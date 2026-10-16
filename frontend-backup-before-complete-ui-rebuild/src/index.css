@@ -1,0 +1,595 @@
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600&display=swap");
+
+:root {
+  /* =========================================================
+     DYNO EDITORIAL COLOR SYSTEM
+     ========================================================= */
+
+  --dyno-bg: #f5f5f3;
+  --dyno-surface: #ffffff;
+  --dyno-surface-soft: #fafaf9;
+  --dyno-dark: #0f0f10;
+
+  --dyno-text: #111111;
+  --dyno-text-secondary: #666666;
+  --dyno-text-subtle: #8a8a8a;
+  --dyno-text-on-dark: #ffffff;
+
+  --dyno-border: #e7e7e7;
+  --dyno-divider: #d9d9d9;
+
+  --dyno-red: #c2182b;
+  --dyno-red-hover: #a1121f;
+
+  /* =========================================================
+     TYPOGRAPHY
+     ========================================================= */
+
+  --font-display: "Bebas Neue", Impact, Haettenschweiler, "Arial Narrow",
+    sans-serif;
+
+  --font-ui: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  --text-eyebrow: 11px;
+  --text-nav: 13px;
+  --text-body: 13px;
+  --text-button: 12px;
+
+  --display-hero: clamp(64px, 7.78vw, 112px);
+  --display-overlay: clamp(48px, 5.84vw, 84px);
+  --display-section: 22px;
+  --display-membership: 56px;
+  --display-banner: 72px;
+
+  /* =========================================================
+     EDITORIAL SPACING
+     ========================================================= */
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+  --space-9: 36px;
+  --space-10: 40px;
+  --space-11: 48px;
+  --space-12: 56px;
+  --space-13: 64px;
+  --space-14: 80px;
+  --space-section: 112px;
+
+  /* =========================================================
+     CONTAINER / GRID
+     ========================================================= */
+
+  --container-max: 1440px;
+  --container-padding: 32px;
+
+  --grid-gap: 40px;
+
+  /* =========================================================
+     EDITORIAL RADII
+     ========================================================= */
+
+  --radius-hero: 36px;
+  --radius-large: 32px;
+  --radius-medium: 28px;
+  --radius-small: 20px;
+  --radius-pill: 999px;
+
+  /* =========================================================
+     MOTION
+     ========================================================= */
+
+  --ease-editorial: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --transition-fast: 220ms var(--ease-editorial);
+  --transition-medium: 260ms var(--ease-editorial);
+  --transition-slow: 300ms var(--ease-editorial);
+
+  /* =========================================================
+     SHADOW
+     ========================================================= */
+
+  --shadow-subtle: 0 2px 12px rgba(0, 0, 0, 0.04);
+
+  /* =========================================================
+     ACCESSIBILITY / SYSTEM
+     ========================================================= */
+
+  color-scheme: light;
+  font-family: var(--font-ui);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  min-height: 100%;
+  background: var(--dyno-bg);
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  background: var(--dyno-bg);
+  color: var(--dyno-text);
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+body,
+button,
+input,
+textarea,
+select {
+  font-family: var(--font-ui);
+}
+
+button,
+input,
+textarea,
+select {
+  font-size: inherit;
+}
+
+button {
+  border: 0;
+  background: none;
+  color: inherit;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img,
+picture,
+svg,
+video,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+
+img {
+  height: auto;
+}
+
+button,
+a,
+input,
+textarea,
+select {
+  outline: none;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--dyno-red);
+  outline-offset: 3px;
+}
+
+/* =========================================================
+   TYPOGRAPHIC PRIMITIVES
+   ========================================================= */
+
+.dyno-display {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+
+.dyno-eyebrow {
+  margin: 0;
+  color: var(--dyno-text);
+  font-family: var(--font-ui);
+  font-size: var(--text-eyebrow);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.dyno-body {
+  margin: 0;
+  color: var(--dyno-text-secondary);
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+.dyno-nav-text {
+  font-size: var(--text-nav);
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.dyno-button-text {
+  font-size: var(--text-button);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+/* =========================================================
+   EDITORIAL CONTAINER
+   ========================================================= */
+
+.dyno-container {
+  width: min(
+    calc(100% - (var(--container-padding) * 2)),
+    var(--container-max)
+  );
+  margin-inline: auto;
+}
+
+/* =========================================================
+   EDITORIAL GRID
+   ========================================================= */
+
+.dyno-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--grid-gap);
+}
+
+.dyno-grid-left {
+  grid-column: span 7;
+}
+
+.dyno-grid-right {
+  grid-column: span 5;
+}
+
+/* =========================================================
+   EDITORIAL BUTTON
+   ========================================================= */
+
+.dyno-pill {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 20px;
+  border: 1px solid var(--dyno-text);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--dyno-text);
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: var(--text-button);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  text-transform: uppercase;
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.dyno-pill:hover {
+  border-color: var(--dyno-red);
+  background: var(--dyno-red);
+  color: var(--dyno-text-on-dark);
+  transform: translateY(-1px);
+}
+
+.dyno-pill:active {
+  transform: translateY(0);
+}
+
+/* =========================================================
+   CIRCULAR ARROW CONTROL
+   ========================================================= */
+
+.dyno-arrow-button {
+  display: inline-flex;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 44px;
+  border-radius: 50%;
+  background: var(--dyno-surface);
+  color: var(--dyno-text);
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.dyno-arrow-button:hover {
+  background: var(--dyno-red);
+  color: var(--dyno-text-on-dark);
+  transform: scale(1.01);
+}
+
+/* =========================================================
+   EDITORIAL CARD
+   ========================================================= */
+
+.dyno-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-large);
+  background: var(--dyno-surface);
+}
+
+.dyno-card-medium {
+  border-radius: var(--radius-medium);
+}
+
+.dyno-card-hero {
+  border-radius: var(--radius-hero);
+}
+
+/* =========================================================
+   IMAGE TREATMENT
+   ========================================================= */
+
+.dyno-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.dyno-image-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.dyno-image-card::after {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: rgba(0, 0, 0, 0.12);
+  content: "";
+  pointer-events: none;
+}
+
+.dyno-image-card-content {
+  position: relative;
+  z-index: 2;
+}
+
+/* =========================================================
+   IMAGE / CONTENT HOVER
+   ========================================================= */
+
+.dyno-interactive-card {
+  transition: transform var(--transition-medium);
+}
+
+.dyno-interactive-card:hover {
+  transform: scale(1.01);
+}
+
+/* =========================================================
+   DIVIDERS
+   ========================================================= */
+
+.dyno-divider {
+  width: 100%;
+  height: 1px;
+  background: var(--dyno-divider);
+}
+
+/* =========================================================
+   DARK EDITORIAL SECTION
+   ========================================================= */
+
+.dyno-dark {
+  background: var(--dyno-dark);
+  color: var(--dyno-text-on-dark);
+}
+
+.dyno-dark .dyno-eyebrow,
+.dyno-dark .dyno-display {
+  color: var(--dyno-text-on-dark);
+}
+
+.dyno-dark .dyno-body {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.dyno-dark .dyno-pill {
+  border-color: rgba(255, 255, 255, 0.9);
+  color: var(--dyno-text-on-dark);
+}
+
+.dyno-dark .dyno-pill:hover {
+  border-color: var(--dyno-red);
+  background: var(--dyno-red);
+}
+
+/* =========================================================
+   CHERRY RED UTILITIES
+   ========================================================= */
+
+.dyno-accent {
+  color: var(--dyno-red);
+}
+
+.dyno-accent-bg {
+  background: var(--dyno-red);
+  color: var(--dyno-text-on-dark);
+}
+
+/* =========================================================
+   SELECTION
+   ========================================================= */
+
+::selection {
+  background: var(--dyno-red);
+  color: #ffffff;
+}
+
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--dyno-divider) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: var(--dyno-divider);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--dyno-text-subtle);
+}
+
+/* =========================================================
+   TABLET
+   768px – 1023px
+   ========================================================= */
+
+@media (max-width: 1023px) {
+  :root {
+    --container-padding: 24px;
+    --grid-gap: 28px;
+    --space-section: 88px;
+
+    --display-hero: 84px;
+    --display-overlay: 64px;
+    --display-membership: 48px;
+  }
+
+  .dyno-grid {
+    gap: var(--grid-gap);
+  }
+
+  .dyno-grid-left {
+    grid-column: span 7;
+  }
+
+  .dyno-grid-right {
+    grid-column: span 5;
+  }
+}
+
+/* =========================================================
+   MOBILE
+   < 768px
+   ========================================================= */
+
+@media (max-width: 767px) {
+  :root {
+    --container-padding: 16px;
+    --grid-gap: 20px;
+    --space-section: 72px;
+
+    --display-hero: 64px;
+    --display-overlay: 48px;
+    --display-section: 20px;
+    --display-membership: 42px;
+    --display-banner: 52px;
+  }
+
+  .dyno-container {
+    width: min(
+      calc(100% - (var(--container-padding) * 2)),
+      var(--container-max)
+    );
+  }
+
+  .dyno-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+
+  .dyno-grid-left,
+  .dyno-grid-right {
+    grid-column: auto;
+  }
+
+  .dyno-pill {
+    min-height: 40px;
+    padding-inline: 18px;
+  }
+
+  .dyno-arrow-button {
+    width: 40px;
+    height: 40px;
+    flex-basis: 40px;
+  }
+}
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 420px) {
+  :root {
+    --container-padding: 14px;
+    --display-hero: 58px;
+    --display-overlay: 44px;
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

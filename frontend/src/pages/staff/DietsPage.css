@@ -1,0 +1,617 @@
+.diets-page {
+  min-height: 100vh;
+  padding: 48px 32px 96px;
+}
+
+.diets-page,
+.diets-page * {
+  box-sizing: border-box;
+}
+
+.diets-page .staff-page-header {
+  max-width: 1440px;
+  margin: 0 auto 64px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 32px;
+}
+
+.diet-header-mark {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: clamp(54px, 7vw, 104px);
+  line-height: 0.8;
+  color: #111;
+  opacity: 0.08;
+  white-space: nowrap;
+}
+
+.diet-builder {
+  max-width: 1440px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.diet-template-panel,
+.diet-builder-main {
+  background: #fff;
+  border: 1px solid #e7e7e7;
+  border-radius: 28px;
+}
+
+.diet-template-panel {
+  overflow: hidden;
+}
+
+.diet-template-header {
+  padding: 30px 28px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  border-bottom: 1px solid #e7e7e7;
+}
+
+.diet-template-header h2,
+.diet-builder-header h2 {
+  margin: 0;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 46px;
+  line-height: 0.88;
+  letter-spacing: 0.01em;
+}
+
+.diet-template-header > span {
+  color: #777;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+
+.diet-template-list {
+  padding: 10px;
+}
+
+.diet-template {
+  width: 100%;
+  min-height: 86px;
+  padding: 16px 14px;
+  display: grid;
+  grid-template-columns: 36px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  border: 0;
+  border-bottom: 1px solid #eeeeee;
+  border-radius: 16px;
+  background: transparent;
+  color: #111;
+  cursor: pointer;
+  text-align: left;
+  transition:
+    background 180ms ease,
+    color 180ms ease;
+}
+
+.diet-template:last-child {
+  border-bottom: 0;
+}
+
+.diet-template:hover {
+  background: #f5f5f3;
+}
+
+.diet-template.active {
+  background: #f5f5f3;
+}
+
+.diet-template-index {
+  align-self: start;
+  padding-top: 3px;
+  color: #c2182b;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 25px;
+  line-height: 1;
+}
+
+.diet-template-copy {
+  min-width: 0;
+}
+
+.diet-template-copy strong,
+.diet-template-copy small {
+  display: block;
+}
+
+.diet-template-copy strong {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 28px;
+  line-height: 0.95;
+  font-weight: 400;
+}
+
+.diet-template-copy small {
+  margin-top: 7px;
+  color: #777;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.diet-template.active .diet-template-copy strong {
+  color: #c2182b;
+}
+
+.diet-template-calories {
+  color: #777;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.diet-empty-library {
+  padding: 40px 18px;
+  text-align: center;
+}
+
+.diet-empty-library strong {
+  display: block;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 32px;
+}
+
+.diet-empty-library p {
+  margin: 8px 0 0;
+  color: #777;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.diet-builder-main {
+  min-height: 680px;
+  padding: 32px;
+}
+
+.diet-builder-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  padding-bottom: 30px;
+  border-bottom: 1px solid #e7e7e7;
+}
+
+.diet-builder-header .staff-button {
+  flex-shrink: 0;
+}
+
+.staff-button-outline {
+  background: #fff;
+  color: #111;
+}
+
+.staff-button-outline:hover {
+  background: #111;
+  color: #fff;
+}
+
+.diet-placeholder {
+  min-height: 480px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  text-align: center;
+}
+
+.diet-placeholder-mark {
+  margin-bottom: 16px;
+  color: #c2182b;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 40px;
+}
+
+.diet-placeholder strong {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 62px;
+  line-height: 0.85;
+}
+
+.diet-placeholder p {
+  max-width: 420px;
+  margin: 16px auto 0;
+  color: #777;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.diet-calorie-hero {
+  min-height: 150px;
+  padding: 30px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 30px;
+  border-bottom: 1px solid #e7e7e7;
+}
+
+.diet-calorie-hero > div:first-child {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.diet-calorie-hero span {
+  color: #777;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+
+.diet-calorie-hero strong {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: clamp(72px, 8vw, 112px);
+  line-height: 0.72;
+  letter-spacing: 0.02em;
+}
+
+.diet-calorie-hero small {
+  color: #777;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+
+.diet-calorie-side {
+  min-width: 90px;
+  padding-left: 24px;
+  border-left: 1px solid #e7e7e7;
+}
+
+.diet-calorie-side span,
+.diet-calorie-side strong {
+  display: block;
+}
+
+.diet-calorie-side strong {
+  margin-top: 4px;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 48px;
+  line-height: 0.8;
+}
+
+.diet-meal-heading {
+  padding: 26px 0 18px;
+}
+
+.diet-meal-heading > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 20px;
+}
+
+.diet-meal-heading .staff-eyebrow {
+  margin-bottom: 0;
+}
+
+.diet-meal-heading span {
+  color: #777;
+  font-size: 11px;
+}
+
+.diet-meal-list {
+  border-top: 1px solid #e7e7e7;
+}
+
+.diet-meal-card {
+  min-height: 118px;
+  padding: 22px 0;
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  gap: 20px;
+  align-items: start;
+  border-bottom: 1px solid #e7e7e7;
+}
+
+.diet-meal-number {
+  padding-top: 2px;
+  color: #c2182b;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 36px;
+  line-height: 0.8;
+}
+
+.diet-meal-content {
+  min-width: 0;
+}
+
+.diet-meal-inputs {
+  display: grid;
+  grid-template-columns: 1fr 120px;
+  gap: 10px;
+}
+
+.diet-meal-content input {
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid #dcdcdc;
+  border-radius: 999px;
+  background: #fff;
+  color: #111;
+  outline: none;
+  font: inherit;
+  font-size: 13px;
+}
+
+.diet-meal-content input:focus {
+  border-color: #111;
+}
+
+.diet-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  padding-top: 12px;
+}
+
+.diet-items span {
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: #f5f5f3;
+  color: #666;
+  font-size: 10px;
+}
+
+.diet-items .diet-no-items {
+  background: transparent;
+  border: 1px dashed #d8d8d8;
+  color: #999;
+  letter-spacing: 0.06em;
+}
+
+.diet-remove {
+  align-self: center;
+  padding: 8px 0 8px 14px;
+  border: 0;
+  background: transparent;
+  color: #777;
+  cursor: pointer;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.diet-remove:hover {
+  color: #c2182b;
+}
+
+.diet-empty-meals {
+  padding: 64px 20px;
+  text-align: center;
+}
+
+.diet-empty-meals strong {
+  display: block;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 38px;
+}
+
+.diet-empty-meals p {
+  margin: 8px 0 0;
+  color: #777;
+  font-size: 12px;
+}
+
+.diet-assignment {
+  margin-top: 34px;
+  padding: 26px;
+  display: grid;
+  grid-template-columns: minmax(230px, 0.8fr) minmax(280px, 1fr) auto;
+  gap: 24px;
+  align-items: end;
+  border-radius: 24px;
+  background: #f5f5f3;
+}
+
+.diet-assignment-copy h3 {
+  margin: 0;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 32px;
+  line-height: 0.9;
+}
+
+.diet-assignment-copy p:last-child {
+  max-width: 300px;
+  margin: 10px 0 0;
+  color: #777;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.diet-assignment-controls {
+  display: grid;
+  gap: 8px;
+}
+
+.diet-assignment-controls input,
+.diet-assignment-controls select {
+  width: 100%;
+  height: 46px;
+  padding: 0 14px;
+  border: 1px solid #dcdcdc;
+  border-radius: 999px;
+  background: #fff;
+  color: #111;
+  outline: none;
+  font: inherit;
+  font-size: 13px;
+}
+
+.diet-assignment-controls input:focus,
+.diet-assignment-controls select:focus {
+  border-color: #111;
+}
+
+.diet-assignment-button {
+  min-width: 150px;
+}
+
+/* Shared loading/state styling */
+
+.diets-page .staff-state {
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+/* Tablet */
+
+@media (max-width: 1100px) {
+  .diet-builder {
+    grid-template-columns: 280px 1fr;
+  }
+
+  .diet-assignment {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .diet-assignment-copy {
+    grid-column: 1 / -1;
+  }
+
+  .diet-assignment-button {
+    width: 100%;
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 900px) {
+  .diet-builder {
+    grid-template-columns: 1fr;
+  }
+
+  .diet-template-panel {
+    overflow: visible;
+  }
+
+  .diet-template-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .diet-template {
+    border: 1px solid #e7e7e7;
+    border-radius: 16px;
+  }
+
+  .diet-template:last-child {
+    border-bottom: 1px solid #e7e7e7;
+  }
+
+  .diet-assignment {
+    grid-template-columns: 1fr;
+  }
+
+  .diet-assignment-copy {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .diets-page {
+    padding: 28px 18px 72px;
+  }
+
+  .diets-page .staff-page-header {
+    align-items: flex-start;
+    flex-direction: column;
+    margin-bottom: 40px;
+  }
+
+  .diet-header-mark {
+    display: none;
+  }
+
+  .diet-builder-main {
+    padding: 22px;
+  }
+
+  .diet-template-header {
+    padding: 24px 22px 20px;
+  }
+
+  .diet-template-header h2,
+  .diet-builder-header h2 {
+    font-size: 40px;
+  }
+
+  .diet-template-list {
+    grid-template-columns: 1fr;
+  }
+
+  .diet-builder-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .diet-builder-header .staff-button {
+    width: 100%;
+  }
+
+  .diet-calorie-hero {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .diet-calorie-hero > div:first-child {
+    flex-wrap: wrap;
+  }
+
+  .diet-calorie-side {
+    padding-left: 0;
+    padding-top: 16px;
+    border-left: 0;
+    border-top: 1px solid #e7e7e7;
+    width: 100%;
+  }
+
+  .diet-meal-heading > div {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .diet-meal-card {
+    grid-template-columns: 40px 1fr;
+    gap: 14px;
+  }
+
+  .diet-meal-number {
+    font-size: 30px;
+  }
+
+  .diet-meal-inputs {
+    grid-template-columns: 1fr;
+  }
+
+  .diet-remove {
+    grid-column: 2;
+    justify-self: start;
+    padding-left: 0;
+  }
+
+  .diet-assignment {
+    padding: 20px;
+  }
+
+  .diet-assignment-button {
+    width: 100%;
+  }
+}

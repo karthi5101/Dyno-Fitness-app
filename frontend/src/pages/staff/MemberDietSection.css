@@ -1,0 +1,419 @@
+.member-diet-section {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.member-diet-state {
+  min-height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 12px;
+  border: 1px solid #dededb;
+  background: #ffffff;
+}
+
+.member-diet-message {
+  padding: 14px 16px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.member-diet-message-error {
+  background: #fff0f1;
+  border: 1px solid #e4a7ad;
+  color: #a20f20;
+}
+
+.member-diet-message-success {
+  background: #f0f7f1;
+  border: 1px solid #b6d1ba;
+  color: #315c38;
+}
+
+.member-diet-current {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: center;
+  padding: 26px;
+  background: #111111;
+  color: #ffffff;
+}
+
+.member-diet-current h3,
+.member-diet-selector h3,
+.member-diet-meals h3,
+.member-diet-history h3 {
+  margin: 5px 0 8px;
+  font-size: clamp(1.4rem, 2.5vw, 2.1rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+}
+
+.member-diet-current p:not(.member-profile-eyebrow) {
+  margin: 0;
+  color: #bcbcb7;
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.member-diet-current-mark {
+  padding: 9px 12px;
+  border: 1px solid #666666;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.member-diet-selector {
+  display: grid;
+  grid-template-columns: 1fr minmax(320px, 500px);
+  gap: 32px;
+  align-items: end;
+  padding: 26px;
+  border: 1px solid #dededb;
+  background: #f8f8f6;
+}
+
+.member-diet-selector p:not(.member-profile-eyebrow) {
+  margin: 0;
+  max-width: 600px;
+  color: #6f6f6a;
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+
+.member-diet-selector-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.member-diet-selector-controls select {
+  flex: 1;
+  min-width: 0;
+  min-height: 48px;
+  border: 1px solid #cfcfcb;
+  background: #ffffff;
+  padding: 0 14px;
+  font: inherit;
+}
+
+.member-diet-button {
+  min-height: 48px;
+  padding: 0 18px;
+  border: 1px solid #111111;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+
+.member-diet-button-dark {
+  background: #111111;
+  color: #ffffff;
+}
+
+.member-diet-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.member-diet-target {
+  display: grid;
+  grid-template-columns: 1fr 180px;
+  border-top: 4px solid #c2182b;
+  background: #ffffff;
+}
+
+.member-diet-target > div {
+  padding: 24px;
+  border: 1px solid #dededb;
+  border-top: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.member-diet-target span {
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: #777772;
+}
+
+.member-diet-target strong {
+  font-size: 2.2rem;
+  letter-spacing: -0.05em;
+}
+
+.member-diet-target small {
+  font-size: 0.62rem;
+  font-weight: 800;
+  color: #777772;
+}
+
+.member-diet-meals {
+  padding-top: 8px;
+}
+
+.member-diet-meals-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 20px;
+  margin-bottom: 14px;
+}
+
+.member-diet-meals-heading button {
+  border: 1px solid #111111;
+  background: #ffffff;
+  padding: 10px 14px;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+
+.member-diet-meal-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.member-diet-meal {
+  border: 1px solid #dededb;
+  background: #fafaf8;
+  padding: 18px;
+}
+
+.member-diet-meal-top {
+  display: grid;
+  grid-template-columns: 45px 1fr auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.member-diet-meal-number {
+  color: #c2182b;
+  font-size: 1.3rem;
+  font-weight: 800;
+}
+
+.member-diet-meal-top input {
+  min-height: 42px;
+  border: 1px solid #d3d3cf;
+  background: #ffffff;
+  padding: 0 10px;
+  font: inherit;
+  font-weight: 700;
+}
+
+.member-diet-meal-top button {
+  border: 0;
+  background: transparent;
+  color: #a20f20;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+
+.member-diet-items {
+  margin-top: 12px;
+  padding-left: 57px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.member-diet-item {
+  display: grid;
+  grid-template-columns: 1.2fr 0.7fr 1fr 32px;
+  gap: 7px;
+}
+
+.member-diet-item input {
+  min-height: 40px;
+  border: 1px solid #d3d3cf;
+  background: #ffffff;
+  padding: 0 9px;
+  font: inherit;
+  font-size: 0.78rem;
+}
+
+.member-diet-item button {
+  border: 0;
+  background: transparent;
+  color: #a20f20;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.member-diet-add-item {
+  align-self: flex-start;
+  margin-top: 4px;
+  border: 0;
+  background: transparent;
+  color: #c2182b;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+
+.member-diet-notes label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.member-diet-notes label > span {
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: #777772;
+}
+
+.member-diet-notes textarea {
+  width: 100%;
+  resize: vertical;
+  border: 1px solid #d3d3cf;
+  background: #ffffff;
+  padding: 12px;
+  font: inherit;
+}
+
+.member-diet-empty {
+  min-height: 230px;
+  padding: 40px 24px;
+  border: 1px dashed #cfcfcb;
+  background: #f8f8f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+}
+
+.member-diet-empty > span {
+  color: #c2182b;
+  font-size: 3rem;
+  line-height: 1;
+}
+
+.member-diet-empty strong {
+  margin-top: 10px;
+}
+
+.member-diet-empty p {
+  max-width: 520px;
+  margin: 10px 0 0;
+  color: #70706b;
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+
+.member-diet-history {
+  padding-top: 8px;
+}
+
+.member-diet-history-list {
+  margin-top: 14px;
+  border-top: 1px solid #111111;
+}
+
+.member-diet-history-list article {
+  display: grid;
+  grid-template-columns: 1fr 1fr 110px;
+  gap: 20px;
+  align-items: center;
+  padding: 17px 0;
+  border-bottom: 1px solid #dededb;
+}
+
+.member-diet-history-list article div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.member-diet-history-list span {
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: #777772;
+}
+
+.member-diet-history-list strong {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+
+.member-diet-history-list > article > span {
+  justify-self: end;
+}
+
+.member-diet-history-list > article > span.is-active {
+  color: #c2182b;
+}
+
+@media (max-width: 900px) {
+  .member-diet-selector {
+    grid-template-columns: 1fr;
+  }
+
+  .member-diet-target {
+    grid-template-columns: 1fr;
+  }
+
+  .member-diet-current {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 620px) {
+  .member-diet-selector-controls {
+    flex-direction: column;
+  }
+
+  .member-diet-meals-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .member-diet-meal-top {
+    grid-template-columns: 40px 1fr;
+  }
+
+  .member-diet-meal-top button {
+    grid-column: 2;
+    justify-self: start;
+  }
+
+  .member-diet-items {
+    padding-left: 0;
+  }
+
+  .member-diet-item {
+    grid-template-columns: 1fr;
+  }
+
+  .member-diet-item button {
+    justify-self: start;
+  }
+
+  .member-diet-history-list article {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .member-diet-history-list > article > span {
+    justify-self: start;
+  }
+}

@@ -1,0 +1,629 @@
+.member-dashboard-page {
+  display: grid;
+  gap: 32px;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.member-dashboard-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 32px;
+}
+
+.member-dashboard-header h1 {
+  margin: 18px 0 18px;
+  color: var(--dyno-text, #111111);
+  font-family: "Bebas Neue", sans-serif;
+  font-size: clamp(68px, 9vw, 132px);
+  font-weight: 400;
+  letter-spacing: 0.005em;
+  line-height: 0.82;
+  text-transform: uppercase;
+}
+
+.member-dashboard-header h1 span {
+  color: #c2182b;
+}
+
+.member-dashboard-intro {
+  max-width: 440px;
+  margin: 0;
+  color: var(--dyno-text-secondary, #666666);
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.member-eyebrow {
+  margin: 0;
+  color: #c2182b;
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.member-eyebrow-light {
+  color: #ffffff;
+}
+
+/* =========================================================
+   PROFILE CHIP
+========================================================= */
+
+.member-profile-chip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 210px;
+  padding: 9px 12px;
+  border: 1px solid #e7e7e7;
+  border-radius: 999px;
+  color: #111111;
+  background: #ffffff;
+  text-decoration: none;
+  transition:
+    border-color 180ms ease,
+    transform 180ms ease;
+}
+
+.member-profile-chip:hover {
+  border-color: #c2182b;
+  transform: translateY(-1px);
+}
+
+.member-profile-avatar {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  color: #ffffff;
+  background: #111111;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 18px;
+}
+
+.member-profile-chip span:nth-child(2) {
+  display: grid;
+  gap: 3px;
+}
+
+.member-profile-chip strong {
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.member-profile-chip small {
+  color: #888888;
+  font-family: "Inter", sans-serif;
+  font-size: 9px;
+}
+
+.member-profile-chip b {
+  margin-left: auto;
+  font-size: 15px;
+  font-weight: 400;
+}
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.member-hero-card {
+  min-height: 560px;
+  display: flex;
+  align-items: flex-end;
+  padding: 48px;
+  border-radius: 36px;
+  overflow: hidden;
+  background-color: #111111;
+  background-image: url("https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&w=1800&q=85");
+  background-position: center;
+  background-size: cover;
+  position: relative;
+}
+
+.member-hero-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.48);
+}
+
+.member-hero-content {
+  position: relative;
+  z-index: 1;
+}
+
+.member-hero-content h2 {
+  margin: 14px 0 30px;
+  color: #ffffff;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: clamp(72px, 10vw, 132px);
+  font-weight: 400;
+  letter-spacing: 0.005em;
+  line-height: 0.78;
+}
+
+.member-outline-button {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  gap: 14px;
+  padding: 0 18px;
+  border: 1px solid #111111;
+  border-radius: 999px;
+  color: #111111;
+  background: transparent;
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition:
+    color 220ms ease,
+    background 220ms ease,
+    border-color 220ms ease,
+    transform 220ms ease;
+}
+
+.member-outline-button-light {
+  border-color: #ffffff;
+  color: #ffffff;
+}
+
+.member-outline-button-light:hover {
+  border-color: #c2182b;
+  color: #ffffff;
+  background: #c2182b;
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   MAIN STATS
+========================================================= */
+
+.member-dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid #e7e7e7;
+  border-bottom: 1px solid #e7e7e7;
+}
+
+.member-dashboard-stats article {
+  min-height: 180px;
+  padding: 28px 30px;
+  border-right: 1px solid #e7e7e7;
+}
+
+.member-dashboard-stats article:last-child {
+  border-right: 0;
+}
+
+.member-dashboard-stats p {
+  margin: 0 0 20px;
+  color: #777777;
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.member-dashboard-stats strong {
+  display: block;
+  color: #111111;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 62px;
+  font-weight: 400;
+  line-height: 0.85;
+}
+
+.member-dashboard-stats span {
+  display: block;
+  margin-top: 12px;
+  color: #777777;
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+}
+
+/* =========================================================
+   SESSION + ATTENDANCE CARDS
+========================================================= */
+
+.member-dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.member-dashboard-card {
+  min-height: 300px;
+  padding: 32px;
+  border-radius: 28px;
+  background: #ffffff;
+}
+
+.member-card-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.member-card-heading h3 {
+  margin: 12px 0 0;
+  color: #111111;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 48px;
+  font-weight: 400;
+  line-height: 0.9;
+}
+
+.member-card-heading > span {
+  color: #aaaaaa;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 28px;
+}
+
+.member-dashboard-session p {
+  max-width: 400px;
+  margin: 48px 0 26px;
+  color: #666666;
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.member-dashboard-card a {
+  color: #111111;
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.member-dashboard-card a span {
+  margin-left: 8px;
+  color: #c2182b;
+}
+
+.member-dashboard-attendance {
+  background: #111111;
+}
+
+.member-dashboard-attendance .member-card-heading h3 {
+  color: #ffffff;
+}
+
+.member-dashboard-attendance .member-card-heading > span {
+  color: #777777;
+}
+
+.member-dashboard-attendance a {
+  color: #ffffff;
+}
+
+/* =========================================================
+   ATTENDANCE PREVIEW
+========================================================= */
+
+.member-attendance-preview {
+  display: grid;
+  grid-template-columns: repeat(14, 1fr);
+  gap: 8px;
+  margin: 60px 0 34px;
+}
+
+.member-attendance-preview span {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #333333;
+}
+
+.member-attendance-preview .is-present {
+  background: #ffffff;
+}
+
+.member-attendance-preview .is-missed {
+  background: #c2182b;
+}
+
+.member-attendance-preview .is-upcoming {
+  background: #333333;
+}
+
+/* =========================================================
+   MEMBER QUICK NAVIGATION
+========================================================= */
+
+.member-dashboard-links {
+  display: grid;
+  border-top: 1px solid #e7e7e7;
+}
+
+.member-dashboard-links a {
+  display: grid;
+  grid-template-columns: 60px 1fr 30px;
+  align-items: center;
+  min-height: 82px;
+  border-bottom: 1px solid #e7e7e7;
+  color: #111111;
+  text-decoration: none;
+  transition:
+    padding 220ms ease,
+    color 220ms ease;
+}
+
+.member-dashboard-links a:hover {
+  padding-left: 8px;
+  color: #c2182b;
+}
+
+.member-dashboard-links span {
+  color: #aaaaaa;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 20px;
+}
+
+.member-dashboard-links strong {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 32px;
+  font-weight: 400;
+}
+
+.member-dashboard-links b {
+  font-size: 18px;
+  font-weight: 400;
+  text-align: right;
+}
+
+/* =========================================================
+   ATTENDANCE / QR ENTRY
+   These styles are intentionally compatible with the
+   existing Member Dashboard architecture.
+========================================================= */
+
+.member-dashboard-qr {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 28px;
+  padding: 30px 32px;
+  border: 1px solid #e7e7e7;
+  border-radius: 28px;
+  background: #ffffff;
+}
+
+.member-dashboard-qr-copy {
+  display: grid;
+  gap: 10px;
+}
+
+.member-dashboard-qr-copy h3 {
+  margin: 0;
+  color: #111111;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 42px;
+  font-weight: 400;
+  line-height: 0.9;
+}
+
+.member-dashboard-qr-copy p {
+  max-width: 520px;
+  margin: 0;
+  color: #666666;
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.member-dashboard-qr-button {
+  display: inline-flex;
+  min-height: 46px;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 0 22px;
+  border: 1px solid #111111;
+  border-radius: 999px;
+  color: #ffffff;
+  background: #111111;
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    transform 180ms ease;
+}
+
+.member-dashboard-qr-button:hover {
+  border-color: #c2182b;
+  background: #c2182b;
+  transform: translateY(-1px);
+}
+
+.member-dashboard-qr-button span {
+  font-size: 15px;
+  font-weight: 400;
+}
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.member-dashboard-skeleton {
+  display: grid;
+  gap: 20px;
+}
+
+.member-dashboard-skeleton div {
+  min-height: 150px;
+  border-radius: 28px;
+  background: #e7e7e7;
+  animation: member-skeleton 1.4s ease-in-out infinite;
+}
+
+/* =========================================================
+   ERROR / EMPTY STATE
+========================================================= */
+
+.member-dashboard-state {
+  min-height: 420px;
+  display: grid;
+  align-content: center;
+  padding: 48px;
+  border-radius: 28px;
+  background: #ffffff;
+}
+
+.member-dashboard-state h1 {
+  margin: 16px 0;
+  color: #111111;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 64px;
+  font-weight: 400;
+  line-height: 0.9;
+}
+
+.member-dashboard-state p:last-child {
+  max-width: 500px;
+  color: #666666;
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+  .member-dashboard-page {
+    padding: 24px;
+  }
+
+  .member-dashboard-header {
+    flex-direction: column;
+  }
+
+  .member-profile-chip {
+    align-self: flex-start;
+  }
+
+  .member-hero-card {
+    min-height: 480px;
+  }
+
+  .member-dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .member-dashboard-qr {
+    grid-template-columns: 1fr;
+  }
+
+  .member-dashboard-qr-button {
+    justify-self: start;
+  }
+}
+
+@media (max-width: 700px) {
+  .member-dashboard-page {
+    gap: 22px;
+    padding: 18px;
+  }
+
+  .member-dashboard-header h1 {
+    font-size: clamp(62px, 18vw, 88px);
+  }
+
+  .member-hero-card {
+    min-height: 440px;
+    padding: 28px;
+    border-radius: 28px;
+  }
+
+  .member-hero-content h2 {
+    font-size: 76px;
+  }
+
+  .member-dashboard-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .member-dashboard-stats article {
+    min-height: 130px;
+    border-right: 0;
+    border-bottom: 1px solid #e7e7e7;
+  }
+
+  .member-dashboard-stats article:last-child {
+    border-bottom: 0;
+  }
+
+  .member-dashboard-links strong {
+    font-size: 25px;
+  }
+
+  .member-dashboard-qr {
+    padding: 24px;
+    border-radius: 24px;
+  }
+
+  .member-dashboard-qr-copy h3 {
+    font-size: 36px;
+  }
+
+  .member-dashboard-qr-button {
+    width: 100%;
+  }
+}
+
+@keyframes member-skeleton {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+.member-dashboard-attendance {
+  display: block;
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.member-dashboard-attendance:hover {
+  color: #ffffff;
+}
+
+.member-dashboard-attendance-action {
+  color: #ffffff;
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.member-dashboard-attendance-action span {
+  margin-left: 8px;
+  color: #c2182b;
+}

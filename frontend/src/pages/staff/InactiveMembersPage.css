@@ -1,0 +1,147 @@
+.inactive-page {
+  min-height: 100vh;
+  padding: 48px 32px 96px;
+}
+
+.inactive-page .staff-page-header {
+  max-width: 1440px;
+  margin: 0 auto 64px;
+}
+
+.inactive-hero {
+  max-width: 1440px;
+  min-height: 290px;
+  margin: 0 auto 56px;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  border-radius: 32px;
+  background: #c2182b;
+  color: #fff;
+}
+
+.inactive-hero span {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+}
+
+.inactive-hero strong {
+  margin-top: 10px;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: clamp(100px, 14vw, 190px);
+  line-height: 0.75;
+}
+
+.inactive-hero p {
+  margin: 20px 0 0;
+  font-size: 12px;
+}
+
+.inactive-list {
+  max-width: 1440px;
+  margin: 0 auto;
+  border-top: 1px solid #e7e7e7;
+}
+
+.inactive-row {
+  min-height: 108px;
+  display: grid;
+  grid-template-columns: 48px 1.5fr 1fr 100px auto;
+  align-items: center;
+  gap: 24px;
+  border-bottom: 1px solid #e7e7e7;
+}
+
+.inactive-avatar {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #f0f0ee;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.inactive-member strong,
+.inactive-member span {
+  display: block;
+}
+
+.inactive-member strong {
+  font-size: 14px;
+}
+
+.inactive-member span {
+  margin-top: 4px;
+  color: #777;
+  font-size: 10px;
+}
+
+.inactive-last span,
+.inactive-days span {
+  display: block;
+  color: #777;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+}
+
+.inactive-last strong {
+  display: block;
+  margin-top: 5px;
+  font-size: 12px;
+}
+
+.inactive-days strong {
+  display: block;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 38px;
+  line-height: 0.8;
+}
+
+.inactive-row button {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.inactive-row button:hover {
+  color: #c2182b;
+}
+
+@media (max-width: 900px) {
+  .inactive-row {
+    grid-template-columns: 48px 1fr auto;
+    padding: 20px 0;
+  }
+
+  .inactive-last {
+    grid-column: 2;
+  }
+
+  .inactive-days {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+  }
+
+  .inactive-row button {
+    grid-column: 2;
+    justify-self: start;
+  }
+}
+
+@media (max-width: 768px) {
+  .inactive-page {
+    padding: 28px 18px 72px;
+  }
+
+  .inactive-hero {
+    min-height: 240px;
+    padding: 28px;
+  }
+}

@@ -1,0 +1,484 @@
+.member-workout-page {
+  min-height: 100vh;
+  padding: 32px;
+  background: #f5f5f3;
+  color: #111;
+}
+
+.member-workout-header {
+  max-width: 1400px;
+  margin: 0 auto 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 32px;
+}
+
+.member-workout-back {
+  display: inline-flex;
+  margin-bottom: 24px;
+  color: #111;
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.member-workout-back:hover {
+  opacity: 0.6;
+}
+
+.member-workout-eyebrow,
+.member-workout-hero p,
+.member-workout-note p,
+.member-workout-section-heading p {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.member-workout-header h1 {
+  margin: 8px 0 0;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: clamp(64px, 9vw, 138px);
+  font-weight: 400;
+  line-height: 0.78;
+  letter-spacing: -0.025em;
+}
+
+.member-workout-meta {
+  min-width: 170px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  text-align: right;
+}
+
+.member-workout-meta span {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.member-workout-meta strong {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+
+.member-workout-meta small {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.member-workout-hero {
+  max-width: 1400px;
+  min-height: 330px;
+  margin: 0 auto 2px;
+  padding: 42px;
+  display: flex;
+  align-items: flex-end;
+  background: #111;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+.member-workout-hero::after {
+  content: "DYNO";
+  position: absolute;
+  right: -20px;
+  bottom: -50px;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: clamp(150px, 24vw, 360px);
+  line-height: 0.8;
+  color: #c2182b;
+  opacity: 0.18;
+  pointer-events: none;
+}
+
+.member-workout-hero > div {
+  position: relative;
+  z-index: 1;
+}
+
+.member-workout-hero h2 {
+  max-width: 850px;
+  margin: 10px 0 12px;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: clamp(52px, 8vw, 112px);
+  font-weight: 400;
+  line-height: 0.85;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+
+.member-workout-hero span {
+  display: block;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: #c2182b;
+  text-transform: uppercase;
+}
+
+.member-workout-summary {
+  max-width: 1400px;
+  margin: 0 auto 48px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-left: 1px solid rgba(17, 17, 17, 0.16);
+  border-bottom: 1px solid rgba(17, 17, 17, 0.16);
+}
+
+.member-workout-summary > div {
+  min-height: 120px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-right: 1px solid rgba(17, 17, 17, 0.16);
+}
+
+.member-workout-summary span {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+}
+
+.member-workout-summary strong {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 42px;
+  font-weight: 400;
+  line-height: 0.9;
+}
+
+.member-workout-list {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.member-workout-section-heading {
+  padding-bottom: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-bottom: 2px solid #111;
+}
+
+.member-workout-section-heading h3 {
+  margin: 5px 0 0;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 56px;
+  font-weight: 400;
+  line-height: 0.85;
+}
+
+.member-workout-section-heading > span {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 42px;
+  line-height: 0.85;
+}
+
+.member-exercise-card {
+  min-height: 118px;
+  display: grid;
+  grid-template-columns: 90px minmax(180px, 1fr) minmax(180px, 260px) 48px;
+  align-items: center;
+  gap: 24px;
+  border-bottom: 1px solid rgba(17, 17, 17, 0.18);
+  transition:
+    padding 180ms ease,
+    background 180ms ease;
+}
+
+.member-exercise-card:hover {
+  padding-left: 12px;
+  padding-right: 12px;
+  background: #fff;
+}
+
+.member-exercise-number {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 36px;
+  color: #c2182b;
+}
+
+.member-exercise-main h4 {
+  margin: 0;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 38px;
+  font-weight: 400;
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+
+.member-exercise-main p {
+  margin: 8px 0 0;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #777;
+  text-transform: uppercase;
+}
+
+.member-exercise-detail {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-align: right;
+  text-transform: uppercase;
+}
+
+.member-exercise-action {
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 1px solid rgba(17, 17, 17, 0.25);
+  border-radius: 50%;
+  background: transparent;
+  color: #111;
+  font-size: 18px;
+  cursor: pointer;
+  transition:
+    background 180ms ease,
+    color 180ms ease,
+    border-color 180ms ease;
+}
+
+.member-exercise-action:hover {
+  background: #c2182b;
+  color: #fff;
+  border-color: #c2182b;
+}
+
+.member-workout-empty {
+  padding: 70px 20px;
+  border-bottom: 1px solid rgba(17, 17, 17, 0.18);
+}
+
+.member-workout-empty strong {
+  display: block;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 42px;
+  font-weight: 400;
+}
+
+.member-workout-empty p {
+  max-width: 420px;
+  margin: 12px 0 0;
+  color: #666;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.member-workout-note {
+  max-width: 1400px;
+  margin: 80px auto 0;
+  padding: 42px;
+  display: grid;
+  grid-template-columns: minmax(240px, 0.7fr) minmax(240px, 1fr) minmax(260px, 1fr);
+  align-items: end;
+  gap: 40px;
+  background: #111;
+  color: #fff;
+}
+
+.member-workout-note h3 {
+  margin: 0;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: clamp(52px, 7vw, 92px);
+  font-weight: 400;
+  line-height: 0.82;
+}
+
+.member-workout-note span {
+  max-width: 460px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #d2d2d2;
+}
+
+.member-workout-note small {
+  grid-column: 1 / -1;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: #c2182b;
+}
+
+.member-workout-loading {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+
+.member-workout-loading span {
+  width: 7px;
+  height: 38px;
+  display: block;
+  background: #111;
+  animation: member-workout-loading 800ms ease-in-out infinite;
+}
+
+.member-workout-loading span:nth-child(2) {
+  animation-delay: 120ms;
+}
+
+.member-workout-loading span:nth-child(3) {
+  animation-delay: 240ms;
+}
+
+@keyframes member-workout-loading {
+  0%,
+  100% {
+    transform: scaleY(0.35);
+    opacity: 0.3;
+  }
+
+  50% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+.member-workout-error {
+  max-width: 900px;
+  min-height: 70vh;
+  margin: 0 auto;
+  padding-top: 60px;
+}
+
+.member-workout-error h1 {
+  margin: 15px 0 25px;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: clamp(70px, 12vw, 150px);
+  font-weight: 400;
+  line-height: 0.78;
+}
+
+.member-workout-error > span {
+  display: block;
+  max-width: 600px;
+  color: #666;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+@media (max-width: 900px) {
+  .member-workout-page {
+    padding: 22px;
+  }
+
+  .member-workout-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .member-workout-meta {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .member-workout-summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .member-exercise-card {
+    grid-template-columns: 52px minmax(0, 1fr) 42px;
+    gap: 14px;
+  }
+
+  .member-exercise-detail {
+    grid-column: 2;
+    text-align: left;
+    margin-top: -8px;
+    padding-bottom: 18px;
+  }
+
+  .member-exercise-action {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+  }
+
+  .member-workout-note {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .member-workout-note small {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 560px) {
+  .member-workout-page {
+    padding: 16px;
+  }
+
+  .member-workout-header h1 {
+    font-size: 72px;
+  }
+
+  .member-workout-hero {
+    min-height: 260px;
+    padding: 26px;
+  }
+
+  .member-workout-hero h2 {
+    font-size: 58px;
+  }
+
+  .member-workout-summary {
+    margin-bottom: 38px;
+  }
+
+  .member-workout-summary > div {
+    min-height: 95px;
+    padding: 16px;
+  }
+
+  .member-workout-summary strong {
+    font-size: 34px;
+  }
+
+  .member-workout-section-heading h3 {
+    font-size: 46px;
+  }
+
+  .member-exercise-card {
+    min-height: 110px;
+    grid-template-columns: 38px minmax(0, 1fr) 38px;
+  }
+
+  .member-exercise-number {
+    font-size: 28px;
+  }
+
+  .member-exercise-main h4 {
+    font-size: 29px;
+  }
+
+  .member-exercise-detail {
+    font-size: 9px;
+  }
+
+  .member-workout-note {
+    margin-top: 55px;
+    padding: 28px;
+  }
+
+  .member-workout-note h3 {
+    font-size: 62px;
+  }
+}

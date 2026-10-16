@@ -1,0 +1,631 @@
+﻿.diet-page {
+  width: 100%;
+  min-width: 0;
+}
+
+.diet-page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 48px;
+  margin-bottom: 56px;
+}
+
+.diet-heading-block h1 {
+  margin: 12px 0 22px;
+  color: var(--dyno-text);
+  font-family: "Bebas Neue", sans-serif;
+  font-size: clamp(64px, 7vw, 118px);
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  line-height: 0.78;
+  text-transform: uppercase;
+}
+
+.diet-heading-block h1 span,
+.diet-hero h2 span,
+.diet-empty h2 span {
+  color: var(--dyno-red);
+}
+
+.diet-heading-block > p:last-child {
+  margin: 0;
+  color: var(--dyno-text-subtle);
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.diet-header-meta {
+  display: flex;
+  min-width: 220px;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 7px;
+  padding-bottom: 5px;
+  text-align: right;
+}
+
+.diet-header-meta > span {
+  color: var(--dyno-text-subtle);
+  font-family: "Inter", sans-serif;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+}
+
+.diet-header-meta select {
+  width: min(320px, 100%);
+  min-height: 42px;
+  padding: 0 38px 0 15px;
+  border: 1px solid var(--dyno-border);
+  border-radius: 999px;
+  outline: none;
+  color: var(--dyno-text);
+  background: var(--dyno-surface);
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.diet-header-meta strong {
+  color: var(--dyno-text);
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+
+.diet-alert {
+  min-height: 48px;
+  margin-bottom: 18px;
+  padding: 15px 18px;
+  border: 1px solid rgba(194, 24, 43, 0.35);
+  border-radius: 14px;
+  color: var(--dyno-text);
+  background: rgba(194, 24, 43, 0.05);
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+}
+
+.diet-hero {
+  position: relative;
+  display: flex;
+  min-height: 500px;
+  align-items: flex-end;
+  justify-content: space-between;
+  overflow: hidden;
+  margin-bottom: 22px;
+  padding: 48px;
+  border-radius: 36px;
+  color: #ffffff;
+  background: #111111;
+}
+
+.diet-hero::before {
+  position: absolute;
+  right: 7%;
+  top: 12%;
+  width: min(38vw, 580px);
+  height: min(38vw, 580px);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 50%;
+  content: "";
+}
+
+.diet-hero::after {
+  position: absolute;
+  right: 20%;
+  bottom: -20%;
+  width: 220px;
+  height: 220px;
+  border: 1px solid rgba(194, 24, 43, 0.28);
+  border-radius: 50%;
+  content: "";
+}
+
+.diet-hero-copy,
+.diet-hero-calories {
+  position: relative;
+  z-index: 1;
+}
+
+.diet-hero-copy > p,
+.diet-hero-copy > small,
+.diet-hero-calories > span,
+.diet-hero-calories > small {
+  display: block;
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+}
+
+.diet-hero-copy > p {
+  margin: 0 0 18px;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 10px;
+}
+
+.diet-hero h2 {
+  margin: 0;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: clamp(72px, 7vw, 122px);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 0.76;
+}
+
+.diet-hero-copy > small {
+  margin-top: 30px;
+  color: rgba(255, 255, 255, 0.42);
+  font-size: 8px;
+}
+
+.diet-hero-calories {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.diet-hero-calories > span {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 9px;
+}
+
+.diet-hero-calories strong {
+  margin: 5px 0 0;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: clamp(68px, 6vw, 108px);
+  font-weight: 400;
+  line-height: 0.8;
+}
+
+.diet-hero-calories > small {
+  margin-top: 8px;
+  color: rgba(255, 255, 255, 0.42);
+  font-size: 8px;
+}
+
+.diet-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-bottom: 64px;
+  border-top: 1px solid var(--dyno-border);
+  border-bottom: 1px solid var(--dyno-border);
+}
+
+.diet-summary article {
+  min-height: 140px;
+  padding: 24px 26px;
+  border-right: 1px solid var(--dyno-border);
+}
+
+.diet-summary article:last-child {
+  border-right: 0;
+}
+
+.diet-summary article > span,
+.diet-summary article > small {
+  display: block;
+  color: var(--dyno-text-subtle);
+  font-family: "Inter", sans-serif;
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+}
+
+.diet-summary article strong {
+  display: block;
+  margin: 16px 0 6px;
+  color: var(--dyno-text);
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 48px;
+  font-weight: 400;
+  line-height: 0.8;
+}
+
+.diet-content-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(320px, 0.72fr);
+  gap: clamp(24px, 3vw, 48px);
+}
+
+.diet-meals,
+.diet-side-column {
+  min-width: 0;
+}
+
+.diet-section-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 22px;
+}
+
+.diet-section-heading h2,
+.diet-side-card-heading h2 {
+  margin: 7px 0 0;
+  color: var(--dyno-text);
+  font-family: "Bebas Neue", sans-serif;
+  font-size: clamp(32px, 2.6vw, 44px);
+  font-weight: 400;
+  line-height: 0.85;
+}
+
+.diet-section-heading > span {
+  color: var(--dyno-text-subtle);
+  font-family: "Inter", sans-serif;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+}
+
+.diet-meal-list {
+  border-top: 1px solid var(--dyno-border);
+}
+
+.diet-meal-card {
+  display: grid;
+  min-height: 180px;
+  grid-template-columns: 58px minmax(0, 1fr) 110px;
+  align-items: start;
+  gap: 22px;
+  padding: 26px 22px;
+  border-bottom: 1px solid var(--dyno-border);
+  background: var(--dyno-surface);
+  transition: transform 260ms ease, background 220ms ease;
+}
+
+.diet-meal-card:hover {
+  transform: scale(1.005);
+  background: var(--dyno-surface-soft);
+}
+
+.diet-meal-number {
+  color: var(--dyno-red);
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 32px;
+  line-height: 1;
+}
+
+.diet-meal-main > span {
+  color: var(--dyno-text-subtle);
+  font-family: "Inter", sans-serif;
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.diet-meal-main h3 {
+  margin: 7px 0 16px;
+  color: var(--dyno-text);
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 34px;
+  font-weight: 400;
+  line-height: 0.88;
+  text-transform: uppercase;
+}
+
+.diet-food-list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.diet-food-list div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 18px;
+  max-width: 520px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--dyno-border);
+}
+
+.diet-food-list span {
+  color: var(--dyno-text);
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+}
+
+.diet-food-list small {
+  color: var(--dyno-text-subtle);
+  font-family: "Inter", sans-serif;
+  font-size: 9px;
+}
+
+.diet-meal-calories {
+  text-align: right;
+}
+
+.diet-meal-calories > span,
+.diet-meal-calories > small {
+  display: block;
+  color: var(--dyno-text-subtle);
+  font-family: "Inter", sans-serif;
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+
+.diet-meal-calories strong {
+  display: block;
+  margin: 8px 0 3px;
+  color: var(--dyno-text);
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 34px;
+  font-weight: 400;
+  line-height: 0.8;
+}
+
+.diet-water-card {
+  min-height: 390px;
+  margin-bottom: 18px;
+  padding: 32px;
+  border-radius: 28px;
+  color: #ffffff;
+  background: var(--dyno-dark);
+}
+
+.diet-water-card > p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.48);
+  font-family: "Inter", sans-serif;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+}
+
+.diet-water-card h2 {
+  margin: 18px 0 38px;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 58px;
+  font-weight: 400;
+  line-height: 0.78;
+}
+
+.diet-water-number {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.diet-water-number strong {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 92px;
+  font-weight: 400;
+  line-height: 0.8;
+}
+
+.diet-water-number span {
+  color: var(--dyno-red);
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 36px;
+}
+
+.diet-water-card > p:nth-of-type(2) {
+  margin-top: 10px;
+  font-size: 8px;
+  line-height: 1.4;
+}
+
+.diet-water-track {
+  height: 2px;
+  margin: 30px 0 14px;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.diet-water-track span {
+  display: block;
+  height: 100%;
+  background: var(--dyno-red);
+}
+
+.diet-water-card > small {
+  color: rgba(255, 255, 255, 0.42);
+  font-family: "Inter", sans-serif;
+  font-size: 8px;
+  line-height: 1.5;
+}
+
+.diet-supplement-card {
+  padding: 28px;
+  border: 1px solid var(--dyno-border);
+  border-radius: 28px;
+  background: var(--dyno-surface);
+}
+
+.diet-side-card-heading > p {
+  margin: 0;
+  color: var(--dyno-text-subtle);
+  font-family: "Inter", sans-serif;
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+}
+
+.diet-supplement-list {
+  margin-top: 24px;
+  border-top: 1px solid var(--dyno-border);
+}
+
+.diet-supplement-list div {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr);
+  align-items: center;
+  min-height: 56px;
+  border-bottom: 1px solid var(--dyno-border);
+}
+
+.diet-supplement-list span {
+  color: var(--dyno-red);
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 23px;
+}
+
+.diet-supplement-list strong {
+  color: var(--dyno-text);
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.diet-no-supplements {
+  margin: 24px 0 0;
+  color: var(--dyno-text-subtle);
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.diet-empty {
+  min-height: 440px;
+  padding: 48px;
+  border-radius: 32px;
+  color: #ffffff;
+  background: var(--dyno-dark);
+}
+
+.diet-empty > p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.45);
+  font-family: "Inter", sans-serif;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+}
+
+.diet-empty h2 {
+  margin: 24px 0;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: clamp(72px, 7vw, 112px);
+  font-weight: 400;
+  line-height: 0.76;
+}
+
+.diet-empty > span {
+  display: block;
+  max-width: 420px;
+  color: rgba(255, 255, 255, 0.48);
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.diet-state {
+  display: flex;
+  min-height: 480px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  border: 1px solid var(--dyno-border);
+  background: var(--dyno-surface);
+}
+
+.diet-state span {
+  width: 42px;
+  height: 2px;
+  background: var(--dyno-red);
+}
+
+.diet-state p {
+  margin: 0;
+  color: var(--dyno-text-subtle);
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+}
+
+@media (max-width: 1100px) {
+  .diet-content-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 767px) {
+  .diet-page-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 28px;
+    margin-bottom: 40px;
+  }
+
+  .diet-heading-block h1 {
+    font-size: 64px;
+  }
+
+  .diet-header-meta {
+    width: 100%;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .diet-header-meta select {
+    width: 100%;
+  }
+
+  .diet-hero {
+    min-height: 430px;
+    padding: 30px;
+    border-radius: 28px;
+  }
+
+  .diet-hero h2 {
+    font-size: 64px;
+  }
+
+  .diet-hero-calories {
+    display: none;
+  }
+
+  .diet-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-bottom: 46px;
+  }
+
+  .diet-summary article {
+    min-height: 120px;
+    padding: 20px;
+    border-bottom: 1px solid var(--dyno-border);
+  }
+
+  .diet-summary article:nth-child(2) {
+    border-right: 0;
+  }
+
+  .diet-summary article strong {
+    font-size: 42px;
+  }
+
+  .diet-meal-card {
+    grid-template-columns: 40px minmax(0, 1fr);
+    gap: 12px;
+    padding: 22px 14px;
+  }
+
+  .diet-meal-calories {
+    display: none;
+  }
+
+  .diet-meal-main h3 {
+    font-size: 30px;
+  }
+
+  .diet-water-card,
+  .diet-supplement-card {
+    border-radius: 24px;
+  }
+
+  .diet-empty {
+    min-height: 380px;
+    padding: 30px;
+    border-radius: 28px;
+  }
+
+  .diet-empty h2 {
+    font-size: 68px;
+  }
+}

@@ -1,0 +1,205 @@
+.payments-page {
+  min-height: 100vh;
+  padding: 48px 32px 96px;
+}
+
+.payments-page .staff-page-header {
+  max-width: 1440px;
+  margin: 0 auto 64px;
+}
+
+.payment-hero {
+  max-width: 1440px;
+  min-height: 300px;
+  margin: 0 auto 40px;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  background: #0f0f10;
+  color: #fff;
+  border-radius: 32px;
+}
+
+.payment-hero span {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+}
+
+.payment-hero strong {
+  margin-top: 12px;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: clamp(80px, 12vw, 170px);
+  line-height: 0.78;
+}
+
+.payment-hero small {
+  margin-top: 20px;
+  color: #aaa;
+  font-size: 11px;
+}
+
+.payment-grid {
+  max-width: 1440px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 400px 1fr;
+  gap: 24px;
+}
+
+.payment-form,
+.payment-list {
+  padding: 30px;
+  background: #fff;
+  border: 1px solid #e7e7e7;
+  border-radius: 28px;
+}
+
+.payment-form h2,
+.payment-list-header h2 {
+  margin: 0 0 28px;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 46px;
+  line-height: 0.85;
+}
+
+.payment-form label {
+  display: block;
+  margin-bottom: 18px;
+  color: #666;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+
+.payment-form input,
+.payment-form select,
+.payment-form textarea {
+  width: 100%;
+  margin-top: 8px;
+  padding: 0 14px;
+  border: 1px solid #ddd;
+  border-radius: 999px;
+  background: #fff;
+  outline: none;
+  color: #111;
+  font: inherit;
+}
+
+.payment-form input,
+.payment-form select {
+  height: 46px;
+}
+
+.payment-form textarea {
+  min-height: 90px;
+  padding-top: 14px;
+  border-radius: 18px;
+  resize: vertical;
+}
+
+.payment-form .staff-button {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.payment-list-header {
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e7e7e7;
+}
+
+.payment-row {
+  min-height: 80px;
+  display: grid;
+  grid-template-columns: 1fr 160px 120px;
+  gap: 20px;
+  align-items: center;
+  border-bottom: 1px solid #e7e7e7;
+}
+
+.payment-member {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.payment-member strong,
+.payment-member span {
+  display: block;
+}
+
+.payment-member strong {
+  font-size: 13px;
+}
+
+.payment-member span {
+  margin-top: 4px;
+  color: #777;
+  font-size: 10px;
+}
+
+.payment-row > div span,
+.payment-row > div small {
+  display: block;
+}
+
+.payment-row > div span {
+  font-size: 11px;
+}
+
+.payment-row > div small {
+  margin-top: 4px;
+  color: #777;
+  font-size: 9px;
+  text-transform: uppercase;
+}
+
+.payment-amount {
+  text-align: right;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 30px;
+}
+
+@media (max-width: 1000px) {
+  .payment-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .payments-page {
+    padding: 28px 18px 72px;
+  }
+
+  .payment-hero {
+    min-height: 240px;
+    padding: 28px;
+  }
+
+  .payment-grid {
+    gap: 18px;
+  }
+
+  .payment-form,
+  .payment-list {
+    padding: 22px;
+  }
+
+  .payment-row {
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    padding: 16px 0;
+  }
+
+  .payment-row > div {
+    grid-column: 1;
+  }
+
+  .payment-amount {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+}

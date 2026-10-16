@@ -1,0 +1,2144 @@
+/* =========================================================
+   DYNO FITNESS
+   Editorial Application Shell
+   UI - 1.5
+   Responsive Editorial System
+   ========================================================= */
+
+:root {
+  --dyno-bg: #f5f5f3;
+  --dyno-surface: #ffffff;
+  --dyno-surface-soft: #efefed;
+
+  --dyno-text: #111111;
+  --dyno-text-secondary: #666666;
+  --dyno-text-subtle: #898989;
+
+  --dyno-dark: #0f0f10;
+
+  --dyno-border: #e7e7e7;
+  --dyno-border-soft: #eeeeec;
+
+  --dyno-red: #c2182b;
+  --dyno-red-hover: #a1121f;
+
+  --dyno-radius-sm: 16px;
+  --dyno-radius-md: 20px;
+  --dyno-radius-lg: 24px;
+  --dyno-radius-xl: 32px;
+  --dyno-radius-pill: 999px;
+
+  --dyno-sidebar-width: clamp(190px, 15vw, 230px);
+  --dyno-content-max: 1440px;
+
+  --dyno-page-gutter: clamp(22px, 3vw, 48px);
+  --dyno-page-top: clamp(38px, 4vw, 64px);
+  --dyno-page-bottom: clamp(72px, 7vw, 120px);
+
+  --dyno-section-gap: clamp(48px, 7vw, 112px);
+  --dyno-card-gap: clamp(12px, 1.4vw, 20px);
+
+  --dyno-ease: 260ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* =========================================================
+   RESET / BASE
+   ========================================================= */
+
+html {
+  background: var(--dyno-bg);
+  overflow-x: hidden;
+}
+
+body {
+  min-width: 0;
+  margin: 0;
+  overflow-x: hidden;
+
+  background: var(--dyno-bg);
+  color: var(--dyno-text);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+img {
+  max-width: 100%;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  color: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+::selection {
+  color: #ffffff;
+  background: var(--dyno-red);
+}
+
+/* =========================================================
+   APPLICATION
+   ========================================================= */
+
+.dyno-app {
+  width: 100%;
+  min-height: 100vh;
+  min-width: 0;
+
+  background: var(--dyno-bg);
+}
+
+/* =========================================================
+   TOP BAR
+   ========================================================= */
+
+.dyno-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+
+  min-height: clamp(64px, 4.8vw, 76px);
+
+  padding:
+    0
+    clamp(18px, 2.3vw, 36px);
+
+  background: rgba(245, 245, 243, 0.96);
+
+  border-bottom: 1px solid rgba(17, 17, 17, 0.06);
+}
+
+.dyno-brand {
+  display: flex;
+  min-width: 0;
+
+  align-items: center;
+
+  gap: clamp(8px, 0.7vw, 11px);
+
+  justify-self: start;
+}
+
+.dyno-brand-mark {
+  display: grid;
+
+  width: clamp(30px, 2.2vw, 34px);
+  height: clamp(30px, 2.2vw, 34px);
+
+  flex: 0 0 auto;
+
+  place-items: center;
+
+  border-radius: 50%;
+
+  color: #ffffff;
+  background: var(--dyno-dark);
+
+  font-family: "Bebas Neue", sans-serif;
+  font-size: clamp(18px, 1.35vw, 21px);
+  font-weight: 400;
+  line-height: 1;
+}
+
+.dyno-brand-copy {
+  display: flex;
+  min-width: 0;
+
+  flex-direction: column;
+
+  gap: 2px;
+}
+
+.dyno-brand-name {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: clamp(18px, 1.4vw, 21px);
+  font-weight: 400;
+  letter-spacing: 0.015em;
+  line-height: 0.85;
+}
+
+.dyno-brand-subtitle {
+  color: var(--dyno-text-subtle);
+
+  font-family: "Inter", sans-serif;
+  font-size: clamp(6px, 0.5vw, 7px);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  line-height: 1;
+}
+
+.dyno-topbar-center {
+  min-width: 0;
+
+  justify-self: center;
+}
+
+.dyno-topbar-status {
+  color: var(--dyno-text-subtle);
+
+  font-family: "Inter", sans-serif;
+  font-size: clamp(7px, 0.58vw, 9px);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.dyno-profile-button {
+  display: grid;
+
+  width: clamp(34px, 2.5vw, 38px);
+  height: clamp(34px, 2.5vw, 38px);
+
+  flex: 0 0 auto;
+
+  place-items: center;
+  justify-self: end;
+
+  padding: 0;
+
+  border: 1px solid var(--dyno-border);
+  border-radius: 50%;
+
+  color: var(--dyno-text);
+  background: var(--dyno-surface);
+
+  cursor: pointer;
+
+  transition:
+    background var(--dyno-ease),
+    border-color var(--dyno-ease),
+    transform var(--dyno-ease);
+}
+
+.dyno-profile-button:hover {
+  border-color: var(--dyno-text);
+  background: var(--dyno-surface-soft);
+  transform: scale(1.02);
+}
+
+.dyno-profile-button span {
+  font-family: "Inter", sans-serif;
+  font-size: clamp(7px, 0.58vw, 9px);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+/* =========================================================
+   APPLICATION SHELL
+   ========================================================= */
+
+.dyno-shell {
+  display: grid;
+  grid-template-columns:
+    var(--dyno-sidebar-width)
+    minmax(0, 1fr);
+
+  width: min(100%, 1680px);
+  min-height: calc(100vh - clamp(64px, 4.8vw, 76px));
+
+  margin: 0 auto;
+}
+
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
+
+.dyno-sidebar {
+  position: sticky;
+  top: clamp(64px, 4.8vw, 76px);
+
+  display: flex;
+  min-width: 0;
+  min-height: calc(100vh - clamp(64px, 4.8vw, 76px));
+
+  flex-direction: column;
+
+  padding:
+    clamp(28px, 2.5vw, 40px)
+    clamp(16px, 1.45vw, 24px)
+    clamp(22px, 2vw, 32px);
+
+  background: var(--dyno-bg);
+
+  border-right: 1px solid var(--dyno-border);
+}
+
+.dyno-sidebar-intro {
+  display: flex;
+  min-width: 0;
+
+  flex-direction: column;
+
+  gap: clamp(6px, 0.5vw, 8px);
+
+  padding-bottom: clamp(28px, 2.5vw, 40px);
+}
+
+.dyno-sidebar-eyebrow {
+  color: var(--dyno-red);
+
+  font-family: "Inter", sans-serif;
+  font-size: clamp(7px, 0.58vw, 9px);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.dyno-sidebar-title {
+  color: var(--dyno-text);
+
+  font-family: "Bebas Neue", sans-serif;
+  font-size: clamp(28px, 2.15vw, 34px);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 0.82;
+}
+
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
+
+.dyno-navigation {
+  display: flex;
+  min-width: 0;
+
+  flex: 1;
+  flex-direction: column;
+}
+
+.dyno-navigation-group {
+  display: flex;
+  min-width: 0;
+
+  flex-direction: column;
+}
+
+.dyno-navigation-group-secondary {
+  margin-top: clamp(28px, 2.5vw, 40px);
+}
+
+.dyno-navigation-heading {
+  margin: 0 0 clamp(9px, 0.75vw, 12px);
+  padding-left: 2px;
+
+  color: var(--dyno-text-subtle);
+
+  font-family: "Inter", sans-serif;
+  font-size: clamp(7px, 0.58vw, 9px);
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.dyno-navigation-links {
+  display: flex;
+  min-width: 0;
+
+  flex-direction: column;
+}
+
+.dyno-nav-link {
+  position: relative;
+
+  display: flex;
+  min-width: 0;
+  min-height: clamp(31px, 2.3vw, 35px);
+
+  align-items: center;
+
+  padding: 0 clamp(6px, 0.55vw, 9px);
+
+  color: var(--dyno-text-secondary);
+
+  font-family: "Inter", sans-serif;
+  font-size: clamp(10px, 0.75vw, 12px);
+  font-weight: 500;
+  line-height: 1;
+
+  text-decoration: none;
+
+  transition:
+    color var(--dyno-ease),
+    padding-left var(--dyno-ease);
+}
+
+.dyno-nav-link::before {
+  position: absolute;
+  left: 0;
+
+  width: 1px;
+  height: 0;
+
+  background: var(--dyno-red);
+
+  content: "";
+
+  transition: height var(--dyno-ease);
+}
+
+.dyno-nav-link:hover {
+  padding-left: clamp(10px, 0.85vw, 14px);
+  color: var(--dyno-text);
+}
+
+.dyno-nav-link-active {
+  padding-left: clamp(10px, 0.85vw, 14px);
+
+  color: var(--dyno-text);
+
+  font-weight: 600;
+}
+
+.dyno-nav-link-active::before {
+  height: 15px;
+}
+
+/* =========================================================
+   SIDEBAR FOOTER
+   ========================================================= */
+
+.dyno-sidebar-footer {
+  display: flex;
+  min-width: 0;
+
+  flex-direction: column;
+
+  gap: 5px;
+
+  padding-top: clamp(18px, 1.6vw, 24px);
+
+  border-top: 1px solid var(--dyno-border);
+}
+
+.dyno-sidebar-footer-label {
+  color: var(--dyno-text);
+
+  font-family: "Inter", sans-serif;
+  font-size: clamp(7px, 0.58vw, 9px);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+
+.dyno-sidebar-footer-copy {
+  color: var(--dyno-text-subtle);
+
+  font-family: "Inter", sans-serif;
+  font-size: clamp(6px, 0.5vw, 8px);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+}
+
+/* =========================================================
+   MAIN
+   ========================================================= */
+
+.dyno-main {
+  min-width: 0;
+  width: 100%;
+}
+
+.dyno-page {
+  width: min(100%, var(--dyno-content-max));
+
+  margin: 0 auto;
+
+  padding:
+    var(--dyno-page-top)
+    var(--dyno-page-gutter)
+    var(--dyno-page-bottom);
+}
+
+/* =========================================================
+   MOBILE NAV
+   ========================================================= */
+
+.dyno-mobile-navigation {
+  display: none;
+}
+
+/* =========================================================
+   GENERIC EDITORIAL PLACEHOLDER
+   ========================================================= */
+
+.dyno-placeholder {
+  display: flex;
+  min-height: clamp(400px, 45vw, 560px);
+
+  flex-direction: column;
+  justify-content: center;
+
+  padding: clamp(28px, 4vw, 56px);
+
+  border-radius: var(--dyno-radius-xl);
+
+  background: var(--dyno-surface);
+}
+
+.dyno-placeholder-eyebrow {
+  margin: 0 0 clamp(11px, 1.1vw, 16px);
+
+  color: var(--dyno-red);
+
+  font-family: "Inter", sans-serif;
+  font-size: clamp(9px, 0.7vw, 11px);
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.dyno-placeholder-title {
+  max-width: 820px;
+
+  margin: 0;
+
+  color: var(--dyno-text);
+
+  font-family: "Bebas Neue", sans-serif;
+  font-size: clamp(58px, 8vw, 112px);
+  font-weight: 400;
+  letter-spacing: 0.005em;
+  line-height: 0.82;
+  text-transform: uppercase;
+}
+
+.dyno-placeholder-description {
+  max-width: 440px;
+
+  margin: clamp(22px, 2vw, 30px) 0 0;
+
+  color: var(--dyno-text-secondary);
+
+  font-family: "Inter", sans-serif;
+  font-size: clamp(12px, 0.9vw, 14px);
+  line-height: 1.65;
+}
+
+/* =========================================================
+   COMMON EDITORIAL PRIMITIVES
+   ========================================================= */
+
+.dyno-card {
+  overflow: hidden;
+
+  border-radius: var(--dyno-radius-md);
+
+  background: var(--dyno-surface);
+
+  transition: transform var(--dyno-ease);
+}
+
+.dyno-card:hover {
+  transform: scale(1.01);
+}
+
+.dyno-image-card {
+  position: relative;
+
+  overflow: hidden;
+
+  border-radius: var(--dyno-radius-lg);
+
+  background: var(--dyno-dark);
+}
+
+.dyno-image-card img {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  transition: transform 500ms ease;
+}
+
+.dyno-image-card:hover img {
+  transform: scale(1.015);
+}
+
+.dyno-image-overlay {
+  position: absolute;
+  inset: 0;
+
+  display: flex;
+
+  flex-direction: column;
+  justify-content: flex-end;
+
+  padding: clamp(22px, 2.5vw, 38px);
+
+  color: #ffffff;
+
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.54),
+    rgba(0, 0, 0, 0.08) 65%,
+    transparent
+  );
+}
+
+.dyno-image-eyebrow {
+  margin: 0 0 clamp(6px, 0.65vw, 9px);
+
+  font-family: "Inter", sans-serif;
+  font-size: clamp(8px, 0.65vw, 10px);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.dyno-image-title {
+  margin: 0;
+
+  font-family: "Bebas Neue", sans-serif;
+  font-size: clamp(48px, 6vw, 84px);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 0.86;
+  text-transform: uppercase;
+}
+
+/* =========================================================
+   TYPOGRAPHY
+   ========================================================= */
+
+.dyno-display {
+  margin: 0;
+
+  color: var(--dyno-text);
+
+  font-family: "Bebas Neue", sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.005em;
+  line-height: 0.86;
+  text-transform: uppercase;
+}
+
+.dyno-eyebrow {
+  margin: 0;
+
+  color: var(--dyno-red);
+
+  font-family: "Inter", sans-serif;
+  font-size: clamp(9px, 0.7vw, 11px);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.dyno-body {
+  margin: 0;
+
+  color: var(--dyno-text-secondary);
+
+  font-family: "Inter", sans-serif;
+  font-size: clamp(12px, 0.85vw, 14px);
+  font-weight: 400;
+  line-height: 1.65;
+}
+
+.dyno-section-heading {
+  margin: 0;
+
+  color: var(--dyno-text);
+
+  font-family: "Bebas Neue", sans-serif;
+  font-size: clamp(24px, 2vw, 30px);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+.dyno-pill {
+  display: inline-flex;
+
+  min-height: 40px;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 clamp(14px, 1.2vw, 19px);
+
+  border: 1px solid var(--dyno-text);
+  border-radius: var(--dyno-radius-pill);
+
+  color: var(--dyno-text);
+  background: transparent;
+
+  font-family: "Inter", sans-serif;
+  font-size: clamp(9px, 0.65vw, 11px);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  cursor: pointer;
+
+  transition:
+    color var(--dyno-ease),
+    background var(--dyno-ease),
+    border-color var(--dyno-ease);
+}
+
+.dyno-pill:hover {
+  border-color: var(--dyno-red);
+
+  color: #ffffff;
+  background: var(--dyno-red);
+}
+
+.dyno-arrow-button {
+  display: grid;
+
+  width: 40px;
+  height: 40px;
+
+  flex: 0 0 auto;
+
+  place-items: center;
+
+  padding: 0;
+
+  border: 0;
+  border-radius: 50%;
+
+  color: var(--dyno-text);
+  background: var(--dyno-surface);
+
+  cursor: pointer;
+
+  transition:
+    color var(--dyno-ease),
+    background var(--dyno-ease),
+    transform var(--dyno-ease);
+}
+
+.dyno-arrow-button:hover {
+  color: #ffffff;
+  background: var(--dyno-red);
+
+  transform: translateX(2px);
+}
+
+/* =========================================================
+   DASHBOARD
+   Existing DashboardPage markup retained.
+   Responsive editorial correction.
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   Dashboard page spacing
+   --------------------------------------------------------- */
+
+.dyno-page .dashboard-page {
+  width: 100%;
+  max-width: none;
+
+  margin: 0;
+  padding: 0;
+
+  background: transparent;
+}
+
+/* ---------------------------------------------------------
+   Dashboard header
+   --------------------------------------------------------- */
+
+.dyno-page .dashboard-page-header {
+  display: flex;
+
+  align-items: flex-end;
+  justify-content: space-between;
+
+  gap: clamp(24px, 3vw, 48px);
+
+  margin-bottom: clamp(28px, 3vw, 42px);
+
+  padding: 0;
+
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.dyno-page .dashboard-page-header h1 {
+  min-width: 0;
+
+  margin: clamp(6px, 0.7vw, 10px) 0 0;
+
+  color: var(--dyno-text) !important;
+
+  font-family: "Bebas Neue", sans-serif !important;
+  font-size: clamp(58px, 6vw, 88px) !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.005em !important;
+  line-height: 0.84 !important;
+  text-transform: uppercase;
+}
+
+.dyno-page .dashboard-page-header p {
+  max-width: 320px;
+
+  color: var(--dyno-text-secondary) !important;
+
+  font-family: "Inter", sans-serif !important;
+  font-size: clamp(10px, 0.8vw, 13px) !important;
+  line-height: 1.55;
+}
+
+/* ---------------------------------------------------------
+   Dashboard statistics
+   --------------------------------------------------------- */
+
+.dyno-page .dashboard-stat-grid {
+  display: grid;
+
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+
+  gap: var(--dyno-card-gap);
+
+  margin-bottom: clamp(30px, 3vw, 44px);
+}
+
+.dyno-page .dashboard-stat-card,
+.dyno-page .dashboard-stat-card-red {
+  min-height: clamp(126px, 10vw, 158px);
+
+  padding: clamp(20px, 1.8vw, 28px) !important;
+
+  border: 0 !important;
+  border-radius: var(--dyno-radius-md) !important;
+
+  background: var(--dyno-surface) !important;
+
+  box-shadow: none !important;
+
+  transition:
+    transform var(--dyno-ease),
+    background var(--dyno-ease) !important;
+}
+
+.dyno-page .dashboard-stat-card:hover,
+.dyno-page .dashboard-stat-card-red:hover {
+  transform: translateY(-2px) !important;
+
+  background: #ffffff !important;
+}
+
+.dyno-page .dashboard-stat-card-red {
+  border: 1px solid rgba(194, 24, 43, 0.22) !important;
+
+  background: #ffffff !important;
+}
+
+.dyno-page .dashboard-stat-card::before,
+.dyno-page .dashboard-stat-card::after,
+.dyno-page .dashboard-stat-card-red::before,
+.dyno-page .dashboard-stat-card-red::after {
+  display: none !important;
+}
+
+.dyno-page .dashboard-stat-card h2,
+.dyno-page .dashboard-stat-card h3,
+.dyno-page .dashboard-stat-card strong {
+  color: var(--dyno-text) !important;
+
+  font-family: "Bebas Neue", sans-serif !important;
+  font-size: clamp(38px, 3.3vw, 50px) !important;
+  font-weight: 400 !important;
+  letter-spacing: 0 !important;
+  line-height: 0.9 !important;
+}
+
+.dyno-page .dashboard-stat-card p,
+.dyno-page .dashboard-stat-card span {
+  color: var(--dyno-text-secondary) !important;
+
+  font-family: "Inter", sans-serif !important;
+  font-size: clamp(9px, 0.68vw, 11px) !important;
+  line-height: 1.4 !important;
+}
+
+.dyno-page .dashboard-stat-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---------------------------------------------------------
+   Main dashboard composition
+   --------------------------------------------------------- */
+
+.dyno-page .dashboard-main-grid {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.45fr)
+    minmax(260px, 0.8fr);
+
+  gap: clamp(14px, 1.5vw, 22px);
+
+  margin: 0;
+}
+
+/* ---------------------------------------------------------
+   All dashboard panels
+   --------------------------------------------------------- */
+
+.dyno-page .dashboard-panel,
+.dyno-page .dashboard-panel-wide {
+  overflow: hidden;
+
+  min-width: 0;
+
+  border: 0 !important;
+  border-radius: var(--dyno-radius-lg) !important;
+
+  color: var(--dyno-text) !important;
+  background: var(--dyno-surface) !important;
+
+  box-shadow: none !important;
+}
+
+.dyno-page .dashboard-panel-wide {
+  grid-column: auto;
+}
+
+.dyno-page .dashboard-panel-header {
+  display: flex;
+
+  min-height: clamp(80px, 6.5vw, 96px);
+
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: clamp(14px, 2vw, 24px);
+
+  padding:
+    clamp(23px, 2vw, 30px)
+    clamp(21px, 2.1vw, 32px) !important;
+
+  border-bottom: 1px solid var(--dyno-border-soft) !important;
+
+  color: var(--dyno-text) !important;
+
+  background: var(--dyno-surface) !important;
+}
+
+.dyno-page .dashboard-panel-header h2,
+.dyno-page .dashboard-panel-header h3 {
+  margin: 5px 0 0;
+
+  color: var(--dyno-text) !important;
+
+  font-family: "Bebas Neue", sans-serif !important;
+  font-size: clamp(24px, 2vw, 29px) !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.01em !important;
+  line-height: 0.9 !important;
+  text-transform: uppercase;
+}
+
+.dyno-page .dashboard-panel-header p,
+.dyno-page .dashboard-panel-header span {
+  color: var(--dyno-text-subtle) !important;
+
+  font-family: "Inter", sans-serif !important;
+  font-size: clamp(8px, 0.62vw, 10px) !important;
+}
+
+/* ---------------------------------------------------------
+   Session list
+   --------------------------------------------------------- */
+
+.dyno-page .dashboard-session-row,
+.dyno-page .dashboard-session-item {
+  min-height: clamp(70px, 5.5vw, 82px);
+
+  padding:
+    clamp(17px, 1.5vw, 22px)
+    clamp(21px, 2.1vw, 32px) !important;
+
+  border-bottom: 1px solid var(--dyno-border-soft) !important;
+
+  color: var(--dyno-text) !important;
+
+  background: var(--dyno-surface) !important;
+
+  transition: background var(--dyno-ease);
+}
+
+.dyno-page .dashboard-session-row:last-child,
+.dyno-page .dashboard-session-item:last-child {
+  border-bottom: 0 !important;
+}
+
+.dyno-page .dashboard-session-row:hover,
+.dyno-page .dashboard-session-item:hover {
+  background: var(--dyno-surface-soft) !important;
+}
+
+.dyno-page .dashboard-session-name,
+.dyno-page .dashboard-session-title {
+  color: var(--dyno-text) !important;
+
+  font-family: "Inter", sans-serif !important;
+  font-size: clamp(11px, 0.82vw, 13px) !important;
+  font-weight: 600 !important;
+}
+
+.dyno-page .dashboard-session-time,
+.dyno-page .dashboard-session-meta {
+  margin-top: 5px;
+
+  color: var(--dyno-text-subtle) !important;
+
+  font-family: "Inter", sans-serif !important;
+  font-size: clamp(8px, 0.62vw, 10px) !important;
+}
+
+.dyno-page .dashboard-session-count {
+  color: var(--dyno-text) !important;
+
+  font-family: "Bebas Neue", sans-serif !important;
+  font-size: clamp(18px, 1.5vw, 22px) !important;
+  font-weight: 400 !important;
+}
+
+/* ---------------------------------------------------------
+   Member / inactive rows
+   --------------------------------------------------------- */
+
+.dyno-page .dashboard-member-row,
+.dyno-page .dashboard-member-item {
+  display: flex;
+
+  min-height: clamp(68px, 5.5vw, 80px);
+
+  align-items: center;
+
+  gap: clamp(11px, 1vw, 15px);
+
+  padding:
+    clamp(16px, 1.45vw, 20px)
+    clamp(20px, 1.8vw, 26px) !important;
+
+  border-bottom: 1px solid var(--dyno-border-soft) !important;
+
+  background: var(--dyno-surface) !important;
+}
+
+.dyno-page .dashboard-member-row:last-child,
+.dyno-page .dashboard-member-item:last-child {
+  border-bottom: 0 !important;
+}
+
+.dyno-page .dashboard-member-avatar {
+  display: grid;
+
+  width: clamp(32px, 2.5vw, 36px);
+  height: clamp(32px, 2.5vw, 36px);
+
+  flex: 0 0 auto;
+
+  place-items: center;
+
+  border: 1px solid rgba(194, 24, 43, 0.35);
+  border-radius: 10px;
+
+  color: var(--dyno-red);
+  background: #ffffff;
+
+  font-family: "Inter", sans-serif;
+  font-size: clamp(8px, 0.62vw, 10px);
+  font-weight: 700;
+}
+
+.dyno-page .dashboard-member-name {
+  min-width: 0;
+
+  color: var(--dyno-text) !important;
+
+  font-family: "Inter", sans-serif !important;
+  font-size: clamp(10px, 0.78vw, 12px) !important;
+  font-weight: 600 !important;
+}
+
+.dyno-page .dashboard-member-id,
+.dyno-page .dashboard-member-meta {
+  color: var(--dyno-text-subtle) !important;
+
+  font-family: "Inter", sans-serif !important;
+  font-size: clamp(7px, 0.58vw, 9px) !important;
+}
+
+/* ---------------------------------------------------------
+   Simple information panels
+   --------------------------------------------------------- */
+
+.dyno-page .dashboard-simple-card,
+.dyno-page .dashboard-simple-content {
+  background: var(--dyno-surface) !important;
+
+  color: var(--dyno-text) !important;
+}
+
+.dyno-page .dashboard-simple-card {
+  min-height: clamp(160px, 13vw, 200px);
+
+  padding: clamp(24px, 2vw, 30px) !important;
+
+  border: 0 !important;
+  border-radius: var(--dyno-radius-lg) !important;
+
+  box-shadow: none !important;
+}
+
+/* ---------------------------------------------------------
+   Empty states
+   --------------------------------------------------------- */
+
+.dyno-page .dashboard-empty {
+  min-height: clamp(120px, 10vw, 145px);
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: clamp(22px, 2vw, 30px) !important;
+
+  color: var(--dyno-text-subtle) !important;
+
+  font-family: "Inter", sans-serif !important;
+  font-size: clamp(9px, 0.68vw, 11px) !important;
+
+  background: var(--dyno-surface) !important;
+}
+
+/* ---------------------------------------------------------
+   Loading / state
+   --------------------------------------------------------- */
+
+.dyno-page .dashboard-state,
+.dyno-page .dashboard-loader {
+  color: var(--dyno-text-secondary) !important;
+
+  font-family: "Inter", sans-serif !important;
+  font-size: clamp(10px, 0.75vw, 12px) !important;
+
+  background: transparent !important;
+}
+
+/* ---------------------------------------------------------
+   Kill old dashboard visual effects
+   --------------------------------------------------------- */
+
+.dyno-page .dashboard-panel *,
+.dyno-page .dashboard-stat-card *,
+.dyno-page .dashboard-stat-card-red * {
+  box-shadow: none;
+}
+
+.dyno-page .dashboard-panel {
+  background-image: none !important;
+}
+
+/* =========================================================
+   ACCESSIBILITY
+   ========================================================= */
+
+.dyno-nav-link:focus-visible,
+.dyno-profile-button:focus-visible,
+.dyno-pill:focus-visible,
+.dyno-arrow-button:focus-visible {
+  outline: 2px solid var(--dyno-red);
+  outline-offset: 3px;
+}
+
+/* =========================================================
+   LARGE DESKTOP
+   1440px+
+   Preserve generous editorial whitespace.
+   ========================================================= */
+
+@media (min-width: 1440px) {
+  .dyno-shell {
+    width: min(100%, 1680px);
+  }
+
+  .dyno-page {
+    padding-left: clamp(40px, 3vw, 52px);
+    padding-right: clamp(40px, 3vw, 52px);
+  }
+
+  .dyno-page .dashboard-page-header {
+    margin-bottom: 44px;
+  }
+}
+
+/* =========================================================
+   COMPACT DESKTOP
+   1024px - 1199px
+   ========================================================= */
+
+@media (max-width: 1199px) {
+  :root {
+    --dyno-sidebar-width: clamp(180px, 18vw, 205px);
+  }
+
+  .dyno-page {
+    --dyno-page-gutter: clamp(22px, 2.8vw, 32px);
+  }
+
+  .dyno-page .dashboard-main-grid {
+    grid-template-columns: minmax(0, 1.25fr) minmax(250px, 0.85fr);
+  }
+}
+
+/* =========================================================
+   TABLET
+   768px - 1023px
+   Sidebar disappears.
+   Content gets the full editorial canvas.
+   ========================================================= */
+
+@media (max-width: 1023px) {
+  :root {
+    --dyno-page-gutter: clamp(24px, 4vw, 40px);
+    --dyno-page-top: clamp(34px, 5vw, 52px);
+  }
+
+  .dyno-shell {
+    display: block;
+
+    width: 100%;
+    min-height: calc(100vh - clamp(64px, 4.8vw, 76px));
+  }
+
+  .dyno-sidebar {
+    display: none;
+  }
+
+  .dyno-main {
+    width: 100%;
+  }
+
+  .dyno-mobile-navigation {
+    position: sticky;
+    top: clamp(64px, 4.8vw, 76px);
+    z-index: 20;
+
+    display: block;
+
+    padding:
+      12px
+      var(--dyno-page-gutter)
+      0;
+
+    background: var(--dyno-bg);
+  }
+
+  .dyno-mobile-navigation-scroll {
+    display: flex;
+
+    width: 100%;
+
+    overflow-x: auto;
+
+    gap: clamp(18px, 3vw, 28px);
+
+    padding-bottom: 12px;
+
+    scrollbar-width: none;
+
+    overscroll-behavior-x: contain;
+  }
+
+  .dyno-mobile-navigation-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .dyno-mobile-navigation .dyno-nav-link {
+    flex: 0 0 auto;
+
+    min-height: 30px;
+
+    padding: 0;
+
+    white-space: nowrap;
+  }
+
+  .dyno-mobile-navigation .dyno-nav-link:hover,
+  .dyno-mobile-navigation .dyno-nav-link-active {
+    padding-left: 0;
+  }
+
+  .dyno-mobile-navigation .dyno-nav-link::before {
+    bottom: -1px;
+    left: 0;
+
+    width: 100%;
+    height: 1px;
+  }
+
+  .dyno-page .dashboard-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dyno-page .dashboard-main-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================================
+   SMALL TABLET
+   768px - 899px
+   ========================================================= */
+
+@media (min-width: 768px) and (max-width: 899px) {
+  .dyno-page {
+    padding:
+      clamp(34px, 4vw, 44px)
+      clamp(24px, 4vw, 32px)
+      82px;
+  }
+
+  .dyno-page .dashboard-page-header {
+    align-items: flex-start;
+  }
+
+  .dyno-page .dashboard-page-header h1 {
+    font-size: clamp(58px, 9vw, 76px) !important;
+  }
+
+  .dyno-page .dashboard-stat-card,
+  .dyno-page .dashboard-stat-card-red {
+    min-height: 132px;
+  }
+}
+
+/* =========================================================
+   MOBILE
+   < 768px
+   ========================================================= */
+
+@media (max-width: 767px) {
+  :root {
+    --dyno-page-gutter: clamp(16px, 5vw, 22px);
+    --dyno-page-top: clamp(28px, 7vw, 36px);
+    --dyno-page-bottom: 72px;
+
+    --dyno-card-gap: 10px;
+  }
+
+  .dyno-topbar {
+    grid-template-columns: minmax(0, 1fr) auto;
+
+    min-height: 66px;
+
+    padding:
+      0
+      var(--dyno-page-gutter);
+  }
+
+  .dyno-topbar-center {
+    display: none;
+  }
+
+  .dyno-brand {
+    gap: 8px;
+  }
+
+  .dyno-brand-mark {
+    width: 30px;
+    height: 30px;
+
+    font-size: 18px;
+  }
+
+  .dyno-brand-name {
+    font-size: 18px;
+  }
+
+  .dyno-profile-button {
+    width: 34px;
+    height: 34px;
+  }
+
+  .dyno-shell {
+    min-height: calc(100vh - 66px);
+  }
+
+  .dyno-mobile-navigation {
+    top: 66px;
+
+    padding:
+      10px
+      var(--dyno-page-gutter)
+      0;
+  }
+
+  .dyno-mobile-navigation-scroll {
+    gap: clamp(18px, 5vw, 24px);
+
+    padding-bottom: 11px;
+  }
+
+  .dyno-mobile-navigation .dyno-nav-link {
+    min-height: 29px;
+
+    font-size: 11px;
+  }
+
+  .dyno-page {
+    padding:
+      var(--dyno-page-top)
+      var(--dyno-page-gutter)
+      var(--dyno-page-bottom);
+  }
+
+  .dyno-placeholder {
+    min-height: 400px;
+
+    padding: 30px 22px;
+
+    border-radius: var(--dyno-radius-lg);
+  }
+
+  .dyno-placeholder-title {
+    font-size: clamp(52px, 15vw, 74px);
+  }
+
+  .dyno-placeholder-description {
+    margin-top: 21px;
+
+    font-size: 12px;
+  }
+
+  .dyno-image-overlay {
+    padding: 23px;
+  }
+
+  .dyno-image-title {
+    font-size: clamp(48px, 15vw, 64px);
+  }
+
+  .dyno-page .dashboard-page-header {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 16px;
+
+    margin-bottom: 28px;
+  }
+
+  .dyno-page .dashboard-page-header h1 {
+    font-size: clamp(52px, 16vw, 72px) !important;
+  }
+
+  .dyno-page .dashboard-page-header p {
+    max-width: 360px;
+  }
+
+  .dyno-page .dashboard-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 10px;
+
+    margin-bottom: 24px;
+  }
+
+  .dyno-page .dashboard-stat-card,
+  .dyno-page .dashboard-stat-card-red {
+    min-height: 120px;
+
+    padding: 20px !important;
+
+    border-radius: var(--dyno-radius-md) !important;
+  }
+
+  .dyno-page .dashboard-stat-card h2,
+  .dyno-page .dashboard-stat-card h3,
+  .dyno-page .dashboard-stat-card strong {
+    font-size: clamp(34px, 11vw, 42px) !important;
+  }
+
+  .dyno-page .dashboard-panel-header {
+    padding: 23px 21px !important;
+  }
+
+  .dyno-page .dashboard-session-row,
+  .dyno-page .dashboard-session-item {
+    padding: 18px 21px !important;
+  }
+
+  .dyno-page .dashboard-member-row,
+  .dyno-page .dashboard-member-item {
+    padding: 16px 20px !important;
+  }
+}
+
+/* =========================================================
+   VERY SMALL MOBILE
+   <= 420px
+   ========================================================= */
+
+@media (max-width: 420px) {
+  :root {
+    --dyno-page-gutter: 16px;
+  }
+
+  .dyno-topbar {
+    min-height: 62px;
+  }
+
+  .dyno-brand-mark {
+    width: 29px;
+    height: 29px;
+
+    font-size: 17px;
+  }
+
+  .dyno-brand-name {
+    font-size: 17px;
+  }
+
+  .dyno-profile-button {
+    width: 33px;
+    height: 33px;
+  }
+
+  .dyno-mobile-navigation {
+    top: 62px;
+
+    padding-top: 9px;
+  }
+
+  .dyno-mobile-navigation-scroll {
+    gap: 19px;
+  }
+
+  .dyno-mobile-navigation .dyno-nav-link {
+    font-size: 10px;
+  }
+
+  .dyno-page .dashboard-stat-card,
+  .dyno-page .dashboard-stat-card-red {
+    min-height: 112px;
+
+    padding: 17px !important;
+  }
+
+  .dyno-page .dashboard-stat-card h2,
+  .dyno-page .dashboard-stat-card h3,
+  .dyno-page .dashboard-stat-card strong {
+    font-size: 33px !important;
+  }
+
+  .dyno-page .dashboard-panel-header {
+    padding:
+      21px
+      18px !important;
+  }
+
+  .dyno-page .dashboard-session-row,
+  .dyno-page .dashboard-session-item {
+    padding:
+      17px
+      18px !important;
+  }
+
+  .dyno-page .dashboard-member-row,
+  .dyno-page .dashboard-member-item {
+    padding:
+      15px
+      17px !important;
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .dyno-card,
+  .dyno-image-card img,
+  .dyno-nav-link,
+  .dyno-profile-button,
+  .dyno-pill,
+  .dyno-arrow-button {
+    transition: none;
+  }
+}
+/* =========================================================
+   UI - 1.6
+   DESKTOP SCALE SYSTEM
+   1024 ? 1280 ? 1440 ? 1920+
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   Desktop base
+--------------------------------------------------------- */
+
+@media (min-width: 1024px) {
+  :root {
+    --dyno-sidebar-width: clamp(220px, 15vw, 292px);
+    --dyno-desktop-gutter: clamp(28px, 3.2vw, 64px);
+    --dyno-content-max: 1920px;
+  }
+
+  .dyno-topbar {
+    min-height: clamp(72px, 4vw, 92px);
+    padding-left: var(--dyno-desktop-gutter);
+    padding-right: var(--dyno-desktop-gutter);
+  }
+
+  .dyno-brand-mark {
+    width: clamp(34px, 2.4vw, 46px);
+    height: clamp(34px, 2.4vw, 46px);
+    font-size: clamp(19px, 1.35vw, 27px);
+  }
+
+  .dyno-brand-name {
+    font-size: clamp(19px, 1.35vw, 27px);
+  }
+
+  .dyno-brand-subtitle {
+    font-size: clamp(7px, 0.5vw, 10px);
+  }
+
+  .dyno-topbar-status {
+    font-size: clamp(9px, 0.62vw, 12px);
+    letter-spacing: 0.16em;
+  }
+
+  .dyno-profile-button {
+    width: clamp(38px, 2.5vw, 48px);
+    height: clamp(38px, 2.5vw, 48px);
+    font-size: clamp(9px, 0.65vw, 12px);
+  }
+
+  /* -------------------------------------------------------
+     Sidebar
+  ------------------------------------------------------- */
+
+  .dyno-sidebar {
+    width: var(--dyno-sidebar-width);
+    padding:
+      clamp(38px, 3vw, 58px)
+      clamp(24px, 2vw, 42px)
+      clamp(28px, 2.5vw, 48px);
+  }
+
+  .dyno-sidebar-intro {
+    margin-bottom: clamp(42px, 4vw, 76px);
+  }
+
+  .dyno-sidebar-eyebrow {
+    font-size: clamp(9px, 0.62vw, 12px);
+    letter-spacing: 0.16em;
+  }
+
+  .dyno-sidebar-title {
+    margin-top: clamp(12px, 1vw, 18px);
+    font-size: clamp(24px, 2vw, 38px);
+    line-height: 0.86;
+  }
+
+  .dyno-navigation {
+    gap: clamp(34px, 3vw, 58px);
+  }
+
+  .dyno-navigation-group {
+    gap: clamp(12px, 1vw, 20px);
+  }
+
+  .dyno-navigation-heading {
+    font-size: clamp(8px, 0.58vw, 11px);
+    letter-spacing: 0.17em;
+  }
+
+  .dyno-navigation-links {
+    gap: clamp(3px, 0.35vw, 7px);
+  }
+
+  .dyno-nav-link {
+    min-height: clamp(38px, 2.7vw, 52px);
+    padding:
+      0
+      clamp(10px, 0.9vw, 18px);
+
+    font-size: clamp(11px, 0.72vw, 14px);
+    letter-spacing: 0.02em;
+  }
+
+  .dyno-nav-link::before {
+    width: clamp(2px, 0.15vw, 3px);
+  }
+
+  .dyno-sidebar-footer {
+    margin-top: auto;
+  }
+
+  .dyno-sidebar-footer-label {
+    font-size: clamp(8px, 0.58vw, 11px);
+    letter-spacing: 0.15em;
+  }
+
+  .dyno-sidebar-footer-copy {
+    margin-top: 8px;
+    font-size: clamp(9px, 0.62vw, 12px);
+  }
+
+  /* -------------------------------------------------------
+     Main content
+  ------------------------------------------------------- */
+
+  .dyno-page {
+    width: 100%;
+    max-width: var(--dyno-content-max);
+
+    padding:
+      clamp(44px, 4vw, 76px)
+      var(--dyno-desktop-gutter)
+      clamp(90px, 7vw, 140px);
+  }
+
+  /* -------------------------------------------------------
+     Editorial primitives
+  ------------------------------------------------------- */
+
+  .dyno-placeholder {
+    min-height: clamp(500px, 42vw, 760px);
+    padding: clamp(42px, 4vw, 76px);
+  }
+
+  .dyno-placeholder-eyebrow,
+  .dyno-eyebrow {
+    font-size: clamp(10px, 0.7vw, 13px);
+  }
+
+  .dyno-placeholder-title {
+    max-width: min(70vw, 1200px);
+    font-size: clamp(72px, 7vw, 138px);
+  }
+
+  .dyno-placeholder-description {
+    max-width: clamp(440px, 32vw, 620px);
+    margin-top: clamp(28px, 2vw, 40px);
+    font-size: clamp(13px, 0.82vw, 16px);
+  }
+
+  .dyno-section-heading {
+    font-size: clamp(28px, 2vw, 40px);
+  }
+
+  .dyno-body {
+    font-size: clamp(13px, 0.82vw, 16px);
+  }
+
+  .dyno-pill {
+    min-height: clamp(40px, 2.8vw, 48px);
+    padding: 0 clamp(17px, 1.2vw, 24px);
+    font-size: clamp(10px, 0.68vw, 13px);
+  }
+
+  .dyno-arrow-button {
+    width: clamp(40px, 2.8vw, 48px);
+    height: clamp(40px, 2.8vw, 48px);
+  }
+
+  .dyno-image-overlay {
+    padding: clamp(28px, 2.5vw, 48px);
+  }
+
+  .dyno-image-eyebrow {
+    font-size: clamp(9px, 0.62vw, 12px);
+  }
+
+  .dyno-image-title {
+    font-size: clamp(58px, 5.8vw, 108px);
+  }
+
+  /* =======================================================
+     DASHBOARD � DESKTOP SCALE
+  ======================================================= */
+
+  .dyno-page .dashboard-page-header {
+    gap: clamp(32px, 4vw, 72px);
+    margin-bottom: clamp(38px, 3.5vw, 64px);
+  }
+
+  .dyno-page .dashboard-page-header h1,
+  .dyno-page .dashboard-page-header h2 {
+    font-size: clamp(64px, 6.2vw, 118px) !important;
+    line-height: 0.82 !important;
+  }
+
+  .dyno-page .dashboard-page-header p {
+    font-size: clamp(12px, 0.78vw, 15px) !important;
+  }
+
+  /* -------------------------------------------------------
+     Stat cards
+  ------------------------------------------------------- */
+
+  .dyno-page .dashboard-stat-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(14px, 1.4vw, 28px);
+    margin-bottom: clamp(38px, 3.5vw, 64px);
+  }
+
+  .dyno-page .dashboard-stat-card,
+  .dyno-page .dashboard-stat-card-red {
+    min-height: clamp(155px, 13vw, 245px);
+    padding: clamp(26px, 2vw, 40px) !important;
+    border-radius: clamp(22px, 1.8vw, 32px) !important;
+  }
+
+  .dyno-page .dashboard-stat-card h2,
+  .dyno-page .dashboard-stat-card h3,
+  .dyno-page .dashboard-stat-card strong {
+    font-size: clamp(48px, 4vw, 78px) !important;
+  }
+
+  .dyno-page .dashboard-stat-card p,
+  .dyno-page .dashboard-stat-card span {
+    font-size: clamp(10px, 0.68vw, 13px) !important;
+  }
+
+  /* -------------------------------------------------------
+     Main dashboard grids
+  ------------------------------------------------------- */
+
+  .dyno-page .dashboard-main-grid {
+    grid-template-columns:
+      minmax(0, 1.55fr)
+      minmax(360px, 0.85fr);
+
+    gap: clamp(18px, 1.7vw, 34px);
+    margin-bottom: clamp(18px, 1.7vw, 34px);
+  }
+
+  .dyno-page .dashboard-panel,
+  .dyno-page .dashboard-panel-wide {
+    border-radius: clamp(24px, 2vw, 36px) !important;
+  }
+
+  /* -------------------------------------------------------
+     Panel headers
+  ------------------------------------------------------- */
+
+  .dyno-page .dashboard-panel-header {
+    min-height: clamp(92px, 7vw, 126px);
+    padding:
+      clamp(28px, 2.2vw, 42px)
+      clamp(30px, 2.5vw, 48px) !important;
+  }
+
+  .dyno-page .dashboard-panel-header h2,
+  .dyno-page .dashboard-panel-header h3 {
+    font-size: clamp(27px, 2vw, 38px) !important;
+  }
+
+  .dyno-page .dashboard-panel-header p,
+  .dyno-page .dashboard-panel-header span {
+    font-size: clamp(9px, 0.62vw, 12px) !important;
+  }
+
+  /* -------------------------------------------------------
+     Sessions
+  ------------------------------------------------------- */
+
+  .dyno-page .dashboard-session-row,
+  .dyno-page .dashboard-session-item {
+    min-height: clamp(78px, 6vw, 112px);
+    padding:
+      clamp(20px, 1.7vw, 34px)
+      clamp(30px, 2.5vw, 48px) !important;
+  }
+
+  .dyno-page .dashboard-session-name,
+  .dyno-page .dashboard-session-title,
+  .dyno-page .dashboard-session-row strong {
+    font-size: clamp(12px, 0.82vw, 16px) !important;
+  }
+
+  .dyno-page .dashboard-session-time,
+  .dyno-page .dashboard-session-meta,
+  .dyno-page .dashboard-session-row span {
+    font-size: clamp(9px, 0.62vw, 12px) !important;
+  }
+
+  .dyno-page .dashboard-session-count {
+    font-size: clamp(20px, 1.5vw, 30px) !important;
+  }
+
+  /* -------------------------------------------------------
+     Members
+  ------------------------------------------------------- */
+
+  .dyno-page .dashboard-member-row,
+  .dyno-page .dashboard-member-item {
+    min-height: clamp(76px, 6vw, 108px);
+    gap: clamp(14px, 1.2vw, 22px);
+    padding:
+      clamp(18px, 1.5vw, 30px)
+      clamp(24px, 2vw, 40px) !important;
+  }
+
+  .dyno-page .dashboard-member-avatar {
+    width: clamp(38px, 3vw, 54px);
+    height: clamp(38px, 3vw, 54px);
+    flex-basis: clamp(38px, 3vw, 54px);
+    border-radius: clamp(10px, 0.8vw, 14px);
+    font-size: clamp(9px, 0.65vw, 13px);
+  }
+
+  .dyno-page .dashboard-member-name {
+    font-size: clamp(11px, 0.78vw, 15px) !important;
+  }
+
+  .dyno-page .dashboard-member-id,
+  .dyno-page .dashboard-member-meta {
+    font-size: clamp(8px, 0.58vw, 11px) !important;
+  }
+
+  /* -------------------------------------------------------
+     Simple rows
+  ------------------------------------------------------- */
+
+  .dyno-page .dashboard-simple-row {
+    padding:
+      clamp(18px, 1.5vw, 30px)
+      clamp(24px, 2.5vw, 48px);
+  }
+
+  .dyno-page .dashboard-simple-row strong {
+    font-size: clamp(11px, 0.76vw, 15px);
+  }
+
+  .dyno-page .dashboard-simple-row span {
+    font-size: clamp(9px, 0.6vw, 12px);
+  }
+
+  /* -------------------------------------------------------
+     1440+
+  ------------------------------------------------------- */
+
+  @media (min-width: 1440px) {
+    .dyno-sidebar {
+      padding-left: clamp(30px, 2.4vw, 46px);
+      padding-right: clamp(30px, 2.4vw, 46px);
+    }
+
+    .dyno-page .dashboard-stat-grid {
+      gap: clamp(18px, 1.5vw, 30px);
+    }
+
+    .dyno-page .dashboard-main-grid {
+      gap: clamp(22px, 1.8vw, 36px);
+    }
+  }
+
+  /* -------------------------------------------------------
+     1920+
+  ------------------------------------------------------- */
+
+  @media (min-width: 1920px) {
+    .dyno-page {
+      padding-left: clamp(64px, 4vw, 96px);
+      padding-right: clamp(64px, 4vw, 96px);
+    }
+
+    .dyno-sidebar-title {
+      font-size: 40px;
+    }
+
+    .dyno-navigation-heading {
+      font-size: 11px;
+    }
+
+    .dyno-nav-link {
+      font-size: 14px;
+    }
+
+    .dyno-page .dashboard-page-header h1,
+    .dyno-page .dashboard-page-header h2 {
+      font-size: 118px !important;
+    }
+
+    .dyno-page .dashboard-stat-card h2,
+    .dyno-page .dashboard-stat-card h3,
+    .dyno-page .dashboard-stat-card strong {
+      font-size: 78px !important;
+    }
+  }
+}
+
+/* =========================================================
+   TABLET � keep full-width tablet experience
+   ========================================================= */
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .dyno-page {
+    padding-left: clamp(28px, 4vw, 44px);
+    padding-right: clamp(28px, 4vw, 44px);
+  }
+
+  .dyno-page .dashboard-page-header h1,
+  .dyno-page .dashboard-page-header h2 {
+    font-size: clamp(58px, 9vw, 84px) !important;
+  }
+
+  .dyno-page .dashboard-stat-card h2,
+  .dyno-page .dashboard-stat-card h3,
+  .dyno-page .dashboard-stat-card strong {
+    font-size: clamp(42px, 6vw, 58px) !important;
+  }
+}
+
+/* =========================================================
+   UI - 1.8
+   DESKTOP GRID CORRECTION
+   ========================================================= */
+
+@media (min-width: 1024px) {
+  :root {
+    --dyno-sidebar-width: clamp(240px, 17vw, 320px);
+  }
+
+  /* The grid track itself must use the sidebar variable.
+     Previously the sidebar element resized, but its grid
+     column remained disproportionately wide. */
+  .dyno-shell {
+    grid-template-columns:
+      var(--dyno-sidebar-width)
+      minmax(0, 1fr) !important;
+
+    width: 100%;
+    min-width: 0;
+  }
+
+  .dyno-sidebar {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .dyno-main {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .dyno-page {
+    width: 100%;
+    max-width: none !important;
+    min-width: 0;
+    margin: 0;
+  }
+
+  /* Give the dashboard the full usable desktop canvas */
+  .dyno-page .dashboard-page {
+    width: 100%;
+    max-width: none;
+  }
+
+  .dyno-page .dashboard-page-header {
+    width: 100%;
+  }
+
+  .dyno-page .dashboard-stat-grid {
+    width: 100%;
+  }
+
+  .dyno-page .dashboard-main-grid {
+    width: 100%;
+  }
+
+  /* Sidebar typography */
+  .dyno-navigation-heading {
+    font-size: clamp(9px, 0.65vw, 11px) !important;
+  }
+
+  .dyno-nav-link {
+    min-height: clamp(42px, 3vw, 52px);
+    font-size: clamp(12px, 0.78vw, 15px) !important;
+  }
+
+  .dyno-sidebar-title {
+    font-size: clamp(28px, 2.25vw, 40px) !important;
+  }
+
+  /* Prevent the desktop dashboard from becoming visually tiny */
+  .dyno-page .dashboard-stat-card strong {
+    font-size: clamp(48px, 4vw, 78px) !important;
+  }
+
+  .dyno-page .dashboard-stat-card p {
+    font-size: clamp(11px, 0.7vw, 13px) !important;
+  }
+
+  .dyno-page .dashboard-panel-header h3 {
+    font-size: clamp(28px, 2vw, 38px) !important;
+  }
+}
+
+/* ---------------------------------------------------------
+   Large desktop
+--------------------------------------------------------- */
+
+@media (min-width: 1440px) {
+  .dyno-page {
+    padding-left: clamp(36px, 3vw, 64px);
+    padding-right: clamp(36px, 3vw, 64px);
+  }
+
+  .dyno-page .dashboard-stat-grid {
+    gap: clamp(18px, 1.4vw, 28px);
+  }
+
+  .dyno-page .dashboard-main-grid {
+    gap: clamp(22px, 1.7vw, 34px);
+  }
+}
+
+/* ---------------------------------------------------------
+   Ultra-wide desktop
+--------------------------------------------------------- */
+
+@media (min-width: 1800px) {
+  :root {
+    --dyno-sidebar-width: 300px;
+  }
+
+  .dyno-page {
+    padding-left: 56px;
+    padding-right: 56px;
+  }
+}

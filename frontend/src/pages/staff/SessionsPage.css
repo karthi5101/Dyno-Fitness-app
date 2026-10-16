@@ -1,0 +1,162 @@
+.sessions-page {
+  min-height: 100vh;
+  padding: 48px 32px 96px;
+}
+
+.sessions-page .staff-page-header,
+.sessions-day {
+  max-width: 1440px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.sessions-page .staff-page-header {
+  margin-bottom: 72px;
+}
+
+.sessions-day {
+  margin-bottom: 112px;
+}
+
+.sessions-day-secondary {
+  margin-bottom: 0;
+}
+
+.sessions-day-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  margin-bottom: 30px;
+}
+
+.sessions-day-header h2 {
+  margin: 0;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 48px;
+  line-height: 0.9;
+}
+
+.sessions-day-header > span {
+  color: #666;
+  font-size: 11px;
+}
+
+.sessions-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+.session-card {
+  min-height: 350px;
+  padding: 32px;
+  background: #fff;
+  border: 1px solid #e7e7e7;
+  border-radius: 28px;
+  transition: transform 260ms ease;
+}
+
+.session-card:hover {
+  transform: scale(1.01);
+}
+
+.session-card-top,
+.session-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.session-number,
+.session-time {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.session-time {
+  color: #777;
+}
+
+.session-card h2 {
+  margin: 70px 0 18px;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: clamp(54px, 7vw, 88px);
+  line-height: 0.8;
+}
+
+.session-count {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.session-count strong {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 68px;
+  line-height: 0.8;
+}
+
+.session-count span {
+  color: #777;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+
+.session-progress {
+  height: 4px;
+  margin: 30px 0 22px;
+  overflow: hidden;
+  background: #e7e7e7;
+}
+
+.session-progress span {
+  display: block;
+  height: 100%;
+  background: #c2182b;
+}
+
+.session-footer {
+  align-items: center;
+}
+
+.session-footer span {
+  color: #666;
+  font-size: 11px;
+}
+
+.session-footer button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #111;
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.session-footer button:hover {
+  color: #c2182b;
+}
+
+@media (max-width: 768px) {
+  .sessions-page {
+    padding: 28px 18px 72px;
+  }
+
+  .sessions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sessions-day {
+    margin-bottom: 72px;
+  }
+
+  .sessions-day-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

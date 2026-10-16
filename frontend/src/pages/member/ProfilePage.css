@@ -1,0 +1,426 @@
+.member-profile-page {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+.member-profile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 25px;
+  border-bottom: 1px solid #e7e7e7;
+}
+
+.member-profile-header > span {
+  color: #777777;
+  font-family: "Inter", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.member-profile-back {
+  color: #111111;
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  transition: color 180ms ease;
+}
+
+.member-profile-back:hover {
+  color: #c2182b;
+}
+
+.member-profile-identity {
+  display: grid;
+  grid-template-columns: 150px 1fr auto;
+  align-items: center;
+  gap: 32px;
+  padding: 60px 0 80px;
+}
+
+.member-profile-photo {
+  display: grid;
+  width: 150px;
+  height: 150px;
+  place-items: center;
+  border-radius: 50%;
+  color: #ffffff;
+  background: #111111;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 58px;
+}
+
+.member-profile-identity p,
+.member-profile-grid article > p,
+.member-profile-emergency p,
+.member-profile-account-actions p {
+  margin: 0;
+  color: #c2182b;
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.member-profile-identity h1 {
+  margin: 12px 0 8px;
+  color: #111111;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: clamp(70px, 10vw, 140px);
+  font-weight: 400;
+  line-height: 0.76;
+}
+
+.member-profile-identity > div:nth-child(2) > span {
+  color: #777777;
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+}
+
+.member-profile-status {
+  display: grid;
+  gap: 8px;
+  text-align: right;
+}
+
+.member-profile-status span {
+  color: #777777;
+  font-family: "Inter", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.member-profile-status strong {
+  color: #c2182b;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 36px;
+  font-weight: 400;
+}
+
+.member-profile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.member-profile-grid article {
+  min-height: 390px;
+  padding: 32px;
+  border-radius: 28px;
+  background: #ffffff;
+}
+
+.member-profile-grid h2 {
+  margin: 14px 0 40px;
+  color: #111111;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 54px;
+  font-weight: 400;
+  line-height: 0.85;
+}
+
+.member-profile-grid dl {
+  display: grid;
+  gap: 0;
+  margin: 0;
+}
+
+.member-profile-grid dl div {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  min-height: 55px;
+  align-items: center;
+  border-top: 1px solid #e7e7e7;
+}
+
+.member-profile-grid dt,
+.member-profile-grid dd {
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+}
+
+.member-profile-grid dt {
+  color: #888888;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.member-profile-grid dd {
+  margin: 0;
+  color: #111111;
+}
+
+/* Emergency contact */
+
+.member-profile-emergency {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-top: 80px;
+  padding: 40px;
+  border-radius: 28px;
+  background: #111111;
+}
+
+.member-profile-emergency h3 {
+  margin: 14px 0 0;
+  color: #ffffff;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 62px;
+  font-weight: 400;
+  line-height: 0.8;
+}
+
+.member-profile-emergency dl {
+  display: grid;
+  align-self: end;
+  gap: 15px;
+}
+
+.member-profile-emergency dl div {
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #333333;
+}
+
+.member-profile-emergency dt {
+  color: #777777;
+  font-family: "Inter", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.member-profile-emergency dd {
+  margin: 0;
+  color: #ffffff;
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+}
+
+/* Account / logout */
+
+.member-profile-account-actions {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 30px;
+  margin-top: 80px;
+  padding: 40px;
+  border: 1px solid #e7e7e7;
+  border-radius: 28px;
+  background: #ffffff;
+}
+
+.member-profile-account-actions h2 {
+  margin: 14px 0 0;
+  color: #111111;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 62px;
+  font-weight: 400;
+  line-height: 0.8;
+}
+
+.member-profile-logout {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 0 22px;
+  border: 1px solid #111111;
+  border-radius: 999px;
+  color: #111111;
+  background: transparent;
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition:
+    color 180ms ease,
+    background 180ms ease,
+    border-color 180ms ease;
+}
+
+.member-profile-logout span {
+  color: #c2182b;
+  font-size: 15px;
+  font-weight: 400;
+}
+
+.member-profile-logout:hover {
+  border-color: #c2182b;
+  color: #ffffff;
+  background: #c2182b;
+}
+
+.member-profile-logout:hover span {
+  color: #ffffff;
+}
+
+/* Loading */
+
+.member-profile-loading {
+  display: grid;
+  gap: 20px;
+}
+
+.member-profile-loading span {
+  height: 120px;
+  border-radius: 28px;
+  background: #e7e7e7;
+  animation: profile-loading 1.4s ease-in-out infinite;
+}
+
+/* Error */
+
+.member-profile-error {
+  min-height: 400px;
+  display: grid;
+  align-content: center;
+}
+
+.member-profile-error p {
+  color: #c2182b;
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.member-profile-error h1 {
+  margin: 15px 0;
+  color: #111111;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 90px;
+  font-weight: 400;
+}
+
+.member-profile-error > span {
+  color: #666666;
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+}
+
+.member-profile-error .member-profile-logout {
+  justify-self: start;
+  margin-top: 28px;
+}
+
+@keyframes profile-loading {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@media (max-width: 800px) {
+  .member-profile-page {
+    padding: 20px;
+  }
+
+  .member-profile-identity {
+    grid-template-columns: 90px 1fr;
+    gap: 18px;
+    padding: 40px 0 55px;
+  }
+
+  .member-profile-photo {
+    width: 90px;
+    height: 90px;
+    font-size: 36px;
+  }
+
+  .member-profile-identity h1 {
+    font-size: 60px;
+  }
+
+  .member-profile-status {
+    grid-column: 1 / -1;
+    justify-self: start;
+    text-align: left;
+  }
+
+  .member-profile-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .member-profile-grid article {
+    min-height: auto;
+  }
+
+  .member-profile-grid dl div {
+    grid-template-columns: 125px 1fr;
+  }
+
+  .member-profile-emergency {
+    grid-template-columns: 1fr;
+  }
+
+  .member-profile-account-actions {
+    align-items: flex-start;
+    flex-direction: column;
+    margin-top: 50px;
+    padding: 28px;
+  }
+
+  .member-profile-account-actions h2 {
+    font-size: 52px;
+  }
+}
+
+@media (max-width: 500px) {
+  .member-profile-page {
+    padding: 18px;
+  }
+
+  .member-profile-header {
+    padding-bottom: 20px;
+  }
+
+  .member-profile-identity {
+    padding: 32px 0 45px;
+  }
+
+  .member-profile-identity h1 {
+    font-size: 50px;
+  }
+
+  .member-profile-grid article {
+    padding: 24px;
+    border-radius: 22px;
+  }
+
+  .member-profile-grid h2 {
+    font-size: 46px;
+  }
+
+  .member-profile-emergency {
+    margin-top: 50px;
+    padding: 28px;
+    border-radius: 22px;
+  }
+
+  .member-profile-emergency h3 {
+    font-size: 48px;
+  }
+
+  .member-profile-account-actions {
+    border-radius: 22px;
+  }
+
+  .member-profile-account-actions h2 {
+    font-size: 46px;
+  }
+
+  .member-profile-logout {
+    width: 100%;
+  }
+}

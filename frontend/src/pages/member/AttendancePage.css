@@ -1,0 +1,337 @@
+.member-attendance-page {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+.member-attendance-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 30px;
+  margin-bottom: 42px;
+}
+
+.member-attendance-header > div > p,
+.member-attendance-heading p,
+.member-attendance-message p {
+  margin: 0;
+  color: #c2182b;
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.member-attendance-header h1 {
+  margin: 16px 0;
+  color: #111111;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: clamp(90px, 12vw, 170px);
+  font-weight: 400;
+  line-height: 0.72;
+}
+
+.member-attendance-header > div > span {
+  color: #666666;
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+}
+
+.member-attendance-scan {
+  display: grid;
+  grid-template-columns: 1fr 35px;
+  align-items: center;
+  min-width: 230px;
+  min-height: 100px;
+  padding: 20px;
+  border-radius: 28px;
+  color: #ffffff;
+  background: #111111;
+  text-decoration: none;
+}
+
+.member-attendance-scan span {
+  grid-column: 1 / -1;
+  color: #aaaaaa;
+  font-family: "Inter", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.member-attendance-scan strong {
+  margin-top: 5px;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 34px;
+  font-weight: 400;
+  line-height: 0.85;
+}
+
+.member-attendance-scan b {
+  grid-column: 2;
+  grid-row: 2;
+  font-size: 18px;
+  font-weight: 400;
+  text-align: right;
+}
+
+.member-attendance-scan:hover {
+  background: #c2182b;
+}
+
+.member-attendance-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin: 32px 0 96px;
+  border-top: 1px solid #e7e7e7;
+  border-bottom: 1px solid #e7e7e7;
+}
+
+.member-attendance-stats article {
+  min-height: 170px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 24px 30px;
+  border-right: 1px solid #e7e7e7;
+}
+
+.member-attendance-stats article:last-child {
+  border-right: 0;
+}
+
+.member-attendance-stats span,
+.member-attendance-stats small {
+  color: #777777;
+  font-family: "Inter", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.member-attendance-stats strong {
+  margin: 12px 0 5px;
+  color: #111111;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 62px;
+  font-weight: 400;
+  line-height: 0.8;
+}
+
+.member-attendance-stats article:last-child strong {
+  font-size: 32px;
+}
+
+.member-attendance-history {
+  max-width: 1150px;
+}
+
+.member-attendance-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 25px;
+}
+
+.member-attendance-heading h2 {
+  margin: 12px 0 0;
+  color: #111111;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 54px;
+  font-weight: 400;
+  line-height: 0.85;
+}
+
+.member-attendance-heading > span {
+  color: #aaaaaa;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 30px;
+}
+
+.member-attendance-row {
+  display: grid;
+  grid-template-columns: 180px 160px 130px 1fr;
+  align-items: center;
+  gap: 20px;
+  min-height: 78px;
+  border-top: 1px solid #e7e7e7;
+}
+
+.member-attendance-row:last-child {
+  border-bottom: 1px solid #e7e7e7;
+}
+
+.member-attendance-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.member-attendance-status > span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.member-attendance-status .is-present {
+  background: #c2182b;
+}
+
+.member-attendance-status .is-missed {
+  background: #bbbbbb;
+}
+
+.member-attendance-status strong {
+  font-family: "Inter", sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+}
+
+.member-attendance-row time,
+.member-attendance-row > span {
+  color: #666666;
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+}
+
+.member-attendance-row small {
+  color: #888888;
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+  text-align: right;
+}
+
+.member-attendance-empty {
+  padding: 70px 30px;
+  border-top: 1px solid #e7e7e7;
+  border-bottom: 1px solid #e7e7e7;
+}
+
+.member-attendance-empty strong {
+  color: #111111;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 48px;
+  font-weight: 400;
+}
+
+.member-attendance-empty p {
+  max-width: 400px;
+  margin: 12px 0 0;
+  color: #666666;
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+}
+
+.member-attendance-message {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin: 96px 0 40px;
+  padding: 42px;
+  border-radius: 28px;
+  background: #111111;
+}
+
+.member-attendance-message h2 {
+  margin: 0;
+  color: #ffffff;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 72px;
+  font-weight: 400;
+  line-height: 0.78;
+}
+
+.member-attendance-back {
+  color: #111111;
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+}
+
+.member-attendance-loading {
+  display: grid;
+  gap: 18px;
+}
+
+.member-attendance-loading span {
+  height: 90px;
+  border-radius: 24px;
+  background: #e7e7e7;
+  animation: attendance-loading 1.4s ease-in-out infinite;
+}
+
+.member-attendance-error {
+  min-height: 400px;
+  display: grid;
+  align-content: center;
+  padding: 40px;
+  border-radius: 28px;
+  background: #ffffff;
+}
+
+.member-attendance-error h1 {
+  margin: 15px 0;
+  color: #111111;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 90px;
+  font-weight: 400;
+}
+
+.member-attendance-error span {
+  color: #666666;
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+}
+
+@keyframes attendance-loading {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@media (max-width: 800px) {
+  .member-attendance-page {
+    padding: 20px;
+  }
+
+  .member-attendance-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .member-attendance-scan {
+    width: 100%;
+  }
+
+  .member-attendance-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .member-attendance-stats article {
+    border-right: 0;
+    border-bottom: 1px solid #e7e7e7;
+  }
+
+  .member-attendance-stats article:last-child {
+    border-bottom: 0;
+  }
+
+  .member-attendance-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 18px 0;
+  }
+
+  .member-attendance-row small {
+    grid-column: 1 / -1;
+    text-align: left;
+  }
+
+  .member-attendance-message {
+    grid-template-columns: 1fr;
+  }
+}
