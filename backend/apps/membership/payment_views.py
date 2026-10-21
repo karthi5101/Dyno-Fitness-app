@@ -2,6 +2,10 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.authentication.permissions import (
+    IsStaffUser,
+    MemberScopedAccess,
+)
 from apps.membership.payment_repository import (
     create_payment,
     delete_payment,
@@ -16,6 +20,8 @@ from apps.membership.payment_serializers import (
 
 
 class PaymentListCreateView(APIView):
+    permission_classes = [IsStaffUser]
+
     def get(self, request):
         payments = get_all_payments()
 
@@ -27,6 +33,17 @@ class PaymentListCreateView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
+        if not request.user.is_staff:
+            return Response(
+                {
+                    "detail": (
+                        "Staff access is required to "
+                        "record a payment."
+                    )
+                },
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         serializer = PaymentSerializer(
             data=request.data
         )
@@ -67,6 +84,8 @@ class PaymentListCreateView(APIView):
 
 
 class PaymentMemberListView(APIView):
+    permission_classes = [MemberScopedAccess]
+
     def get(self, request, member_id):
         payments = get_payments_by_member_id(
             member_id
@@ -81,6 +100,8 @@ class PaymentMemberListView(APIView):
 
 
 class PaymentDetailView(APIView):
+    permission_classes = [IsStaffUser]
+
     def get(self, request, payment_id):
         payment = get_payment_by_id(payment_id)
 
@@ -97,6 +118,16 @@ class PaymentDetailView(APIView):
         return Response(serializer.data)
 
     def patch(self, request, payment_id):
+        if not request.user.is_staff:
+            return Response(
+                {
+                    "detail": (
+                        "Staff access is required to "
+                        "update a payment."
+                    )
+                },
+                status=status.HTTP_403_FORBIDDEN,
+            )
         existing_payment = get_payment_by_id(
             payment_id
         )
@@ -155,6 +186,16 @@ class PaymentDetailView(APIView):
         return Response(response_serializer.data)
 
     def delete(self, request, payment_id):
+        if not request.user.is_staff:
+            return Response(
+                {
+                    "detail": (
+                        "Staff access is required to "
+                        "delete a payment."
+                    )
+                },
+                status=status.HTTP_403_FORBIDDEN,
+            )
         deleted = delete_payment(payment_id)
 
         if not deleted:

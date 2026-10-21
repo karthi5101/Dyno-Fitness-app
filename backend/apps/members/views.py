@@ -1,4 +1,3 @@
-from rest_framework.permissions import IsAdminUser
 from .database import get_members_collection
 from apps.authentication.models import UserMemberProfile
 
@@ -12,6 +11,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.authentication.models import UserMemberProfile
+from apps.authentication.permissions import (
+    IsStaffOrReadOnly,
+    IsStaffUser,
+    MemberScopedAccess,
+)
 
 from .repository import (
     create_member,
@@ -72,6 +76,8 @@ def sync_member_account_status(member_id, status):
 class MemberListView(APIView):
     """List all members and register a new member."""
 
+    permission_classes = [IsStaffUser]
+
     def get(self, request):
         members = get_all_members()
 
@@ -81,6 +87,17 @@ class MemberListView(APIView):
         ])
 
     def post(self, request):
+        if not request.user.is_staff:
+            return Response(
+                {
+                    "detail": (
+                        "Staff access is required to "
+                        "register a member."
+                    )
+                },
+                status=403,
+            )
+
         serializer = MemberSerializer(data=request.data)
 
         if not serializer.is_valid():
@@ -185,6 +202,8 @@ class MemberListView(APIView):
 class MemberDetailView(APIView):
     """Retrieve, update, or deactivate a member."""
 
+    permission_classes = [MemberScopedAccess]
+
     def get(self, request, member_id):
         member = get_member_by_id(member_id)
 
@@ -197,6 +216,17 @@ class MemberDetailView(APIView):
         return Response(serialize_member(member))
 
     def put(self, request, member_id):
+        if not request.user.is_staff:
+            return Response(
+                {
+                    "detail": (
+                        "Staff access is required to "
+                        "update a member."
+                    )
+                },
+                status=403,
+            )
+
         member = get_member_by_id(member_id)
 
         if member is None:

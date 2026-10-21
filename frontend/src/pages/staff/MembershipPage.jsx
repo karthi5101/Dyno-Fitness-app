@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { getMembers } from "../../api/client";
+import { getAuthHeaders } from "../../api/client";
 
 import "./MembershipPage.css";
 
@@ -12,6 +13,12 @@ const API_BASE_URL =
 async function request(endpoint) {
   const response = await fetch(
     `${API_BASE_URL}${endpoint}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        ...getAuthHeaders(),
+      },
+    },
   );
 
   let data = null;

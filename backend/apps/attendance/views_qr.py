@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.authentication.identity import get_member_id_for_user
+from apps.authentication.permissions import IsStaffUser
 
 from .qr import (
     generate_daily_qr_token,
@@ -18,12 +19,10 @@ class GymQRView(APIView):
     """
     Return the common QR token for the current gym day.
 
-    Authentication is required for the prototype.
-    Staff-only authorization will be added when
-    role-based access control is implemented.
+    Staff-only endpoint.
     """
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsStaffUser]
 
     def get(self, request):
         return Response(

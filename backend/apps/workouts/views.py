@@ -2,8 +2,15 @@
 from datetime import date
 
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from apps.authentication.identity import get_member_id_for_user
+from apps.authentication.permissions import (
+    IsStaffUser,
+    MemberScopedAccess,
+)
 
 from apps.workouts.repositories import (
     assign_template,
@@ -131,6 +138,8 @@ def serialize_daily_workout(document):
 
 class WorkoutTemplateListCreateView(APIView):
 
+    permission_classes = [IsStaffUser]
+
     def get(self, request):
         templates = get_all_templates()
 
@@ -143,6 +152,17 @@ class WorkoutTemplateListCreateView(APIView):
         )
 
     def post(self, request):
+        if not request.user.is_staff:
+            return Response(
+                {
+                    "detail": (
+                        "Staff access is required to "
+                        "create a workout template."
+                    )
+                },
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         serializer = WorkoutTemplateSerializer(
             data=request.data
         )
@@ -171,6 +191,8 @@ class WorkoutTemplateListCreateView(APIView):
 
 class WorkoutTemplateDetailView(APIView):
 
+    permission_classes = [IsStaffUser]
+
     def get(self, request, template_id):
         template = get_template(template_id)
 
@@ -186,6 +208,16 @@ class WorkoutTemplateDetailView(APIView):
         )
 
     def put(self, request, template_id):
+        if not request.user.is_staff:
+            return Response(
+                {
+                    "detail": (
+                        "Staff access is required to "
+                        "update a workout template."
+                    )
+                },
+                status=status.HTTP_403_FORBIDDEN,
+            )
         serializer = WorkoutTemplateUpdateSerializer(
             data=request.data
         )
@@ -219,6 +251,16 @@ class WorkoutTemplateDetailView(APIView):
         )
 
     def delete(self, request, template_id):
+        if not request.user.is_staff:
+            return Response(
+                {
+                    "detail": (
+                        "Staff access is required to "
+                        "delete a workout template."
+                    )
+                },
+                status=status.HTTP_403_FORBIDDEN,
+            )
         try:
             deleted = delete_template(
                 template_id
@@ -246,6 +288,8 @@ class WorkoutTemplateDetailView(APIView):
 
 class WorkoutAssignmentView(APIView):
 
+    permission_classes = [MemberScopedAccess]
+
     def get(self, request, member_id):
         assignment = get_assignment_by_member(
             member_id
@@ -268,6 +312,17 @@ class WorkoutAssignmentView(APIView):
         )
 
     def post(self, request):
+        if not request.user.is_staff:
+            return Response(
+                {
+                    "detail": (
+                        "Staff access is required to "
+                        "assign a workout."
+                    )
+                },
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         serializer = WorkoutAssignmentSerializer(
             data=request.data
         )
@@ -300,6 +355,8 @@ class WorkoutAssignmentView(APIView):
 # ---------------------------------------------------------------------------
 
 class DailyWorkoutGenerateView(APIView):
+
+    permission_classes = [IsStaffUser]
 
     def post(self, request):
         serializer = DailyWorkoutGenerateSerializer(
@@ -363,6 +420,8 @@ class DailyWorkoutGenerateView(APIView):
 # ---------------------------------------------------------------------------
 
 class DailyWorkoutView(APIView):
+
+    permission_classes = [MemberScopedAccess]
 
     def get(self, request, member_id):
         workout_date = request.query_params.get(
@@ -450,6 +509,17 @@ class DailyWorkoutView(APIView):
         )
 
     def put(self, request, member_id):
+        if not request.user.is_staff:
+            return Response(
+                {
+                    "detail": (
+                        "Staff access is required to "
+                        "update a daily workout."
+                    )
+                },
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         serializer = DailyWorkoutUpdateSerializer(
             data=request.data
         )
@@ -505,6 +575,17 @@ class DailyWorkoutView(APIView):
         )
 
     def delete(self, request, member_id):
+        if not request.user.is_staff:
+            return Response(
+                {
+                    "detail": (
+                        "Staff access is required to "
+                        "delete a daily workout."
+                    )
+                },
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         workout_date = request.query_params.get(
             "date"
         )
@@ -546,6 +627,8 @@ class DailyWorkoutView(APIView):
 
 class WorkoutHistoryView(APIView):
 
+    permission_classes = [MemberScopedAccess]
+
     def get(self, request, member_id):
         workouts = get_member_workout_history(
             member_id
@@ -565,6 +648,8 @@ class WorkoutHistoryView(APIView):
 # ---------------------------------------------------------------------------
 
 class WorkoutSyncView(APIView):
+
+    permission_classes = [IsStaffUser]
 
     def post(self, request):
         serializer = DailyWorkoutGenerateSerializer(

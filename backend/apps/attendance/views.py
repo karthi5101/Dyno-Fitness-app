@@ -12,6 +12,11 @@ from apps.attendance.repositories import (
     get_today_attendance,
     update_attendance,
 )
+
+from apps.authentication.permissions import (
+    IsStaffUser,
+    MemberScopedAccess,
+)
 from apps.attendance.serializers import (
     AttendanceScanSerializer,
     AttendanceSerializer,
@@ -53,6 +58,8 @@ def serialize_document(document):
 
 class AttendanceListCreateView(APIView):
 
+    permission_classes = [IsStaffUser]
+
     def get(self, request):
         records = get_attendance_list()
 
@@ -90,6 +97,8 @@ class AttendanceListCreateView(APIView):
 
 class AttendanceScanView(APIView):
 
+    permission_classes = [IsStaffUser]
+
     def post(self, request):
         serializer = AttendanceScanSerializer(
             data=request.data
@@ -124,6 +133,8 @@ class AttendanceScanView(APIView):
 
 class AttendanceTodayView(APIView):
 
+    permission_classes = [IsStaffUser]
+
     def get(self, request):
         records = get_today_attendance()
 
@@ -134,6 +145,8 @@ class AttendanceTodayView(APIView):
 
 
 class AttendanceMemberListView(APIView):
+
+    permission_classes = [MemberScopedAccess]
 
     def get(self, request, member_id):
         records = get_attendance_by_member(
@@ -147,6 +160,8 @@ class AttendanceMemberListView(APIView):
 
 
 class AttendanceDetailView(APIView):
+
+    permission_classes = [IsStaffUser]
 
     def get(self, request, attendance_id):
         record = get_attendance_by_id(

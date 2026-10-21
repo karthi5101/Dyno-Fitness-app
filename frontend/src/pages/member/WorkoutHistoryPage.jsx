@@ -1,12 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
+import { useAuth } from "../../auth/AuthContext";
 import { getWorkoutHistory } from "../../api/client";
 
 import "./WorkoutHistoryPage.css";
-
-const MEMBER_ID =
-  localStorage.getItem("dyno_member_id") || "MEM-0001";
 
 function formatDate(value) {
   if (!value) {
@@ -64,6 +62,8 @@ function totalSets(exercises) {
 }
 
 function WorkoutHistoryPage() {
+  const { memberId } = useAuth();
+
   const [historyData, setHistoryData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -71,11 +71,20 @@ function WorkoutHistoryPage() {
 
   useEffect(() => {
     async function loadHistory() {
+      if (!memberId) {
+        setLoading(false);
+        setError(
+          "Your member account is not linked to a Dyno member.",
+        );
+
+        return;
+      }
+
       try {
         setLoading(true);
         setError("");
 
-        const data = await getWorkoutHistory(MEMBER_ID);
+        const data = await getWorkoutHistory(memberId);
 
         setHistoryData(normalizeHistory(data));
       } catch (err) {
@@ -89,7 +98,7 @@ function WorkoutHistoryPage() {
     }
 
     loadHistory();
-  }, []);
+  }, [memberId]);
 
   const history = useMemo(() => {
     return [...historyData].sort((a, b) => {

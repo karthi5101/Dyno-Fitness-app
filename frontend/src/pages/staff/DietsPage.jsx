@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { getMembers } from "../../api/client";
+import { getAuthHeaders } from "../../api/client";
 
 import "./DietsPage.css";
 
@@ -14,6 +15,7 @@ async function request(endpoint, options = {}) {
     {
       headers: {
         "Content-Type": "application/json",
+        ...getAuthHeaders(),
         ...(options.headers || {}),
       },
       ...options,

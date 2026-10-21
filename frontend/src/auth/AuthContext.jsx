@@ -7,9 +7,6 @@ import {
 
 import {
   getCurrentIdentity,
-  getStoredMemberId,
-  getStoredRole,
-  getStoredUsername,
   isAuthenticated,
   login as loginRequest,
   logout as logoutRequest,
@@ -49,27 +46,14 @@ export function AuthProvider({ children }) {
         }
 
         /*
-         * Always keep role inside React state.
-         *
          * Backend identity is authoritative.
-         * Stored localStorage role is only a fallback.
+         * Never mix in stale localStorage values.
          */
 
         const normalizedIdentity = {
-          username:
-            identity?.username ||
-            getStoredUsername() ||
-            null,
-
-          member_id:
-            identity?.member_id ||
-            getStoredMemberId() ||
-            null,
-
-          role:
-            identity?.role ||
-            getStoredRole() ||
-            null,
+          username: identity?.username ?? null,
+          member_id: identity?.member_id ?? null,
+          role: identity?.role ?? null,
         };
 
         setUser(normalizedIdentity);
@@ -125,14 +109,11 @@ export function AuthProvider({ children }) {
         null,
 
       member_id:
-        data?.user?.member_id ||
-        getStoredMemberId() ||
-        null,
+        data?.user?.member_id || null,
 
       role:
         data?.user?.role ||
         data?.role ||
-        getStoredRole() ||
         null,
     };
 
@@ -166,20 +147,11 @@ export function AuthProvider({ children }) {
     isAuthenticated:
       Boolean(user),
 
-    username:
-      user?.username ||
-      getStoredUsername() ||
-      null,
+    username: user?.username || null,
 
-    memberId:
-      user?.member_id ||
-      getStoredMemberId() ||
-      null,
+    memberId: user?.member_id || null,
 
-    role:
-      user?.role ||
-      getStoredRole() ||
-      null,
+    role: user?.role || null,
 
     login,
 

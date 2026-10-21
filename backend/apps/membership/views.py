@@ -1,7 +1,12 @@
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.authentication.permissions import (
+    IsStaffUser,
+    MemberScopedAccess,
+)
 from apps.membership.repository import (
     create_membership,
     get_all_memberships,
@@ -12,6 +17,8 @@ from apps.membership.serializers import MembershipSerializer
 
 
 class MembershipListCreateView(APIView):
+    permission_classes = [IsStaffUser]
+
     def get(self, request):
         memberships = get_all_memberships()
 
@@ -23,6 +30,17 @@ class MembershipListCreateView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
+        if not request.user.is_staff:
+            return Response(
+                {
+                    "detail": (
+                        "Staff access is required to "
+                        "create a membership."
+                    )
+                },
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         serializer = MembershipSerializer(
             data=request.data
         )
@@ -56,6 +74,8 @@ class MembershipListCreateView(APIView):
 
 
 class MembershipDetailView(APIView):
+    permission_classes = [MemberScopedAccess]
+
     def get(self, request, member_id):
         membership = get_membership_by_member_id(
             member_id
@@ -76,6 +96,17 @@ class MembershipDetailView(APIView):
         return Response(serializer.data)
 
     def patch(self, request, member_id):
+        if not request.user.is_staff:
+            return Response(
+                {
+                    "detail": (
+                        "Staff access is required to "
+                        "update a membership."
+                    )
+                },
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         existing_membership = (
             get_membership_by_member_id(member_id)
         )

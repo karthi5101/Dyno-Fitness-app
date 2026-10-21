@@ -17,7 +17,7 @@ function getAccessToken() {
   return localStorage.getItem(ACCESS_TOKEN_KEY);
 }
 
-function getAuthHeaders() {
+export function getAuthHeaders() {
   const token = getAccessToken();
 
   return token
@@ -50,16 +50,28 @@ export async function apiRequest(endpoint, options = {}) {
   }
 
   if (!response.ok) {
+    const nonFieldErrors = Array.isArray(
+      data?.non_field_errors,
+    )
+      ? data.non_field_errors.join(" ")
+      : "";
+
     const message =
       data?.detail ||
       data?.message ||
+      nonFieldErrors ||
       "An API request failed.";
 
-    if (
+    const tokenRejected =
       response.status === 401 &&
-      data?.code === "token_not_valid"
-    ) {
+      data?.code === "token_not_valid";
+
+    if (tokenRejected) {
       logout();
+
+      throw new Error(
+        "Your session has expired. Please sign in again.",
+      );
     }
 
     throw new Error(message);

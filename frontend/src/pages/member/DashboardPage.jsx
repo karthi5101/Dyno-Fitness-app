@@ -1,15 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
+import { useAuth } from "../../auth/AuthContext";
+
 import {
   getMember,
   getMemberAttendance,
 } from "../../api/client";
 
 import "./DashboardPage.css";
-
-const MEMBER_ID =
-  localStorage.getItem("dyno_member_id") || "MEM-0001";
 
 const SESSION_LABELS = {
   morning_first: "Morning · First",
@@ -121,6 +120,8 @@ function calculateStreak(records) {
 }
 
 function DashboardPage() {
+  const { memberId } = useAuth();
+
   const [member, setMember] = useState(null);
   const [attendance, setAttendance] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -128,6 +129,15 @@ function DashboardPage() {
 
   useEffect(() => {
     async function loadDashboard() {
+      if (!memberId) {
+        setLoading(false);
+        setError(
+          "Your member account is not linked to a Dyno member.",
+        );
+
+        return;
+      }
+
       try {
         setLoading(true);
         setError("");
@@ -136,8 +146,8 @@ function DashboardPage() {
           memberData,
           attendanceData,
         ] = await Promise.all([
-          getMember(MEMBER_ID),
-          getMemberAttendance(MEMBER_ID),
+          getMember(memberId),
+          getMemberAttendance(memberId),
         ]);
 
         setMember(
@@ -167,7 +177,7 @@ function DashboardPage() {
     }
 
     loadDashboard();
-  }, []);
+  }, [memberId]);
 
   const attendanceRate = useMemo(
     () =>
@@ -312,7 +322,7 @@ function DashboardPage() {
                   letterSpacing: "0.08em",
                 }}
               >
-                {MEMBER_ID}
+                {memberId}
               </small>
             </span>
 

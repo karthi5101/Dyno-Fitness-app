@@ -1,7 +1,12 @@
 ﻿from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.authentication.permissions import (
+    IsStaffUser,
+    MemberScopedAccess,
+)
 from apps.transformations.repositories import (
     create_transformation,
     delete_transformation,
@@ -94,6 +99,8 @@ def serialize_transformation(document):
 
 class TransformationListCreateView(APIView):
 
+    permission_classes = [IsStaffUser]
+
     def get(self, request):
         member_id = request.query_params.get(
             "member_id",
@@ -117,6 +124,17 @@ class TransformationListCreateView(APIView):
         )
 
     def post(self, request):
+        if not request.user.is_staff:
+            return Response(
+                {
+                    "detail": (
+                        "Staff access is required to "
+                        "create a transformation record."
+                    )
+                },
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         serializer = TransformationSerializer(
             data=request.data,
         )
@@ -165,6 +183,8 @@ class TransformationListCreateView(APIView):
 
 class TransformationMemberListView(APIView):
 
+    permission_classes = [MemberScopedAccess]
+
     def get(self, request, member_id):
         transformations = get_transformations_by_member(
             member_id,
@@ -182,6 +202,8 @@ class TransformationMemberListView(APIView):
 
 
 class TransformationDetailView(APIView):
+
+    permission_classes = [IsStaffUser]
 
     def get(self, request, transformation_id):
         transformation = get_transformation_by_id(
@@ -204,6 +226,16 @@ class TransformationDetailView(APIView):
         )
 
     def put(self, request, transformation_id):
+        if not request.user.is_staff:
+            return Response(
+                {
+                    "detail": (
+                        "Staff access is required to "
+                        "update a transformation record."
+                    )
+                },
+                status=status.HTTP_403_FORBIDDEN,
+            )
         return self._update(
             request,
             transformation_id,
@@ -211,6 +243,16 @@ class TransformationDetailView(APIView):
         )
 
     def patch(self, request, transformation_id):
+        if not request.user.is_staff:
+            return Response(
+                {
+                    "detail": (
+                        "Staff access is required to "
+                        "update a transformation record."
+                    )
+                },
+                status=status.HTTP_403_FORBIDDEN,
+            )
         return self._update(
             request,
             transformation_id,
@@ -297,6 +339,16 @@ class TransformationDetailView(APIView):
         )
 
     def delete(self, request, transformation_id):
+        if not request.user.is_staff:
+            return Response(
+                {
+                    "detail": (
+                        "Staff access is required to "
+                        "delete a transformation record."
+                    )
+                },
+                status=status.HTTP_403_FORBIDDEN,
+            )
         deleted = delete_transformation(
             transformation_id,
         )

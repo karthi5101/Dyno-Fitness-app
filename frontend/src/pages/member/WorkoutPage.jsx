@@ -1,12 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
+import { useAuth } from "../../auth/AuthContext";
 import { getMemberWorkout } from "../../api/client";
 
 import "./WorkoutPage.css";
-
-const MEMBER_ID =
-  localStorage.getItem("dyno_member_id") || "MEM-0001";
 
 function getDateString(date = new Date()) {
   const year = date.getFullYear();
@@ -154,6 +152,8 @@ function calculateTotalReps(exercises) {
 }
 
 function WorkoutPage() {
+  const { memberId } = useAuth();
+
   const [workoutData, setWorkoutData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -162,12 +162,23 @@ function WorkoutPage() {
     let active = true;
 
     async function loadWorkout() {
+      if (!memberId) {
+        if (active) {
+          setLoading(false);
+          setError(
+            "Your member account is not linked to a Dyno member.",
+          );
+        }
+
+        return;
+      }
+
       try {
         setLoading(true);
         setError("");
 
         const data = await getMemberWorkout(
-          MEMBER_ID,
+          memberId,
           getTodayDate(),
         );
 
@@ -193,7 +204,7 @@ function WorkoutPage() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [memberId]);
 
   const workout = workoutData?.workout;
   const assignment = workoutData?.assignment;

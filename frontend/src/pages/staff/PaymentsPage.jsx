@@ -6,9 +6,6 @@ import { apiRequest, getMember } from "../../api/client";
 
 import "./ProgressPage.css";
 
-const FALLBACK_MEMBER_ID =
-  localStorage.getItem("dyno_member_id") || "MEM-0001";
-
 function getTransformationId(record) {
   return (
     record?.transformation_id ||
@@ -172,9 +169,7 @@ function ProgressPage() {
   const { memberId: authenticatedMemberId } =
     useAuth();
 
-  const memberId =
-    authenticatedMemberId ||
-    FALLBACK_MEMBER_ID;
+  const memberId = authenticatedMemberId;
 
   const [member, setMember] = useState(null);
   const [transformations, setTransformations] =

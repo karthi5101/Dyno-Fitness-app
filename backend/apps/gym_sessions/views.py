@@ -3,6 +3,8 @@ from datetime import date, timedelta
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.authentication.permissions import IsStaffUser
+
 from .services import get_session_overview
 
 
@@ -38,6 +40,8 @@ class SessionTodayView(APIView):
     This endpoint is intended for internal/trainer use.
     """
 
+    permission_classes = [IsStaffUser]
+
     def get(self, request):
         overview = get_session_overview(date.today())
 
@@ -48,6 +52,8 @@ class SessionTomorrowView(APIView):
     """
     Return the complete expected session overview for tomorrow.
     """
+
+    permission_classes = [IsStaffUser]
 
     def get(self, request):
         tomorrow = date.today() + timedelta(days=1)
@@ -64,6 +70,8 @@ class SessionClientTodayView(APIView):
     Member identities are intentionally removed.
     """
 
+    permission_classes = [IsStaffUser]
+
     def get(self, request):
         overview = get_session_overview(date.today())
 
@@ -78,6 +86,8 @@ class SessionTrainerTodayView(APIView):
 
     Includes present member IDs and names.
     """
+
+    permission_classes = [IsStaffUser]
 
     def get(self, request):
         overview = get_session_overview(date.today())

@@ -1,12 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
+import { useAuth } from "../../auth/AuthContext";
 import { getMemberAttendance } from "../../api/client";
 
 import "./AttendancePage.css";
-
-const MEMBER_ID =
-  localStorage.getItem("dyno_member_id") || "MEM-0001";
 
 function formatDate(value) {
   if (!value) {
@@ -44,17 +42,28 @@ function formatTime(value) {
 }
 
 function AttendancePage() {
+  const { memberId } = useAuth();
+
   const [attendance, setAttendance] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
     async function loadAttendance() {
+      if (!memberId) {
+        setLoading(false);
+        setError(
+          "Your member account is not linked to a Dyno member.",
+        );
+
+        return;
+      }
+
       try {
         setLoading(true);
         setError("");
 
-        const data = await getMemberAttendance(MEMBER_ID);
+        const data = await getMemberAttendance(memberId);
 
         setAttendance(Array.isArray(data) ? data : []);
       } catch (err) {
@@ -67,7 +76,7 @@ function AttendancePage() {
     }
 
     loadAttendance();
-  }, []);
+  }, [memberId]);
 
   const presentCount = useMemo(
     () =>
@@ -161,7 +170,7 @@ function AttendancePage() {
 
         <article>
           <span>MEMBER ID</span>
-          <strong>{MEMBER_ID}</strong>
+          <strong>{memberId}</strong>
           <small>your account</small>
         </article>
       </section>

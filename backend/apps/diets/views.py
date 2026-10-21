@@ -1,8 +1,11 @@
 from bson import ObjectId
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.authentication.identity import get_member_id_for_user
+from apps.authentication.permissions import IsStaffOrReadOnly
 from apps.diets.repositories import (
     create_diet_assignment,
     create_diet_template,
@@ -84,6 +87,8 @@ def serialize_diet_assignment(document):
 
 class DietTemplateListCreateView(APIView):
 
+    permission_classes = [IsStaffOrReadOnly]
+
     def get(self, request):
         templates = get_all_diet_templates()
 
@@ -136,8 +141,22 @@ class DietTemplateListCreateView(APIView):
 
 class DietAssignmentListCreateView(APIView):
 
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
         assignments = get_all_diet_assignments()
+
+        if not request.user.is_staff:
+            own_member_id = get_member_id_for_user(
+                request.user
+            )
+
+            assignments = [
+                assignment
+                for assignment in assignments
+                if str(assignment.get("member_id"))
+                == str(own_member_id)
+            ]
 
         return Response(
             [
@@ -148,6 +167,17 @@ class DietAssignmentListCreateView(APIView):
         )
 
     def post(self, request):
+        if not request.user.is_staff:
+            return Response(
+                {
+                    "detail": (
+                        "Staff access is required to "
+                        "assign diets."
+                    )
+                },
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         serializer = DietAssignmentSerializer(
             data=request.data,
         )

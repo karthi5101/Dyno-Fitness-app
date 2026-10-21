@@ -6,9 +6,6 @@ import { getMember } from "../../api/client";
 
 import "./ProfilePage.css";
 
-const MEMBER_ID =
-  localStorage.getItem("dyno_member_id") || "MEM-0001";
-
 const SESSION_LABELS = {
   morning_first: "Morning · First",
   morning_second: "Morning · Second",
@@ -51,7 +48,7 @@ function getInitials(name = "") {
 
 function ProfilePage() {
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { logout, memberId } = useAuth();
 
   const [member, setMember] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -59,11 +56,20 @@ function ProfilePage() {
 
   useEffect(() => {
     async function loadProfile() {
+      if (!memberId) {
+        setLoading(false);
+        setError(
+          "Your member account is not linked to a Dyno member.",
+        );
+
+        return;
+      }
+
       try {
         setLoading(true);
         setError("");
 
-        const data = await getMember(MEMBER_ID);
+        const data = await getMember(memberId);
 
         setMember(data?.value || data);
       } catch (err) {
@@ -76,7 +82,7 @@ function ProfilePage() {
     }
 
     loadProfile();
-  }, []);
+  }, [memberId]);
 
   function handleLogout() {
     logout();
@@ -146,7 +152,7 @@ function ProfilePage() {
 
           <h1>{name}</h1>
 
-          <span>{MEMBER_ID}</span>
+          <span>{memberId}</span>
         </div>
 
         <div className="member-profile-status">
@@ -227,7 +233,7 @@ function ProfilePage() {
               <dt>MEMBER ID</dt>
 
               <dd>
-                {member?.member_id || MEMBER_ID}
+                {member?.member_id || memberId}
               </dd>
             </div>
 

@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
+import { useAuth } from "../../auth/AuthContext";
+
 import {
   getDietAssignments,
   getDietAssignment,
@@ -8,9 +10,6 @@ import {
 } from "../../api/client";
 
 import "./DietPage.css";
-
-const MEMBER_ID =
-  localStorage.getItem("dyno_member_id") || "MEM-0001";
 
 function normalizeMeals(source) {
   if (!source) {
@@ -75,7 +74,7 @@ function normalizeCalories(value) {
   return numeric.toLocaleString("en-IN");
 }
 
-function findMemberAssignment(data) {
+function findMemberAssignment(data, memberId) {
   const assignments =
     Array.isArray(data)
       ? data
@@ -93,18 +92,29 @@ function findMemberAssignment(data) {
             assignment.member ||
             assignment.memberId ||
             "",
-        ) === String(MEMBER_ID),
+        ) === String(memberId),
     ) || null
   );
 }
 
 function DietPage() {
+  const { memberId } = useAuth();
+
   const [diet, setDiet] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
     async function loadDiet() {
+      if (!memberId) {
+        setLoading(false);
+        setError(
+          "Your member account is not linked to a Dyno member.",
+        );
+
+        return;
+      }
+
       try {
         setLoading(true);
         setError("");
@@ -115,6 +125,7 @@ function DietPage() {
         const assignment =
           findMemberAssignment(
             assignmentsData,
+            memberId,
           );
 
         if (!assignment) {
@@ -189,7 +200,7 @@ function DietPage() {
     }
 
     loadDiet();
-  }, []);
+  }, [memberId]);
 
   const source = useMemo(() => {
     if (!diet) {
