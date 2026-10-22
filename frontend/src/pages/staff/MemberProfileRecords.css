@@ -1,0 +1,229 @@
+.member-records-section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.member-records-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.member-records-card {
+  padding: 22px;
+  background: #ffffff;
+  border: 1px solid #e7e7e7;
+  border-radius: 20px;
+}
+
+.member-records-card span {
+  display: block;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #8a8a8a;
+}
+
+.member-records-card strong {
+  display: block;
+  margin-top: 10px;
+  font-family: "Bebas Neue", Impact, sans-serif;
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 1;
+  color: #111111;
+}
+
+.member-records-card small {
+  display: block;
+  margin-top: 8px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: #8a8a8a;
+  text-transform: uppercase;
+}
+
+.member-records-card-dark {
+  background: #0f0f10;
+  border-color: #0f0f10;
+  color: #ffffff;
+}
+
+.member-records-card-dark strong {
+  color: #ffffff;
+}
+
+.member-records-card-dark span,
+.member-records-card-dark small {
+  color: #a0a0a0;
+}
+
+.member-records-total {
+  padding: 24px;
+  background: #0f0f10;
+  border-radius: 20px;
+  color: #ffffff;
+}
+
+.member-records-total span {
+  display: block;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #a0a0a0;
+}
+
+.member-records-total strong {
+  display: block;
+  margin-top: 10px;
+  font-family: "Bebas Neue", Impact, sans-serif;
+  font-size: 44px;
+  font-weight: 400;
+  line-height: 0.9;
+}
+
+.member-records-total small {
+  display: block;
+  margin-top: 8px;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: #a0a0a0;
+  text-transform: uppercase;
+}
+
+.member-records-note-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 22px;
+  background: #ffffff;
+  border: 1px solid #e7e7e7;
+  border-radius: 20px;
+}
+
+.member-records-note-form label {
+  display: block;
+  margin-bottom: 16px;
+  color: #8a8a8a;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.member-records-note-form input,
+.member-records-note-form textarea {
+  width: 100%;
+  margin-top: 8px;
+  padding: 12px 14px;
+  border: 1px solid #dededb;
+  border-radius: 14px;
+  background: #ffffff;
+  outline: none;
+  color: #111111;
+  font: inherit;
+  font-size: 13px;
+  resize: vertical;
+}
+
+.member-records-note-form input:focus,
+.member-records-note-form textarea:focus {
+  border-color: #c2182b;
+}
+
+.member-records-note-form button {
+  align-self: flex-start;
+}
+
+.member-records-note-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.member-records-note {
+  padding: 20px;
+  background: #ffffff;
+  border: 1px solid #e7e7e7;
+  border-radius: 20px;
+}
+
+.member-records-note-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.member-records-note-head strong {
+  font-family: "Bebas Neue", Impact, sans-serif;
+  font-size: 22px;
+  font-weight: 400;
+  color: #111111;
+}
+
+.member-records-note-head small {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: #8a8a8a;
+}
+
+.member-records-note p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #444444;
+  white-space: pre-wrap;
+}
+
+.member-records-note input,
+.member-records-note textarea {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 10px 12px;
+  border: 1px solid #dededb;
+  border-radius: 12px;
+  outline: none;
+  color: #111111;
+  font: inherit;
+  font-size: 13px;
+  resize: vertical;
+}
+
+.member-records-note-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.member-records-note-actions button {
+  padding: 8px 16px;
+  border: 1px solid #111111;
+  border-radius: 999px;
+  background: transparent;
+  color: #111111;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition:
+    background 160ms ease,
+    color 160ms ease;
+}
+
+.member-records-note-actions button:hover {
+  background: #111111;
+  color: #ffffff;
+}
+
+.member-records-note-actions button:last-child:hover {
+  background: #c2182b;
+  border-color: #c2182b;
+}
+
+@media (max-width: 768px) {
+  .member-records-grid {
+    grid-template-columns: 1fr;
+  }
+}

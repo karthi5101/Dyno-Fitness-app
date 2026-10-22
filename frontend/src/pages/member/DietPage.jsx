@@ -5,8 +5,7 @@ import { useAuth } from "../../auth/AuthContext";
 
 import {
   getDietAssignments,
-  getDietAssignment,
-  getDietTemplate,
+  getDietTemplates,
 } from "../../api/client";
 
 import "./DietPage.css";
@@ -27,41 +26,91 @@ function normalizeMeals(source) {
     return [];
   }
 
-  return meals.map((meal, index) => ({
-    time:
-      meal.time ||
-      meal.meal_time ||
-      meal.scheduled_time ||
-      "--:--",
-
-    type:
-      meal.type ||
+  return meals.map((meal, index) => {
+    const mealType =
       meal.meal_type ||
+      meal.type ||
       meal.category ||
-      `MEAL ${String(index + 1).padStart(2, "0")}`,
+      "";
 
-    title:
-      meal.title ||
-      meal.name ||
-      meal.meal_name ||
-      "MEAL",
+    const items = Array.isArray(meal.items)
+      ? meal.items
+      : null;
 
-    description:
-      meal.description ||
-      meal.notes ||
-      meal.detail ||
-      "Follow your assigned nutrition plan.",
+    const itemSummary = items
+      ? items
+          .map((item) =>
+            [item?.name, item?.quantity]
+              .filter(
+                (part) =>
+                  part !== null &&
+                  part !== undefined &&
+                  String(part).trim() !== "",
+              )
+              .join(" — "),
+          )
+          .filter(Boolean)
+          .join(" · ")
+      : "";
 
-    calories:
-      meal.calories ??
-      meal.kcal ??
-      meal.energy ??
-      null,
-  }));
+    return {
+      time:
+        meal.time ||
+        meal.meal_time ||
+        meal.scheduled_time ||
+        (mealType
+          ? mealType
+              .replace(/_/g, " ")
+              .toUpperCase()
+          : `--:--`),
+
+      type:
+        meal.type ||
+        meal.meal_type ||
+        meal.category ||
+        `MEAL ${String(index + 1).padStart(2, "0")}`,
+
+      title:
+        meal.title ||
+        meal.name ||
+        meal.meal_name ||
+        "MEAL",
+
+      description:
+        meal.description ||
+        meal.notes ||
+        meal.detail ||
+        itemSummary ||
+        "Follow your assigned nutrition plan.",
+
+      calories:
+        meal.calories ??
+        meal.kcal ??
+        meal.energy ??
+        null,
+    };
+  });
 }
 
-function normalizeCalories(value) {
-  if (value === null || value === undefined || value === "") {
+function formatAssignmentDate(value) {
+  if (!value) {
+    return "—";
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return String(value);
+  }
+
+  return date.toLocaleDateString("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+}
+
+function normalizeCalories(value) {  if (value === null || value === undefined || value === "") {
     return null;
   }
 
@@ -74,33 +123,11 @@ function normalizeCalories(value) {
   return numeric.toLocaleString("en-IN");
 }
 
-function findMemberAssignment(data, memberId) {
-  const assignments =
-    Array.isArray(data)
-      ? data
-      : Array.isArray(data?.value)
-        ? data.value
-        : Array.isArray(data?.assignments)
-          ? data.assignments
-          : [];
-
-  return (
-    assignments.find(
-      (assignment) =>
-        String(
-          assignment.member_id ||
-            assignment.member ||
-            assignment.memberId ||
-            "",
-        ) === String(memberId),
-    ) || null
-  );
-}
-
 function DietPage() {
   const { memberId } = useAuth();
 
   const [diet, setDiet] = useState(null);
+  const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -119,71 +146,58 @@ function DietPage() {
         setLoading(true);
         setError("");
 
-        const assignmentsData =
-          await getDietAssignments();
+        const [assignmentsData, templatesData] =
+          await Promise.all([
+            getDietAssignments(),
+            getDietTemplates(),
+          ]);
 
-        const assignment =
-          findMemberAssignment(
-            assignmentsData,
-            memberId,
+        const assignments = Array.isArray(
+          assignmentsData,
+        )
+          ? assignmentsData
+          : Array.isArray(assignmentsData?.value)
+            ? assignmentsData.value
+            : [];
+
+        const memberAssignments =
+          assignments.filter(
+            (assignment) =>
+              String(
+                assignment?.member_id || "",
+              ) === String(memberId),
           );
+
+        setHistory(memberAssignments);
+
+        const assignment = memberAssignments[0] || null;
 
         if (!assignment) {
           setDiet(null);
           return;
         }
 
-        let resolvedAssignment =
-          assignment;
+        const resolvedAssignment = assignment;
 
-        const assignmentId =
-          assignment._id ||
-          assignment.id ||
-          assignment.assignment_id;
+        /*
+         * A diet assignment stores the template key.
+         * The template itself carries the meals and the
+         * daily calorie target.
+         */
+        const templates = Array.isArray(
+          templatesData,
+        )
+          ? templatesData
+          : Array.isArray(templatesData?.value)
+            ? templatesData.value
+            : [];
 
-        if (assignmentId) {
-          try {
-            const assignmentData =
-              await getDietAssignment(
-                assignmentId,
-              );
-
-            resolvedAssignment =
-              assignmentData?.value ||
-              assignmentData ||
-              assignment;
-          } catch {
-            resolvedAssignment =
-              assignment;
-          }
-        }
-
-        let template = null;
-
-        const templateId =
-          resolvedAssignment.template_id ||
-          resolvedAssignment.diet_template_id ||
-          resolvedAssignment.template ||
-          resolvedAssignment.diet_id;
-
-        if (
-          templateId &&
-          typeof templateId === "string"
-        ) {
-          try {
-            const templateData =
-              await getDietTemplate(
-                templateId,
-              );
-
-            template =
-              templateData?.value ||
-              templateData ||
-              null;
-          } catch {
-            template = null;
-          }
-        }
+        const template =
+          templates.find(
+            (item) =>
+              item?.template_key ===
+              resolvedAssignment.template_key,
+          ) || null;
 
         setDiet({
           ...resolvedAssignment,
@@ -216,6 +230,7 @@ function DietPage() {
   );
 
   const dailyCalories =
+    source?.target_calories ??
     source?.daily_calories ??
     source?.calorie_target ??
     source?.calories ??
@@ -499,6 +514,66 @@ function DietPage() {
           </article>
         ))}
       </section>
+
+      {history.length > 1 && (
+        <section className="member-diet-history">
+          <div className="member-meals-heading">
+            <div>
+              <p>YOUR PLAN</p>
+              <h3>PREVIOUS PLANS</h3>
+            </div>
+
+            <span>
+              {String(history.length).padStart(2, "0")}
+            </span>
+          </div>
+
+          <div className="member-diet-history-list">
+            {history.map((assignment) => (
+              <article
+                key={
+                  assignment.id ||
+                  assignment._id ||
+                  `${assignment.template_key}-${assignment.assigned_date}`
+                }
+              >
+                <div>
+                  <span>PLAN</span>
+
+                  <strong>
+                    {assignment.template_key ||
+                      "PLAN"}
+                  </strong>
+                </div>
+
+                <div>
+                  <span>ASSIGNED</span>
+
+                  <strong>
+                    {formatAssignmentDate(
+                      assignment.assigned_date,
+                    )}
+                  </strong>
+                </div>
+
+                <span
+                  className={
+                    String(
+                      assignment.status || "",
+                    ).toLowerCase() === "active"
+                      ? "is-active"
+                      : ""
+                  }
+                >
+                  {String(
+                    assignment.status || "active",
+                  ).toUpperCase()}
+                </span>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="member-water-card">
         <div>

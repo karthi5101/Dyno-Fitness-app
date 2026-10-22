@@ -75,7 +75,7 @@ function MembershipPage() {
         const [memberData, membershipData] =
           await Promise.all([
             getMembers(),
-            request("/memberships/"),
+            request("/membership/"),
           ]);
 
         setMembers(memberData || []);

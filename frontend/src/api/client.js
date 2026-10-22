@@ -31,6 +31,48 @@ export function getAuthHeaders() {
 // GENERIC API REQUEST
 // ---------------------------------------------------------------------------
 
+function extractErrorMessage(data) {
+  if (!data) {
+    return "";
+  }
+
+  if (typeof data.detail === "string" && data.detail) {
+    return data.detail;
+  }
+
+  if (typeof data.message === "string" && data.message) {
+    return data.message;
+  }
+
+  if (Array.isArray(data.non_field_errors)) {
+    const joined = data.non_field_errors
+      .filter((value) => typeof value === "string")
+      .join(" ");
+
+    if (joined) {
+      return joined;
+    }
+  }
+
+  for (const value of Object.values(data)) {
+    if (typeof value === "string" && value) {
+      return value;
+    }
+
+    if (Array.isArray(value)) {
+      const first = value.find(
+        (item) => typeof item === "string",
+      );
+
+      if (first) {
+        return first;
+      }
+    }
+  }
+
+  return "";
+}
+
 export async function apiRequest(endpoint, options = {}) {
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     ...options,
@@ -50,16 +92,8 @@ export async function apiRequest(endpoint, options = {}) {
   }
 
   if (!response.ok) {
-    const nonFieldErrors = Array.isArray(
-      data?.non_field_errors,
-    )
-      ? data.non_field_errors.join(" ")
-      : "";
-
     const message =
-      data?.detail ||
-      data?.message ||
-      nonFieldErrors ||
+      extractErrorMessage(data) ||
       "An API request failed.";
 
     const tokenRejected =
@@ -74,7 +108,11 @@ export async function apiRequest(endpoint, options = {}) {
       );
     }
 
-    throw new Error(message);
+    const error = new Error(message);
+
+    error.status = response.status;
+
+    throw error;
   }
 
   return data;
@@ -412,11 +450,35 @@ export async function getMemberWorkout(
     getWorkoutAssignment(memberId),
   ]);
 
+  const workoutMissing =
+    workoutResult.status === "rejected" &&
+    workoutResult.reason?.status === 404;
+
+  const assignmentMissing =
+    assignmentResult.status === "rejected" &&
+    assignmentResult.reason?.status === 404;
+
+  if (workoutMissing && assignmentMissing) {
+    return {
+      workout: null,
+      assignment: null,
+    };
+  }
+
   if (
     workoutResult.status === "rejected" &&
     assignmentResult.status === "rejected"
   ) {
-    throw workoutResult.reason;
+    const realFailure = [
+      workoutResult.reason,
+      assignmentResult.reason,
+    ].find(
+      (reason) => reason?.status !== 404,
+    );
+
+    if (realFailure) {
+      throw realFailure;
+    }
   }
 
   return {
@@ -539,12 +601,6 @@ export async function getDietAssignments() {
   return apiRequest("/diets/assignments/");
 }
 
-export async function getDietAssignment(assignmentId) {
-  return apiRequest(
-    `/diets/assignments/${encodeURIComponent(assignmentId)}/`,
-  );
-}
-
 export async function createDietAssignment(
   assignmentData,
 ) {
@@ -565,6 +621,155 @@ export async function assignDietTemplate(
     template_key: templateKey,
     assigned_date: assignedDate,
     notes,
+  });
+}
+
+// ---------------------------------------------------------------------------
+// GYM SESSIONS
+// ---------------------------------------------------------------------------
+
+export async function getSessionOptions() {
+  return apiRequest("/sessions/options/");
+}
+
+export async function getSessionPreference() {
+  return apiRequest("/sessions/preference/");
+}
+
+export async function updatePreferredSession(
+  sessionKey,
+) {
+  return apiRequest("/sessions/preference/", {
+    method: "PUT",
+    body: JSON.stringify({
+      session_key: sessionKey,
+    }),
+  });
+}
+
+// ---------------------------------------------------------------------------
+// MEMBERSHIP
+// ---------------------------------------------------------------------------
+
+export async function getMemberships() {
+  return apiRequest("/membership/");
+}
+
+export async function getMembership(memberId) {
+  return apiRequest(
+    `/membership/${encodeURIComponent(memberId)}/`,
+  );
+}
+
+export async function createMembership(
+  membershipData,
+) {
+  return apiRequest("/membership/", {
+    method: "POST",
+    body: JSON.stringify(membershipData),
+  });
+}
+
+export async function updateMembership(
+  memberId,
+  membershipData,
+) {
+  return apiRequest(
+    `/membership/${encodeURIComponent(memberId)}/`,
+    {
+      method: "PATCH",
+      body: JSON.stringify(membershipData),
+    },
+  );
+}
+
+// ---------------------------------------------------------------------------
+// PAYMENTS
+// ---------------------------------------------------------------------------
+
+export async function getPayments() {
+  return apiRequest("/membership/payments/");
+}
+
+export async function getMemberPayments(memberId) {
+  return apiRequest(
+    `/membership/payments/member/${encodeURIComponent(
+      memberId,
+    )}/`,
+  );
+}
+
+export async function createPayment(paymentData) {
+  return apiRequest("/membership/payments/", {
+    method: "POST",
+    body: JSON.stringify(paymentData),
+  });
+}
+
+export async function deletePayment(paymentId) {
+  return apiRequest(
+    `/membership/payments/${encodeURIComponent(
+      paymentId,
+    )}/`,
+    {
+      method: "DELETE",
+    },
+  );
+}
+
+// ---------------------------------------------------------------------------
+// MEMBER NOTES
+// ---------------------------------------------------------------------------
+
+export async function getMemberNotes(memberId) {
+  return apiRequest(
+    `/notes/member/${encodeURIComponent(memberId)}/`,
+  );
+}
+
+export async function createNote(noteData) {
+  return apiRequest("/notes/", {
+    method: "POST",
+    body: JSON.stringify(noteData),
+  });
+}
+
+export async function updateNote(
+  noteId,
+  noteData,
+) {
+  return apiRequest(
+    `/notes/${encodeURIComponent(noteId)}/`,
+    {
+      method: "PATCH",
+      body: JSON.stringify(noteData),
+    },
+  );
+}
+
+export async function deleteNote(noteId) {
+  return apiRequest(
+    `/notes/${encodeURIComponent(noteId)}/`,
+    {
+      method: "DELETE",
+    },
+  );
+}
+
+// ---------------------------------------------------------------------------
+// PASSWORD
+// ---------------------------------------------------------------------------
+
+export async function changePassword(
+  oldPassword,
+  newPassword,
+) {
+  return apiRequest("/auth/password/change/", {
+    method: "POST",
+    body: JSON.stringify({
+      old_password: oldPassword,
+      new_password: newPassword,
+    }),
   });
 }
 

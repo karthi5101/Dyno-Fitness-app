@@ -49,4 +49,8 @@ urlpatterns = [
         "dashboard/",
         include("apps.dashboard.urls"),
     ),
+    path(
+        "notes/",
+        include("apps.notes.urls"),
+    ),
 ]

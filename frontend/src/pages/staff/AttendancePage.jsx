@@ -10,6 +10,16 @@ import {
 
 import "./AttendancePage.css";
 
+function getLocalDate() {
+  const date = new Date();
+
+  return [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, "0"),
+    String(date.getDate()).padStart(2, "0"),
+  ].join("-");
+}
+
 function formatTime(value) {
   if (!value) {
     return "—";
@@ -250,8 +260,7 @@ function AttendancePage() {
       const record =
         await createAttendance({
           member_id: selectedMember,
-          attendance_date:
-            now.toISOString().slice(0, 10),
+          attendance_date: getLocalDate(),
           status: "present",
           check_in_time:
             now.toISOString(),

@@ -266,6 +266,143 @@
   color: #ffffff;
 }
 
+/* Default session selection */
+
+.member-profile-session-row dd {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 8px 0;
+}
+
+.member-profile-session-select {
+  width: 100%;
+  min-height: 42px;
+  padding: 0 14px;
+  border: 1px solid #dededb;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #111111;
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+  outline: none;
+}
+
+.member-profile-session-select:focus {
+  border-color: #c2182b;
+}
+
+.member-profile-session-select:disabled {
+  background: #f4f4f2;
+  color: #888888;
+}
+
+.member-profile-session-message {
+  font-family: "Inter", sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: #c2182b;
+  text-transform: uppercase;
+}
+
+/* Password change */
+
+.member-profile-password {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-top: 40px;
+  padding: 40px;
+  border: 1px solid #e7e7e7;
+  border-radius: 28px;
+  background: #ffffff;
+}
+
+.member-profile-password h3 {
+  margin: 14px 0 0;
+  color: #111111;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 54px;
+  font-weight: 400;
+  line-height: 0.82;
+}
+
+.member-profile-password label {
+  display: block;
+  margin-bottom: 16px;
+  color: #888888;
+  font-family: "Inter", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.member-profile-password input {
+  width: 100%;
+  min-height: 46px;
+  margin-top: 8px;
+  padding: 0 16px;
+  border: 1px solid #dededb;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #111111;
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  outline: none;
+}
+
+.member-profile-password input:focus {
+  border-color: #c2182b;
+}
+
+.member-profile-password-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.member-profile-password-error,
+.member-profile-password-success {
+  margin: 0 0 16px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.member-profile-password-error {
+  border: 1px solid #e0b8bd;
+  background: #fff4f5;
+  color: #8f1725;
+}
+
+.member-profile-password-success {
+  border: 1px solid #cfe0d2;
+  background: #f3faf4;
+  color: #1f6b32;
+}
+
+.member-profile-logout-quiet {
+  border-color: #dededb;
+  color: #444444;
+}
+
+.member-profile-logout-quiet:hover {
+  border-color: #111111;
+  background: #111111;
+  color: #ffffff;
+}
+
+.member-profile-account-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
 /* Loading */
 
 .member-profile-loading {
@@ -373,6 +510,22 @@
 
   .member-profile-account-actions h2 {
     font-size: 52px;
+  }
+
+  .member-profile-password {
+    grid-template-columns: 1fr;
+    margin-top: 30px;
+    padding: 28px;
+    border-radius: 22px;
+  }
+
+  .member-profile-password h3 {
+    font-size: 46px;
+  }
+
+  .member-profile-account-buttons {
+    width: 100%;
+    justify-content: flex-start;
   }
 }
 

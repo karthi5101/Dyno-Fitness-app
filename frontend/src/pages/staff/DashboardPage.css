@@ -391,6 +391,7 @@
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.08em;
+  text-decoration: none;
 }
 
 .dashboard-payment,
@@ -401,6 +402,16 @@
   align-items: center;
   gap: 20px;
   border-top: 1px solid #e7e7e7;
+}
+
+a.dashboard-transformation {
+  color: inherit;
+  text-decoration: none;
+  transition: color 180ms ease;
+}
+
+a.dashboard-transformation:hover {
+  color: #c2182b;
 }
 
 .dashboard-payment span {

@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -23,6 +25,52 @@ from apps.attendance.serializers import (
 )
 
 
+def serialize_datetime(value):
+    """
+    Serialize a stored timestamp.
+
+    MongoDB returns naive datetimes in UTC. They are
+    tagged as UTC so that clients can convert them to
+    their own local time without guessing.
+    """
+
+    if value is None:
+        return None
+
+    if isinstance(value, datetime):
+        if value.tzinfo is None:
+            value = value.replace(
+                tzinfo=timezone.utc,
+            )
+
+        return value.isoformat()
+
+    if hasattr(value, "isoformat"):
+        return value.isoformat()
+
+    return value
+
+
+def serialize_date(value):
+    """
+    Serialize a stored calendar date.
+
+    Attendance dates are calendar days, not instants,
+    so they are returned as plain ISO dates.
+    """
+
+    if value is None:
+        return None
+
+    if isinstance(value, datetime):
+        return value.date().isoformat()
+
+    if hasattr(value, "isoformat"):
+        return value.isoformat()
+
+    return value
+
+
 def serialize_document(document):
     if not document:
         return None
@@ -30,28 +78,19 @@ def serialize_document(document):
     return {
         "id": str(document["_id"]),
         "member_id": document["member_id"],
-        "attendance_date": (
-            document["attendance_date"].isoformat()
-            if hasattr(document["attendance_date"], "isoformat")
-            else document["attendance_date"]
+        "attendance_date": serialize_date(
+            document["attendance_date"],
         ),
-        "check_in_time": (
-            document["check_in_time"].isoformat()
-            if document.get("check_in_time")
-            and hasattr(document["check_in_time"], "isoformat")
-            else document.get("check_in_time")
+        "check_in_time": serialize_datetime(
+            document.get("check_in_time"),
         ),
         "status": document["status"],
         "notes": document.get("notes"),
-        "created_at": (
-            document["created_at"].isoformat()
-            if hasattr(document["created_at"], "isoformat")
-            else document["created_at"]
+        "created_at": serialize_datetime(
+            document.get("created_at"),
         ),
-        "updated_at": (
-            document["updated_at"].isoformat()
-            if hasattr(document["updated_at"], "isoformat")
-            else document["updated_at"]
+        "updated_at": serialize_datetime(
+            document.get("updated_at"),
         ),
     }
 

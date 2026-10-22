@@ -1,9 +1,104 @@
-
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+
+import { useAuth } from "../../auth/AuthContext";
+import { getMembership } from "../../api/client";
 
 import "./MembershipPage.css";
 
+function formatDate(value) {
+  if (!value) {
+    return "—";
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return String(value);
+  }
+
+  return date
+    .toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    })
+    .toUpperCase();
+}
+
 function MembershipPage() {
+  const { memberId } = useAuth();
+
+  const [membership, setMembership] =
+    useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadMembership() {
+      if (!memberId) {
+        setLoading(false);
+        setError(
+          "Your member account is not linked to a Dyno member.",
+        );
+
+        return;
+      }
+
+      try {
+        setLoading(true);
+        setError("");
+
+        const response =
+          await getMembership(memberId);
+
+        if (!cancelled) {
+          setMembership(response);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setMembership(null);
+
+          if (err?.status === 404) {
+            setError("");
+          } else {
+            setError(
+              err.message ||
+                "Unable to load your membership.",
+            );
+          }
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }
+
+    loadMembership();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [memberId]);
+
+  if (loading) {
+    return (
+      <section className="member-membership-page">
+        <div className="member-membership-loading">
+          <span />
+          <span />
+        </div>
+      </section>
+    );
+  }
+
+  const status = String(
+    membership?.status || "none",
+  ).toUpperCase();
+
   return (
     <section className="member-membership-page">
       <header className="member-membership-header">
@@ -31,34 +126,75 @@ function MembershipPage() {
 
         <div className="member-membership-status">
           <span>STATUS</span>
-          <strong>ACTIVE</strong>
+          <strong>
+            {membership ? status : "NONE"}
+          </strong>
         </div>
       </header>
 
-      <article className="member-membership-hero">
-        <div>
-          <p>CURRENT MEMBERSHIP</p>
-          <h2>QUARTERLY</h2>
-          <span>ACTIVE PLAN</span>
-        </div>
-      </article>
+      {error && (
+        <p className="member-membership-error">
+          {error}
+        </p>
+      )}
 
-      <section className="member-membership-details">
-        <article>
-          <span>START DATE</span>
-          <strong>11 SEP 2026</strong>
-        </article>
+      {membership ? (
+        <>
+          <article className="member-membership-hero">
+            <div>
+              <p>CURRENT MEMBERSHIP</p>
+              <h2>
+                {String(
+                  membership.plan_name ||
+                    "MEMBERSHIP",
+                ).toUpperCase()}
+              </h2>
+              <span>{status} PLAN</span>
+            </div>
+          </article>
 
-        <article>
-          <span>EXPIRES</span>
-          <strong>10 OCT 2026</strong>
-        </article>
+          <section className="member-membership-details">
+            <article>
+              <span>START DATE</span>
+              <strong>
+                {formatDate(
+                  membership.start_date,
+                )}
+              </strong>
+            </article>
 
-        <article>
-          <span>STATUS</span>
-          <strong>ACTIVE</strong>
+            <article>
+              <span>EXPIRES</span>
+              <strong>
+                {formatDate(
+                  membership.end_date,
+                )}
+              </strong>
+            </article>
+
+            <article>
+              <span>STATUS</span>
+              <strong>{status}</strong>
+            </article>
+          </section>
+        </>
+      ) : (
+        <article className="member-membership-hero">
+          <div>
+            <p>CURRENT MEMBERSHIP</p>
+            <h2>
+              NO
+              <br />
+              PLAN
+              <br />
+              YET.
+            </h2>
+            <span>
+              SPEAK WITH THE GYM TO CONTINUE
+            </span>
+          </div>
         </article>
-      </section>
+      )}
 
       <section className="member-membership-accordion">
         <article>
@@ -118,4 +254,3 @@ function MembershipPage() {
 }
 
 export default MembershipPage;
-

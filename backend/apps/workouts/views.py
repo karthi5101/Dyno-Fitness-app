@@ -84,7 +84,7 @@ def serialize_template(document):
     }
 
 
-def serialize_assignment(document):
+def serialize_assignment(document, template=None):
     if not document:
         return None
 
@@ -94,6 +94,13 @@ def serialize_assignment(document):
         "template_id": str(document["template_id"]),
         "template_key": document["template_key"],
         "template_name": document["template_name"],
+        "exercises": [
+            serialize_exercise(exercise)
+            for exercise in (template or {}).get(
+                "exercises",
+                [],
+            )
+        ],
         "created_at": serialize_datetime(
             document.get("created_at")
         ),
@@ -306,8 +313,15 @@ class WorkoutAssignmentView(APIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
+        template = get_template(
+            assignment.get("template_id")
+        )
+
         return Response(
-            serialize_assignment(assignment),
+            serialize_assignment(
+                assignment,
+                template,
+            ),
             status=status.HTTP_200_OK,
         )
 
@@ -344,8 +358,15 @@ class WorkoutAssignmentView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        template = get_template(
+            assignment.get("template_id")
+        )
+
         return Response(
-            serialize_assignment(assignment),
+            serialize_assignment(
+                assignment,
+                template,
+            ),
             status=status.HTTP_200_OK,
         )
 

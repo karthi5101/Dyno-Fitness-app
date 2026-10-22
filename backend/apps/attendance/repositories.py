@@ -68,8 +68,13 @@ def create_attendance(data):
     if member is None:
         raise ValueError("Member not found.")
 
+    raw_attendance_date = data.get("attendance_date")
+
+    if raw_attendance_date is None:
+        raw_attendance_date = timezone.localdate()
+
     attendance_date = normalize_attendance_date(
-        data["attendance_date"]
+        raw_attendance_date
     )
 
     if attendance_exists_for_member_date(
@@ -80,7 +85,7 @@ def create_attendance(data):
             "Attendance already exists for this member on this date."
         )
 
-    now = datetime.utcnow()
+    now = timezone.now()
 
     document = {
         "member_id": member_id,
@@ -127,7 +132,7 @@ def create_scan_attendance(member_id):
 
     check_in_time = timezone.now()
 
-    now = datetime.utcnow()
+    now = timezone.now()
 
     document = {
         "member_id": member_id,
@@ -200,8 +205,21 @@ def update_attendance(attendance_id, data):
     if member is None:
         raise ValueError("Member not found.")
 
+    existing_record = get_attendance_by_id(
+        attendance_id
+    )
+
+    raw_attendance_date = data.get("attendance_date")
+
+    if raw_attendance_date is None:
+        raw_attendance_date = (
+            existing_record.get("attendance_date")
+            if existing_record
+            else timezone.localdate()
+        )
+
     attendance_date = normalize_attendance_date(
-        data["attendance_date"]
+        raw_attendance_date
     )
 
     if attendance_exists_for_member_date(
@@ -219,7 +237,7 @@ def update_attendance(attendance_id, data):
         "check_in_time": data.get("check_in_time"),
         "status": data.get("status", "present"),
         "notes": data.get("notes"),
-        "updated_at": datetime.utcnow(),
+        "updated_at": timezone.now(),
     }
 
     result = collection.update_one(

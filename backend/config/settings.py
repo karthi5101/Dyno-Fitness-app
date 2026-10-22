@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     "apps.inactive_members",
     "apps.membership",
     "apps.dashboard",
+    "apps.notes",
 ]
 
 # ---------------------------------------------------------------------------

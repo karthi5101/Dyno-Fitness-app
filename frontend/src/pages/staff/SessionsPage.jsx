@@ -47,8 +47,13 @@ function formatSessionName(value) {
 }
 
 function SessionCard({ session, navigate }) {
-  const expected = Number(session.expected || 0);
-  const present = Number(session.present || 0);
+  const expected = Number(
+    session.expected_count ?? session.expected ?? 0,
+  );
+
+  const present = Number(
+    session.present_count ?? session.present ?? 0,
+  );
 
   const percentage =
     expected > 0
@@ -69,9 +74,8 @@ function SessionCard({ session, navigate }) {
       </div>
 
       <h2>
-        {formatSessionName(
-          session.session_key,
-        )}
+        {session.name ||
+          formatSessionName(session.session_key)}
       </h2>
 
       <div className="session-count">
@@ -115,8 +119,8 @@ function SessionsPage() {
 
         const [todayData, tomorrowData] =
           await Promise.all([
-            request("/gym-sessions/today/"),
-            request("/gym-sessions/tomorrow/"),
+            request("/sessions/today/"),
+            request("/sessions/tomorrow/"),
           ]);
 
         setToday(todayData);

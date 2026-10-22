@@ -210,8 +210,11 @@ function WorkoutPage() {
   const assignment = workoutData?.assignment;
 
   const exercises = useMemo(
-    () => normalizeExercises(workout),
-    [workout],
+    () =>
+      normalizeExercises(
+        workout || assignment,
+      ),
+    [workout, assignment],
   );
 
   const totalSets = useMemo(

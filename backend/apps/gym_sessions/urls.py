@@ -2,6 +2,8 @@ from django.urls import path
 
 from .views import (
     SessionClientTodayView,
+    SessionOptionsView,
+    SessionPreferenceView,
     SessionTodayView,
     SessionTomorrowView,
     SessionTrainerTodayView,
@@ -28,5 +30,15 @@ urlpatterns = [
         "trainer/today/",
         SessionTrainerTodayView.as_view(),
         name="session-trainer-today",
+    ),
+    path(
+        "options/",
+        SessionOptionsView.as_view(),
+        name="session-options",
+    ),
+    path(
+        "preference/",
+        SessionPreferenceView.as_view(),
+        name="session-preference",
     ),
 ]

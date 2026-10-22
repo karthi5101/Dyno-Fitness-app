@@ -5,6 +5,8 @@ from rest_framework import serializers
 
 
 class PaymentSerializer(serializers.Serializer):
+    id = serializers.SerializerMethodField()
+
     member_id = serializers.CharField(
         max_length=50
     )
@@ -31,6 +33,14 @@ class PaymentSerializer(serializers.Serializer):
         allow_blank=True,
         allow_null=True,
     )
+
+    def get_id(self, obj):
+        payment_id = obj.get("id") or obj.get("_id")
+
+        if payment_id is None:
+            return None
+
+        return str(payment_id)
 
     def validate(self, attrs):
         period_start = attrs.get("period_start")
@@ -64,6 +74,9 @@ class PaymentSerializer(serializers.Serializer):
 
             if isinstance(value, datetime):
                 data[field] = value.date()
+
+        if data.get("_id") is not None:
+            data["id"] = str(data["_id"])
 
         data.pop("_id", None)
         data.pop("created_at", None)

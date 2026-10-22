@@ -234,6 +234,55 @@
   background: #c2182b;
 }
 
+.member-diet-history {
+  margin-top: 34px;
+}
+
+.member-diet-history-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.member-diet-history-list article {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 16px 0;
+  border-top: 1px solid #e7e7e7;
+}
+
+.member-diet-history-list article > div span {
+  display: block;
+  color: #888888;
+  font-family: "Inter", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.member-diet-history-list article > div strong {
+  display: block;
+  margin-top: 6px;
+  color: #111111;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 20px;
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+.member-diet-history-list article > span {
+  color: #888888;
+  font-family: "Inter", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.member-diet-history-list article > span.is-active {
+  color: #c2182b;
+}
+
 .member-water-card {
   display: grid;
   grid-template-columns: 1fr 1.3fr 1fr;

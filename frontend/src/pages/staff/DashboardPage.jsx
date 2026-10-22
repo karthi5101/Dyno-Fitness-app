@@ -251,10 +251,15 @@ function DashboardPage() {
                   </div>
 
                   <strong>
-                    {session.present ?? 0}
+                    {session.present_count ??
+                      session.present ??
+                      0}
 
                     <small>
-                      / {session.expected ?? 0}
+                      /{" "}
+                      {session.expected_count ??
+                        session.expected ??
+                        0}
                     </small>
                   </strong>
                 </div>
@@ -382,10 +387,7 @@ function DashboardPage() {
           </b>
         </Link>
 
-        <Link
-          className="dashboard-panel dashboard-panel-link"
-          to="/staff/progress"
-        >
+        <div className="dashboard-panel dashboard-panel-link">
           <div className="dashboard-panel-header">
             <div>
               <p className="staff-eyebrow">
@@ -412,12 +414,15 @@ function DashboardPage() {
             transformations
               .slice(0, 5)
               .map((record, index) => (
-                <div
+                <Link
                   className="dashboard-transformation"
                   key={
                     record._id ||
-                    `${record.member_id}-${record.week}-${index}`
+                    `${record.member_id}-${record.week_number}-${index}`
                   }
+                  to={`/staff/progress/${encodeURIComponent(
+                    record.member_id || "",
+                  )}`}
                 >
                   <strong>
                     {record.member_name ||
@@ -426,22 +431,32 @@ function DashboardPage() {
                   </strong>
 
                   <span>
-                    WEEK {record.week || "—"}
+                    WEEK{" "}
+                    {record.week_number ??
+                      record.week ??
+                      "—"}
                   </span>
 
                   <b>
-                    {record.weight
-                      ? `${record.weight} KG`
+                    {record.weight_kg ??
+                      record.weight
+                      ? `${
+                          record.weight_kg ??
+                          record.weight
+                        } KG`
                       : "—"}
                   </b>
-                </div>
+                </Link>
               ))
           )}
 
-          <b className="dashboard-panel-footer">
+          <Link
+            className="dashboard-panel-footer"
+            to="/staff/progress"
+          >
             OPEN ALL TRANSFORMATIONS →
-          </b>
-        </Link>
+          </Link>
+        </div>
       </div>
     </section>
   );

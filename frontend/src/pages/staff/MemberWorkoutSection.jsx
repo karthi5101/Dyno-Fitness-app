@@ -207,11 +207,28 @@ function MemberWorkoutSection({ memberId }) {
           String(
             template?.id ||
               template?._id ||
+              template?.template_key ||
               "",
           ) ===
           String(selectedTemplateId),
-      ) || null,
-    [templates, selectedTemplateId],
+      ) ||
+      (assignment?.template_id &&
+      String(assignment.template_id) ===
+        String(selectedTemplateId)
+        ? {
+            name:
+              assignment?.template_name ||
+              assignment?.template_key,
+            template_key:
+              assignment?.template_key,
+            id: assignment?.template_id,
+          }
+        : null),
+    [
+      templates,
+      selectedTemplateId,
+      assignment,
+    ],
   );
 
   async function handleAssignTemplate() {
@@ -599,16 +616,44 @@ function MemberWorkoutSection({ memberId }) {
                 template?._id ||
                 template?.template_key;
 
+              if (!templateId) {
+                return null;
+              }
+
               return (
                 <option
-                  key={templateId}
-                  value={templateId}
+                  key={String(templateId)}
+                  value={String(templateId)}
                 >
                   {template.name ||
                     template.template_key}
                 </option>
               );
             })}
+
+            {assignment?.template_id &&
+              !templates.some(
+                (template) =>
+                  String(
+                    template?.id ||
+                      template?._id ||
+                      template?.template_key ||
+                      "",
+                  ) ===
+                  String(
+                    assignment.template_id,
+                  ),
+              ) && (
+                <option
+                  value={String(
+                    assignment.template_id,
+                  )}
+                >
+                  {assignment.template_name ||
+                    assignment.template_key ||
+                    "Assigned template"}
+                </option>
+              )}
           </select>
 
           <button

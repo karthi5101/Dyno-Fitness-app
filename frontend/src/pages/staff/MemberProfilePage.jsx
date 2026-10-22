@@ -1,5 +1,5 @@
 ﻿import { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import {
   createAttendance,
@@ -11,6 +11,12 @@ import {
 
 import MemberDietSection from "./MemberDietSection";
 import MemberWorkoutSection from "./MemberWorkoutSection";
+
+import {
+  MembershipSection,
+  NotesSection,
+  PaymentsSection,
+} from "./MemberProfileRecords";
 
 import "./MemberProfilePage.css";
 
@@ -76,6 +82,16 @@ function getInitials(name) {
     .map((part) => part[0])
     .join("")
     .toUpperCase();
+}
+
+function getLocalDate() {
+  const date = new Date();
+
+  return [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, "0"),
+    String(date.getDate()).padStart(2, "0"),
+  ].join("-");
 }
 
 function formatDate(value) {
@@ -171,6 +187,7 @@ function normalizeAttendanceResponse(
 
 function MemberProfilePage() {
   const { memberId } = useParams();
+  const navigate = useNavigate();
 
   const [member, setMember] =
     useState(null);
@@ -385,9 +402,7 @@ function MemberProfilePage() {
       const createdRecord =
         await createAttendance({
           member_id: memberId,
-          attendance_date: now
-            .toISOString()
-            .slice(0, 10),
+          attendance_date: getLocalDate(),
           status:
             attendanceStatus,
           check_in_time:
@@ -455,6 +470,19 @@ function MemberProfilePage() {
   function handleSectionChange(
     sectionKey,
   ) {
+    if (sectionKey === "progress") {
+      if (memberId) {
+        navigate(
+          `/staff/progress/${encodeURIComponent(
+            memberId,
+          )}`,
+        );
+      } else {
+        navigate("/staff/progress");
+      }
+      return;
+    }
+
     setActiveSection(sectionKey);
   }
 
@@ -870,22 +898,26 @@ function MemberProfilePage() {
           />
         )}
 
-        {activeSection !==
-          "overview" &&
-          activeSection !==
-            "attendance" &&
-          activeSection !==
-            "workout" &&
-          activeSection !==
-            "diet" && (
-            <PlaceholderSection
-              section={PROFILE_SECTIONS.find(
-                (section) =>
-                  section.key ===
-                  activeSection,
-              )}
-            />
-          )}
+        {activeSection ===
+          "membership" && (
+          <MembershipSection
+            memberId={memberId}
+          />
+        )}
+
+        {activeSection ===
+          "payments" && (
+          <PaymentsSection
+            memberId={memberId}
+          />
+        )}
+
+        {activeSection ===
+          "notes" && (
+          <NotesSection
+            memberId={memberId}
+          />
+        )}
       </main>
     </section>
   );
@@ -1165,41 +1197,6 @@ function DetailItem({
         {displayValue}
       </strong>
     </div>
-  );
-}
-
-function PlaceholderSection({
-  section,
-}) {
-  if (!section) {
-    return null;
-  }
-
-  return (
-    <section className="member-profile-placeholder">
-      <div className="member-profile-placeholder-index">
-        /
-      </div>
-
-      <p className="member-profile-eyebrow">
-        MEMBER / {section.label}
-      </p>
-
-      <h2>
-        {section.label}
-        <br />
-        COMING NEXT.
-      </h2>
-
-      <p>
-        This section is intentionally
-        separated from the member overview.
-        Its UI will connect to the existing{" "}
-        {section.label.toLowerCase()}{" "}
-        backend module without changing
-        the member-profile workflow.
-      </p>
-    </section>
   );
 }
 

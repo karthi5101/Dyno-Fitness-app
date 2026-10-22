@@ -4,6 +4,36 @@
   padding: 32px;
 }
 
+.member-membership-loading {
+  display: grid;
+  gap: 20px;
+}
+
+.member-membership-loading span {
+  height: 120px;
+  border-radius: 28px;
+  background: #e7e7e7;
+  animation: membership-loading 1.4s ease-in-out infinite;
+}
+
+.member-membership-error {
+  margin: 0 0 28px;
+  padding: 14px 18px;
+  border: 1px solid #e0b8bd;
+  border-radius: 16px;
+  background: #fff4f5;
+  color: #8f1725;
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+@keyframes membership-loading {
+  50% {
+    opacity: 0.45;
+  }
+}
+
 .member-membership-header {
   display: flex;
   align-items: flex-end;
