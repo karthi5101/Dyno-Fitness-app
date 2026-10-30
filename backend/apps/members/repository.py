@@ -1,5 +1,8 @@
 from datetime import datetime, time
 
+from pymongo import ReturnDocument
+from pymongo.errors import DuplicateKeyError
+
 from apps.members.database import get_members_collection
 
 
@@ -8,6 +11,41 @@ def _date_to_datetime(value):
         return datetime.combine(value, time.min)
 
     return value
+
+
+def generate_member_id():
+    """
+    Return the next sequential member ID.
+
+    MongoDB's atomic $inc guarantees that concurrent callers receive
+    different sequence numbers. Existing records are skipped so a
+    manually created ID can never be reused.
+    """
+
+    members = get_members_collection()
+    counters = members.database["counters"]
+
+    for _ in range(1000):
+        try:
+            counter = counters.find_one_and_update(
+                {"_id": "member_id_sequence"},
+                {"$inc": {"sequence": 1}},
+                upsert=True,
+                return_document=ReturnDocument.AFTER,
+            )
+        except DuplicateKeyError:
+            # Another caller inserted the counter document first.
+            continue
+
+        candidate = f"A{counter['sequence']:03d}"
+
+        if members.find_one(
+            {"member_id": candidate},
+            {"_id": 1},
+        ) is None:
+            return candidate
+
+    raise RuntimeError("Unable to generate a unique member ID.")
 
 
 def create_member(data):
@@ -28,6 +66,9 @@ def create_member(data):
             data["joining_date"]
         ),
         "status": data.get("status", "active"),
+        "password_reset_required": bool(
+            data.get("password_reset_required", False)
+        ),
         "emergency_contact": data.get(
             "emergency_contact",
             "",

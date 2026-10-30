@@ -222,8 +222,114 @@
   border-color: #c2182b;
 }
 
+.member-records-membership-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.member-records-membership-actions button,
+.member-records-membership-form-actions button {
+  border: 1px solid #111111;
+  border-radius: 10px;
+  padding: 10px 16px;
+  background: #111111;
+  color: #ffffff;
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+}
+
+.member-records-membership-actions button:hover,
+.member-records-membership-form-actions button:hover {
+  background: #c2182b;
+  border-color: #c2182b;
+}
+
+.member-records-membership-form {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  padding: 20px;
+  background: #ffffff;
+  border: 1px solid #e7e7e7;
+  border-radius: 20px;
+}
+
+.member-records-membership-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.member-records-membership-form label span {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #8a8a8a;
+}
+
+.member-records-membership-form input,
+.member-records-membership-form select {
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid #dddddd;
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: #fafaf8;
+  color: #111111;
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+}
+
+.member-records-membership-form input:focus,
+.member-records-membership-form select:focus {
+  outline: 2px solid rgba(194, 24, 43, 0.22);
+  border-color: #c2182b;
+}
+
+.member-records-membership-form-actions {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  grid-column: 1 / -1;
+}
+
+.member-records-membership-form-actions button[type="button"] {
+  background: #ffffff;
+  color: #111111;
+  border-color: #d8d8d4;
+}
+
+.member-records-membership-form-actions button:disabled,
+.member-records-membership-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.member-records-membership-error,
+.member-records-membership-success {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.member-records-membership-error {
+  color: #c2182b;
+}
+
+.member-records-membership-success {
+  color: #1f7a4d;
+}
+
 @media (max-width: 768px) {
   .member-records-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .member-records-membership-form {
     grid-template-columns: 1fr;
   }
 }

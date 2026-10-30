@@ -1,9 +1,6 @@
 from .database import get_members_collection
-from apps.authentication.models import UserMemberProfile
 
 from django.contrib.auth import get_user_model
-from django.contrib.auth.password_validation import validate_password
-from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import IntegrityError, transaction
 
 from pymongo.errors import DuplicateKeyError
@@ -19,6 +16,7 @@ from apps.authentication.permissions import (
 
 from .repository import (
     create_member,
+    generate_member_id,
     get_all_members,
     get_member_by_id,
     update_member,
@@ -47,12 +45,18 @@ def serialize_member(member):
     }
 
 
-def sync_member_account_status(member_id, status):
+def sync_member_account_status(
+    member_id,
+    status,
+    reset_password=False,
+):
     """
     Synchronize a linked non-staff account with the
     member's active/inactive status.
 
     Staff accounts are not disabled through member status.
+    Reactivating a member resets the password to the member ID
+    and clears the previous recovery configuration.
     """
     profile = UserMemberProfile.objects.filter(
         member_id=member_id,
@@ -67,10 +71,32 @@ def sync_member_account_status(member_id, status):
         return
 
     desired_active_state = status == "active"
+    update_fields = []
 
     if user.is_active != desired_active_state:
         user.is_active = desired_active_state
-        user.save(update_fields=["is_active"])
+        update_fields.append("is_active")
+
+    if reset_password and desired_active_state:
+        user.set_password(member_id)
+        update_fields.append("password")
+
+        get_members_collection().update_one(
+            {"member_id": member_id},
+            {
+                "$set": {
+                    "password_reset_required": True,
+                },
+                "$unset": {
+                    "security_answer_hash": "",
+                    "recovery_events": "",
+                    "recovery_lock_until": "",
+                },
+            },
+        )
+
+    if update_fields:
+        user.save(update_fields=update_fields)
 
 
 class MemberListView(APIView):
@@ -104,55 +130,85 @@ class MemberListView(APIView):
             return Response(serializer.errors, status=400)
 
         data = dict(serializer.validated_data)
-        password = data.pop("password")
+        data.pop("password", None)
         data.pop("status", None)
 
-        member_id = data["member_id"]
+        member_id = data.get("member_id")
+        auto_generated = not member_id
 
-        # Never create a second record for an existing member.
-        if get_member_by_id(member_id) is not None:
-            return Response(
-                {"detail": "A member with this member_id already exists."},
-                status=409,
-            )
+        if auto_generated:
+            # The counter is atomic, but a stale Django account or
+            # manually created A### member can still occupy the next
+            # sequence number. Skip those IDs rather than failing.
+            for _ in range(20):
+                candidate = generate_member_id()
 
-        # Member ID becomes the new member's Django username.
-        if User.objects.filter(username=member_id).exists():
-            return Response(
-                {
-                    "detail": (
-                        "This member ID conflicts with an existing "
-                        "Django username. Resolve the account conflict "
-                        "before registering this member."
-                    )
-                },
-                status=409,
-            )
+                if (
+                    get_member_by_id(candidate) is None
+                    and not User.objects.filter(
+                        username=candidate
+                    ).exists()
+                    and not UserMemberProfile.objects.filter(
+                        member_id=candidate
+                    ).exists()
+                ):
+                    member_id = candidate
+                    break
 
-        if UserMemberProfile.objects.filter(
-            member_id=member_id,
-        ).exists():
-            return Response(
-                {"detail": "This member ID is already linked to an account."},
-                status=409,
-            )
+            if not member_id:
+                return Response(
+                    {
+                        "detail": (
+                            "Unable to allocate a unique member ID. "
+                            "Please try again."
+                        )
+                    },
+                    status=409,
+                )
 
-        password_user = User(
-            username=member_id,
-            first_name=data["name"],
-            email=data.get("email") or "",
-        )
+            data["member_id"] = member_id
+        else:
+            # Never create a second record for an existing member.
+            if get_member_by_id(member_id) is not None:
+                return Response(
+                    {
+                        "detail": (
+                            "A member with this member_id already exists."
+                        )
+                    },
+                    status=409,
+                )
 
-        try:
-            validate_password(password, user=password_user)
-        except DjangoValidationError as exc:
-            return Response(
-                {"password": list(exc.messages)},
-                status=400,
-            )
+            # Member ID becomes the new member's Django username.
+            if User.objects.filter(username=member_id).exists():
+                return Response(
+                    {
+                        "detail": (
+                            "This member ID conflicts with an existing "
+                            "Django username. Resolve the account conflict "
+                            "before registering this member."
+                        )
+                    },
+                    status=409,
+                )
 
+            if UserMemberProfile.objects.filter(
+                member_id=member_id,
+            ).exists():
+                return Response(
+                    {
+                        "detail": (
+                            "This member ID is already linked to an account."
+                        )
+                    },
+                    status=409,
+                )
+
+        # The member ID is the required initial password.
+        # It is deliberately set without normal password validators.
         # Force active status regardless of any supplied status.
         data["status"] = "active"
+        data["password_reset_required"] = True
 
         try:
             # Django user/profile changes are rolled back together
@@ -162,7 +218,7 @@ class MemberListView(APIView):
             with transaction.atomic():
                 user = User.objects.create_user(
                     username=member_id,
-                    password=password,
+                    password=member_id,
                     email=data.get("email") or "",
                     first_name=data["name"],
                     is_active=True,
@@ -260,6 +316,10 @@ class MemberDetailView(APIView):
             sync_member_account_status(
                 member_id,
                 updated_member["status"],
+                reset_password=(
+                    updated_member["status"] == "active"
+                    and member.get("status") != "active"
+                ),
             )
 
         return Response(serialize_member(updated_member))

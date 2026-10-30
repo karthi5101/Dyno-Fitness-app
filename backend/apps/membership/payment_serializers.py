@@ -3,9 +3,13 @@ from datetime import datetime
 
 from rest_framework import serializers
 
+from apps.uploads import build_upload_payload
+
 
 class PaymentSerializer(serializers.Serializer):
     id = serializers.SerializerMethodField()
+
+    payment_proof = serializers.SerializerMethodField()
 
     member_id = serializers.CharField(
         max_length=50
@@ -41,6 +45,34 @@ class PaymentSerializer(serializers.Serializer):
             return None
 
         return str(payment_id)
+
+    def get_payment_proof(self, obj):
+        file_id = obj.get("payment_proof_file_id")
+
+        if not file_id:
+            return None
+
+        request = self.context.get("request")
+        payload = build_upload_payload(file_id, request)
+        uploaded_at = obj.get("payment_proof_uploaded_at")
+
+        payload.update(
+            {
+                "filename": obj.get("payment_proof_filename", ""),
+                "content_type": obj.get(
+                    "payment_proof_content_type",
+                    "",
+                ),
+                "size": obj.get("payment_proof_size", 0),
+                "uploaded_at": (
+                    uploaded_at.isoformat()
+                    if hasattr(uploaded_at, "isoformat")
+                    else uploaded_at
+                ),
+            }
+        )
+
+        return payload
 
     def validate(self, attrs):
         period_start = attrs.get("period_start")

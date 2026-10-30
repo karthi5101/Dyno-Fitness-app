@@ -92,3 +92,32 @@ class MemberScopedAccess(BasePermission):
             str(get_member_id_for_user(user))
             == str(target_member_id)
         )
+
+
+class StaffOrLinkedMember(BasePermission):
+    """
+    Staff accounts may act on any member's records.
+
+    Members may act only through their own linked
+    member_id, derived from the authenticated account.
+    The identity comparison happens in the view, which
+    answers 404 for another member's records.
+    """
+
+    message = "You are not allowed to access this member's records."
+
+    def has_permission(self, request, view):
+        user = request.user
+
+        if not (user and user.is_authenticated):
+            return False
+
+        if user.is_staff:
+            return True
+
+        return (
+            get_member_id_for_user(user) is not None
+            and bool(
+                view.kwargs.get("member_id")
+            )
+        )

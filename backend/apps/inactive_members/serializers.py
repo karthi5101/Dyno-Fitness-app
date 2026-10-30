@@ -8,4 +8,6 @@ class InactiveMemberSerializer(serializers.Serializer):
     status = serializers.CharField()
     last_attendance_date = serializers.DateField()
     days_since_attendance = serializers.IntegerField()
+    last_attendance = serializers.DateField(allow_null=True)
+    days_since_reference = serializers.IntegerField()
     inactive_threshold_days = serializers.IntegerField()

@@ -15,9 +15,16 @@ from apps.transformations.repositories import (
     get_transformation_by_member_and_week,
     get_transformations_by_member,
     update_transformation,
+    update_transformation_image,
 )
 from apps.transformations.serializers import (
     TransformationSerializer,
+)
+from apps.uploads import (
+    IMAGE_CONTENT_TYPES,
+    delete_upload,
+    save_upload,
+    signed_url_from_document,
 )
 
 
@@ -31,7 +38,7 @@ def serialize_datetime(value):
     return value
 
 
-def serialize_transformation(document):
+def serialize_transformation(document, request=None):
     if not document:
         return None
 
@@ -62,14 +69,16 @@ def serialize_transformation(document):
         # New front/back workflow
         # -------------------------------------------------
 
-        "front_image_url": document.get(
-            "front_image_url",
-            "",
+        "front_image_url": signed_url_from_document(
+            document,
+            "front_image",
+            request,
         ),
 
-        "back_image_url": document.get(
-            "back_image_url",
-            "",
+        "back_image_url": signed_url_from_document(
+            document,
+            "back_image",
+            request,
         ),
 
         # -------------------------------------------------
@@ -77,9 +86,10 @@ def serialize_transformation(document):
         # single-image transformation workflow.
         # -------------------------------------------------
 
-        "image_url": document.get(
-            "image_url",
-            "",
+        "image_url": signed_url_from_document(
+            document,
+            "image",
+            request,
         ),
 
         "notes": document.get(
@@ -116,7 +126,8 @@ class TransformationListCreateView(APIView):
         return Response(
             [
                 serialize_transformation(
-                    transformation
+                    transformation,
+                    request,
                 )
                 for transformation in transformations
             ],
@@ -175,7 +186,8 @@ class TransformationListCreateView(APIView):
 
         return Response(
             serialize_transformation(
-                transformation
+                transformation,
+                request,
             ),
             status=status.HTTP_201_CREATED,
         )
@@ -193,10 +205,77 @@ class TransformationMemberListView(APIView):
         return Response(
             [
                 serialize_transformation(
-                    transformation
+                    transformation,
+                    request,
                 )
                 for transformation in transformations
             ],
+            status=status.HTTP_200_OK,
+        )
+
+
+class TransformationImageUploadView(APIView):
+    permission_classes = [IsStaffUser]
+
+    _PREFIXES = {
+        "image": "image",
+        "front": "front_image",
+        "back": "back_image",
+    }
+
+    def post(self, request, transformation_id):
+        transformation = get_transformation_by_id(
+            transformation_id,
+        )
+
+        if transformation is None:
+            return Response(
+                {"detail": "Transformation not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        slot = str(request.data.get("slot", "image")).strip()
+
+        if slot not in self._PREFIXES:
+            return Response(
+                {"slot": ["Use image, front, or back."]},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            upload_metadata = save_upload(
+                request.FILES.get("file"),
+                allowed_content_types=IMAGE_CONTENT_TYPES,
+                purpose=f"transformation_{slot}",
+            )
+        except ValueError as exc:
+            return Response(
+                {"file": [str(exc)]},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        prefix = self._PREFIXES[slot]
+        old_file_id = transformation.get(f"{prefix}_file_id")
+
+        updated = update_transformation_image(
+            transformation_id,
+            prefix,
+            upload_metadata,
+        )
+
+        if updated is None:
+            delete_upload(upload_metadata["file_id"])
+
+            return Response(
+                {"detail": "Transformation not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        if old_file_id and old_file_id != upload_metadata["file_id"]:
+            delete_upload(old_file_id)
+
+        return Response(
+            serialize_transformation(updated, request),
             status=status.HTTP_200_OK,
         )
 
@@ -220,7 +299,8 @@ class TransformationDetailView(APIView):
 
         return Response(
             serialize_transformation(
-                transformation
+                transformation,
+                request,
             ),
             status=status.HTTP_200_OK,
         )
@@ -333,7 +413,8 @@ class TransformationDetailView(APIView):
 
         return Response(
             serialize_transformation(
-                transformation
+                transformation,
+                request,
             ),
             status=status.HTTP_200_OK,
         )

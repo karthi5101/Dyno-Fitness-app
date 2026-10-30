@@ -36,6 +36,40 @@ class WorkoutExerciseSerializer(serializers.Serializer):
     )
 
 
+class WorkoutSplitDaySerializer(serializers.Serializer):
+    day = serializers.IntegerField(
+        min_value=1,
+        max_value=6,
+    )
+
+    label = serializers.CharField(
+        max_length=50,
+        trim_whitespace=True,
+    )
+
+    exercises = WorkoutExerciseSerializer(
+        many=True,
+    )
+
+    def validate_label(self, value):
+        value = value.strip()
+
+        if not value:
+            raise serializers.ValidationError(
+                "Every split day needs a label."
+            )
+
+        return value
+
+    def validate_exercises(self, value):
+        if not value:
+            raise serializers.ValidationError(
+                "Every split day must contain at least one exercise."
+            )
+
+        return value
+
+
 class WorkoutTemplateSerializer(serializers.Serializer):
     template_key = serializers.CharField(
         max_length=50,
@@ -57,6 +91,11 @@ class WorkoutTemplateSerializer(serializers.Serializer):
         required=True,
     )
 
+    split_days = WorkoutSplitDaySerializer(
+        many=True,
+        required=False,
+    )
+
     def validate_template_key(self, value):
         value = value.strip().lower()
 
@@ -71,6 +110,25 @@ class WorkoutTemplateSerializer(serializers.Serializer):
         if not value:
             raise serializers.ValidationError(
                 "A workout template must contain at least one exercise."
+            )
+
+        return value
+
+    def validate_split_days(self, value):
+        if value is None:
+            return value
+
+        if len(value) != 6:
+            raise serializers.ValidationError(
+                "A split must contain exactly six days."
+            )
+
+        days = sorted(item["day"] for item in value)
+
+        if days != [1, 2, 3, 4, 5, 6]:
+            raise serializers.ValidationError(
+                "Split days must be exactly 1, 2, 3, 4, 5 and 6 "
+                "with no duplicates."
             )
 
         return value
@@ -99,6 +157,11 @@ class WorkoutTemplateUpdateSerializer(serializers.Serializer):
         required=False,
     )
 
+    split_days = WorkoutSplitDaySerializer(
+        many=True,
+        required=False,
+    )
+
     def validate_template_key(self, value):
         value = value.strip().lower()
 
@@ -113,6 +176,25 @@ class WorkoutTemplateUpdateSerializer(serializers.Serializer):
         if not value:
             raise serializers.ValidationError(
                 "A workout template must contain at least one exercise."
+            )
+
+        return value
+
+    def validate_split_days(self, value):
+        if value is None:
+            return value
+
+        if len(value) != 6:
+            raise serializers.ValidationError(
+                "A split must contain exactly six days."
+            )
+
+        days = sorted(item["day"] for item in value)
+
+        if days != [1, 2, 3, 4, 5, 6]:
+            raise serializers.ValidationError(
+                "Split days must be exactly 1, 2, 3, 4, 5 and 6 "
+                "with no duplicates."
             )
 
         return value
@@ -159,6 +241,18 @@ class DailyWorkoutGenerateSerializer(serializers.Serializer):
 
     workout_date = serializers.DateField(
         required=False,
+    )
+
+    split = serializers.BooleanField(
+        required=False,
+        default=False,
+    )
+
+
+class DailyWorkoutCompleteSerializer(serializers.Serializer):
+    workout_id = serializers.CharField(
+        max_length=50,
+        trim_whitespace=True,
     )
 
 

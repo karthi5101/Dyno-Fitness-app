@@ -107,7 +107,6 @@ function SessionsPage() {
   const navigate = useNavigate();
 
   const [today, setToday] = useState(null);
-  const [tomorrow, setTomorrow] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -117,14 +116,10 @@ function SessionsPage() {
         setLoading(true);
         setError("");
 
-        const [todayData, tomorrowData] =
-          await Promise.all([
-            request("/sessions/today/"),
-            request("/sessions/tomorrow/"),
-          ]);
+        const todayData =
+          await request("/sessions/today/");
 
         setToday(todayData);
-        setTomorrow(tomorrowData);
       } catch (err) {
         setError(
           err.message || "Unable to load sessions.",
@@ -150,11 +145,6 @@ function SessionsPage() {
 
   const todaySessions =
     today?.sessions || today?.value || [];
-
-  const tomorrowSessions =
-    tomorrow?.sessions ||
-    tomorrow?.value ||
-    [];
 
   return (
     <section className="staff-page sessions-page">
@@ -194,35 +184,6 @@ function SessionsPage() {
             </div>
           ) : (
             todaySessions.map((session) => (
-              <SessionCard
-                key={session.session_key}
-                session={session}
-                navigate={navigate}
-              />
-            ))
-          )}
-        </div>
-      </section>
-
-      <section className="sessions-day sessions-day-secondary">
-        <div className="sessions-day-header">
-          <div>
-            <p className="staff-eyebrow">NEXT</p>
-            <h2>Tomorrow.</h2>
-          </div>
-
-          <span>
-            {tomorrow?.date || "—"}
-          </span>
-        </div>
-
-        <div className="sessions-grid">
-          {tomorrowSessions.length === 0 ? (
-            <div className="staff-empty">
-              <strong>No sessions scheduled.</strong>
-            </div>
-          ) : (
-            tomorrowSessions.map((session) => (
               <SessionCard
                 key={session.session_key}
                 session={session}

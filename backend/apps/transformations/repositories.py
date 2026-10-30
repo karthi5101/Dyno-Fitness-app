@@ -5,6 +5,7 @@ from bson import ObjectId
 from apps.transformations.database import (
     get_transformations_collection,
 )
+from apps.uploads import delete_upload, metadata_fields
 
 
 def utc_now():
@@ -122,6 +123,14 @@ def create_transformation(data):
             "image_url",
             "",
         ),
+        "front_image_url": data.get(
+            "front_image_url",
+            "",
+        ),
+        "back_image_url": data.get(
+            "back_image_url",
+            "",
+        ),
         "notes": data.get(
             "notes",
             "",
@@ -180,6 +189,12 @@ def update_transformation(
     if "image_url" in data:
         update_fields["image_url"] = data["image_url"]
 
+    if "front_image_url" in data:
+        update_fields["front_image_url"] = data["front_image_url"]
+
+    if "back_image_url" in data:
+        update_fields["back_image_url"] = data["back_image_url"]
+
     if "notes" in data:
         update_fields["notes"] = data["notes"]
 
@@ -201,11 +216,46 @@ def update_transformation(
     )
 
 
+def update_transformation_image(
+    transformation_id,
+    prefix,
+    upload_metadata,
+):
+    collection = get_transformations_collection()
+
+    if not ObjectId.is_valid(transformation_id):
+        return None
+
+    object_id = ObjectId(transformation_id)
+    update_fields = metadata_fields(prefix, upload_metadata)
+    update_fields["updated_at"] = utc_now()
+
+    result = collection.update_one(
+        {"_id": object_id},
+        {"$set": update_fields},
+    )
+
+    if result.matched_count == 0:
+        return None
+
+    return collection.find_one({"_id": object_id})
+
+
 def delete_transformation(transformation_id):
     collection = get_transformations_collection()
 
     if not ObjectId.is_valid(transformation_id):
         return False
+
+    document = collection.find_one(
+        {"_id": ObjectId(transformation_id)}
+    )
+
+    if document is None:
+        return False
+
+    for prefix in ("image", "front_image", "back_image"):
+        delete_upload(document.get(f"{prefix}_file_id"))
 
     result = collection.delete_one(
         {

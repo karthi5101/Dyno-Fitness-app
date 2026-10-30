@@ -623,4 +623,126 @@
   .workout-assignment-controls button {
     grid-column: auto;
   }
+}/* Six-day split */
+
+.workout-split-header {
+  margin-top: 32px;
+}
+
+.workout-split-days {
+  display: grid;
+  gap: 14px;
+}
+
+.workout-split-day {
+  border: 1px solid #e7e7e4;
+  background: #ffffff;
+  padding: 14px;
+}
+
+.workout-split-day-head {
+  display: grid;
+  grid-template-columns: 90px minmax(160px, 1fr) 120px;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.workout-split-day-number {
+  color: #111111;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 20px;
+  letter-spacing: 0.04em;
+}
+
+.workout-split-day-head input {
+  min-width: 0;
+  border: 1px solid #ddddda;
+  padding: 10px 12px;
+  color: #111111;
+  background: #fafaf8;
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  outline: none;
+}
+
+.workout-split-day-head button {
+  border: 0;
+  padding: 10px 12px;
+  color: #ffffff;
+  background: #111111;
+  font-family: "Inter", sans-serif;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+
+.workout-split-day-head button:hover {
+  background: #c2182b;
+}
+
+.workout-split-exercise {
+  margin-top: 8px;
+}
+
+.workout-split-day-empty {
+  padding: 12px;
+  border: 1px dashed #e7e7e4;
+  color: #999999;
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+}
+
+.workout-split-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.workout-split-summary-day {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px;
+  border: 1px solid #e7e7e4;
+  background: #fafaf8;
+}
+
+.workout-split-summary-day span {
+  color: #aaaaaa;
+  font-family: "Inter", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.workout-split-summary-day strong {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 22px;
+  font-weight: 400;
+}
+
+.workout-split-summary-day small {
+  color: #999999;
+  font-family: "Inter", sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+}
+
+@media (max-width: 640px) {
+  .workout-split-day-head {
+    grid-template-columns: 1fr;
+  }
+
+  .workout-split-summary {
+    grid-template-columns: 1fr;
+  }
+}
+.workout-split-note {
+  margin: 0 0 14px;
+  color: #777777;
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+  line-height: 1.7;
 }

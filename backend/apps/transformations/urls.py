@@ -2,6 +2,7 @@ from django.urls import path
 
 from apps.transformations.views import (
     TransformationDetailView,
+    TransformationImageUploadView,
     TransformationListCreateView,
     TransformationMemberListView,
 )
@@ -12,6 +13,11 @@ urlpatterns = [
         "",
         TransformationListCreateView.as_view(),
         name="transformation-list-create",
+    ),
+    path(
+        "record/<str:transformation_id>/image/",
+        TransformationImageUploadView.as_view(),
+        name="transformation-image-upload",
     ),
     path(
         "record/<str:transformation_id>/",

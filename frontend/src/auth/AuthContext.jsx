@@ -54,6 +54,10 @@ export function AuthProvider({ children }) {
           username: identity?.username ?? null,
           member_id: identity?.member_id ?? null,
           role: identity?.role ?? null,
+          password_reset_required:
+            Boolean(
+              identity?.password_reset_required,
+            ),
         };
 
         setUser(normalizedIdentity);
@@ -115,6 +119,12 @@ export function AuthProvider({ children }) {
         data?.user?.role ||
         data?.role ||
         null,
+
+      password_reset_required:
+        Boolean(
+          data?.user
+            ?.password_reset_required,
+        ),
     };
 
     setUser(identity);
@@ -131,6 +141,17 @@ export function AuthProvider({ children }) {
   function logout() {
     logoutRequest();
     setUser(null);
+  }
+
+  function clearPasswordResetRequired() {
+    setUser((current) =>
+      current
+        ? {
+            ...current,
+            password_reset_required: false,
+          }
+        : current,
+    );
   }
 
   /*
@@ -153,9 +174,16 @@ export function AuthProvider({ children }) {
 
     role: user?.role || null,
 
+    passwordResetRequired:
+      Boolean(
+        user?.password_reset_required,
+      ),
+
     login,
 
     logout,
+
+    clearPasswordResetRequired,
   };
 
   return (

@@ -4,15 +4,11 @@ import {
   useState,
 } from "react";
 
-import { useNavigate } from "react-router-dom";
-
 import { QRCodeSVG } from "qrcode.react";
 
 import { apiRequest } from "../../api/client";
 
 function GymQRPage() {
-  const navigate = useNavigate();
-
   const [qrData, setQrData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -64,54 +60,6 @@ function GymQRPage() {
             marginBottom: "28px",
           }}
         >
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              gap: "12px",
-              marginBottom: "24px",
-            }}
-          >
-            <button
-              type="button"
-              onClick={() =>
-                navigate("/staff/dashboard")
-              }
-              style={{
-                border: "1px solid #111111",
-                borderRadius: "10px",
-                padding: "10px 14px",
-                background: "#FFFFFF",
-                color: "#111111",
-                cursor: "pointer",
-                fontWeight: 700,
-                fontSize: "12px",
-              }}
-            >
-              ← DASHBOARD
-            </button>
-
-            <button
-              type="button"
-              onClick={() =>
-                navigate("/staff/attendance")
-              }
-              style={{
-                border: "1px solid #D8D8D4",
-                borderRadius: "10px",
-                padding: "10px 14px",
-                background: "#FFFFFF",
-                color: "#111111",
-                cursor: "pointer",
-                fontWeight: 700,
-                fontSize: "12px",
-              }}
-            >
-              ATTENDANCE
-            </button>
-          </div>
-
           <p
             style={{
               margin: 0,

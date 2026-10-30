@@ -2,7 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { useAuth } from "../../auth/AuthContext";
-import { getMemberWorkout } from "../../api/client";
+import {
+  completeDailyWorkout,
+  getMemberWorkout,
+  getWorkoutHistory,
+} from "../../api/client";
 
 import "./WorkoutPage.css";
 
@@ -158,6 +162,12 @@ function WorkoutPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const [completing, setCompleting] =
+    useState(false);
+
+  const [feedback, setFeedback] =
+    useState(null);
+
   useEffect(() => {
     let active = true;
 
@@ -182,8 +192,46 @@ function WorkoutPage() {
           getTodayDate(),
         );
 
+        let nextData = data;
+
+        if (!data?.workout) {
+          const historyResponse =
+            await getWorkoutHistory(memberId);
+
+          const history = Array.isArray(
+            historyResponse,
+          )
+            ? historyResponse
+            : [];
+
+          const pending = history
+            .filter(
+              (record) =>
+                record?.status === "pending" &&
+                Number.isInteger(
+                  record?.split_day,
+                ),
+            )
+            .sort(
+              (first, second) =>
+                new Date(
+                  second?.workout_date || 0,
+                ).getTime() -
+                new Date(
+                  first?.workout_date || 0,
+                ).getTime(),
+            )[0];
+
+          if (pending) {
+            nextData = {
+              ...data,
+              workout: pending,
+            };
+          }
+        }
+
         if (active) {
-          setWorkoutData(data);
+          setWorkoutData(nextData);
         }
       } catch (err) {
         if (active) {
@@ -227,12 +275,72 @@ function WorkoutPage() {
     [exercises],
   );
 
-  const trainingFocus =
-    workout?.focus ||
-    workout?.training_focus ||
-    assignment?.focus ||
-    assignment?.training_focus ||
-    "TODAY'S TRAINING";
+  const trainingFocus = workout?.split_day
+    ? `DAY ${workout.split_day}${
+        workout.split_day_label
+          ? ` · ${workout.split_day_label}`
+          : ""
+      }`
+    : workout?.focus ||
+      workout?.training_focus ||
+      assignment?.focus ||
+      assignment?.training_focus ||
+      "TODAY'S TRAINING";
+
+  const isSplitWorkout = Number.isInteger(
+    workout?.split_day,
+  );
+
+  const isCompleted =
+    workout?.status === "completed";
+
+  async function handleCompleteWorkout() {
+    if (!memberId || !workout?.id || completing) {
+      return;
+    }
+
+    try {
+      setCompleting(true);
+      setFeedback(null);
+
+      const result = await completeDailyWorkout(
+        memberId,
+        workout.id,
+      );
+
+      if (result?.workout) {
+        setWorkoutData((current) =>
+          current
+            ? {
+                ...current,
+                workout: result.workout,
+              }
+            : current,
+        );
+      }
+
+      if (result?.already_completed) {
+        setFeedback({
+          type: "notice",
+          text: "This workout was already completed. Your progress is unchanged.",
+        });
+      } else {
+        setFeedback({
+          type: "success",
+          text: "Workout completed. Your next session moves to the next split day.",
+        });
+      }
+    } catch (err) {
+      setFeedback({
+        type: "error",
+        text:
+          err?.message ||
+          "Unable to complete this workout.",
+      });
+    } finally {
+      setCompleting(false);
+    }
+  }
 
   const workoutType =
     workout?.type ||
@@ -257,6 +365,12 @@ function WorkoutPage() {
     workout?.workout_date ||
     workout?.date ||
     getTodayDate();
+
+  const isPendingFallback = Boolean(
+    workout?.status === "pending" &&
+      String(workoutDate).slice(0, 10) !==
+        getTodayDate(),
+  );
 
   const templateName =
     workout?.template_name ||
@@ -316,13 +430,25 @@ function WorkoutPage() {
           </Link>
 
           <p className="member-workout-eyebrow">
-            TODAY / WORKOUT
+            {isPendingFallback
+              ? "PENDING / WORKOUT"
+              : "TODAY / WORKOUT"}
           </p>
 
           <h1>
-            TODAY&apos;S
-            <br />
-            WORKOUT.
+            {isPendingFallback ? (
+              <>
+                PENDING
+                <br />
+                SESSION.
+              </>
+            ) : (
+              <>
+                TODAY&apos;S
+                <br />
+                WORKOUT.
+              </>
+            )}
           </h1>
         </div>
 
@@ -344,6 +470,50 @@ function WorkoutPage() {
           <span>{templateName}</span>
         </div>
       </article>
+
+      {isSplitWorkout && (
+        <section className="member-workout-completion">
+          {isCompleted ? (
+            <div className="member-workout-completion-state">
+              <span>SESSION STATUS</span>
+
+              <strong>COMPLETED</strong>
+
+              <small>
+                {workout?.completed_at
+                  ? formatDate(
+                      workout.completed_at,
+                    )
+                  : "RECORDED"}
+                {" · "}
+                {(
+                  workout?.completed_by_role ||
+                  "member"
+                ).toUpperCase()}
+              </small>
+            </div>
+          ) : (
+            <button
+              type="button"
+              className="member-workout-complete-button"
+              onClick={handleCompleteWorkout}
+              disabled={completing}
+            >
+              {completing
+                ? "COMPLETING..."
+                : "MARK WORKOUT COMPLETE →"}
+            </button>
+          )}
+
+          {feedback && (
+            <p
+              className={`member-workout-feedback member-workout-feedback-${feedback.type}`}
+            >
+              {feedback.text}
+            </p>
+          )}
+        </section>
+      )}
 
       <section className="member-workout-summary">
         <div>

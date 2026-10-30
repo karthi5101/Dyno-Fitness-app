@@ -5,6 +5,7 @@ from .password_views import (
     ChangePasswordView,
     PasswordResetConfirmView,
     PasswordResetRequestView,
+    SchoolPasswordRecoveryView,
 )
 from .views import LoginView
 from .views_identity import CurrentIdentityView
@@ -21,6 +22,11 @@ urlpatterns = [
         "password/change/",
         ChangePasswordView.as_view(),
         name="change-password",
+    ),
+    path(
+        "password/recover/",
+        SchoolPasswordRecoveryView.as_view(),
+        name="school-password-recovery",
     ),
     path(
         "password/reset/",

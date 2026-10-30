@@ -17,6 +17,12 @@ from apps.membership.payment_repository import (
 from apps.membership.payment_serializers import (
     PaymentSerializer,
 )
+from apps.uploads import (
+    PAYMENT_CONTENT_TYPES,
+    delete_upload,
+    metadata_fields,
+    save_upload,
+)
 
 
 class PaymentListCreateView(APIView):
@@ -28,6 +34,7 @@ class PaymentListCreateView(APIView):
         serializer = PaymentSerializer(
             payments,
             many=True,
+            context={"request": request},
         )
 
         return Response(serializer.data)
@@ -74,7 +81,8 @@ class PaymentListCreateView(APIView):
             )
 
         response_serializer = PaymentSerializer(
-            payment
+            payment,
+            context={"request": request},
         )
 
         return Response(
@@ -94,6 +102,58 @@ class PaymentMemberListView(APIView):
         serializer = PaymentSerializer(
             payments,
             many=True,
+            context={"request": request},
+        )
+
+        return Response(serializer.data)
+
+
+class PaymentProofUploadView(APIView):
+    permission_classes = [IsStaffUser]
+
+    def post(self, request, payment_id):
+        payment = get_payment_by_id(payment_id)
+
+        if payment is None:
+            return Response(
+                {"detail": "Payment not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        try:
+            upload_metadata = save_upload(
+                request.FILES.get("file"),
+                allowed_content_types=PAYMENT_CONTENT_TYPES,
+                purpose="payment_proof",
+            )
+        except ValueError as exc:
+            return Response(
+                {"file": [str(exc)]},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        old_file_id = payment.get("payment_proof_file_id")
+        fields = metadata_fields(
+            "payment_proof",
+            upload_metadata,
+        )
+
+        updated = update_payment(payment_id, fields)
+
+        if updated is None:
+            delete_upload(upload_metadata["file_id"])
+
+            return Response(
+                {"detail": "Payment not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        if old_file_id and old_file_id != upload_metadata["file_id"]:
+            delete_upload(old_file_id)
+
+        serializer = PaymentSerializer(
+            updated,
+            context={"request": request},
         )
 
         return Response(serializer.data)
@@ -113,7 +173,10 @@ class PaymentDetailView(APIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        serializer = PaymentSerializer(payment)
+        serializer = PaymentSerializer(
+            payment,
+            context={"request": request},
+        )
 
         return Response(serializer.data)
 
@@ -180,7 +243,8 @@ class PaymentDetailView(APIView):
             )
 
         response_serializer = PaymentSerializer(
-            payment
+            payment,
+            context={"request": request},
         )
 
         return Response(response_serializer.data)

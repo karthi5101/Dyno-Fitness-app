@@ -24,7 +24,6 @@ class TransformationSerializer(serializers.Serializer):
         max_length=2000,
         allow_blank=True,
         required=False,
-        default="",
     )
 
     notes = serializers.CharField(

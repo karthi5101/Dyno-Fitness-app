@@ -104,6 +104,76 @@
   margin-top: 8px;
 }
 
+.payment-proof-drop {
+  display: flex !important;
+  min-height: 96px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 6px;
+  padding: 18px;
+  border: 1px dashed #cfcfcf;
+  border-radius: 18px;
+  background: #fafaf8;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease;
+}
+
+.payment-proof-drop.is-dragging {
+  border-color: #c2182b;
+  background: #fff5f5;
+}
+
+.payment-proof-drop input {
+  display: none;
+}
+
+.payment-proof-drop strong {
+  color: #111111;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  word-break: break-word;
+}
+
+.payment-proof-drop span {
+  color: #888888;
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+
+.payment-proof-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.payment-proof-cell a,
+.payment-proof-replace {
+  color: #111111;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.payment-proof-cell a:hover,
+.payment-proof-replace:hover {
+  color: #c2182b;
+}
+
+.payment-proof-replace {
+  cursor: pointer;
+}
+
+.payment-proof-replace input {
+  display: none;
+}
+
 .payment-list-header {
   padding-bottom: 20px;
   border-bottom: 1px solid #e7e7e7;
@@ -112,7 +182,7 @@
 .payment-row {
   min-height: 80px;
   display: grid;
-  grid-template-columns: 1fr 160px 120px 110px;
+  grid-template-columns: 1fr 150px 100px 150px 110px;
   gap: 20px;
   align-items: center;
   border-bottom: 1px solid #e7e7e7;

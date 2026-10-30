@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import {
   assignWorkoutTemplate,
+  completeDailyWorkout,
   deleteDailyWorkout,
   generateDailyWorkout,
   getMemberWorkout,
@@ -114,17 +115,32 @@ function MemberWorkoutSection({ memberId }) {
   const [assigning, setAssigning] =
     useState(false);
 
+  const [completing, setCompleting] =
+    useState(false);
+
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [notice, setNotice] = useState("");
 
   const today = getToday();
 
   const isToday = selectedDate === today;
 
+  const workoutDate = dailyWorkout?.workout_date
+    ? String(dailyWorkout.workout_date).slice(0, 10)
+    : selectedDate;
+
+  const isSplitWorkout =
+    Number.isInteger(dailyWorkout?.split_day);
+
+  const isCompleted =
+    dailyWorkout?.status === "completed";
+
   async function loadWorkout(date = selectedDate) {
     try {
       setLoading(true);
       setError("");
+      setNotice("");
 
       const [
         workoutData,
@@ -243,6 +259,7 @@ function MemberWorkoutSection({ memberId }) {
       setAssigning(true);
       setError("");
       setSuccess("");
+      setNotice("");
 
       const result =
         await assignWorkoutTemplate(
@@ -279,27 +296,43 @@ function MemberWorkoutSection({ memberId }) {
       setSaving(true);
       setError("");
       setSuccess("");
+      setNotice("");
 
-      const created =
-        await generateDailyWorkout(
-          memberId,
-          selectedDate,
-        );
+      const created = await generateDailyWorkout(
+        memberId,
+        selectedDate,
+        {
+          split: Boolean(
+            selectedTemplate?.split_days
+              ?.length,
+          ),
+        },
+      );
 
-      setDailyWorkout(created);
+      const createdWorkout =
+        created?.workout || created;
+
+      setDailyWorkout(createdWorkout);
 
       setExercises(
         normalizeExercises(
-          created?.exercises || [],
+          createdWorkout?.exercises || [],
         ),
       );
 
+      const createdDate =
+        createdWorkout?.workout_date
+          ? String(
+              createdWorkout.workout_date,
+            ).slice(0, 10)
+          : selectedDate;
+
       setSuccess(
-        isToday
-          ? "Today's workout has been created."
+        createdDate === today
+          ? "Today's workout is ready."
           : `Workout for ${formatDate(
-              selectedDate,
-            )} has been created.`,
+              createdDate,
+            )} is ready.`,
       );
 
       await loadHistory();
@@ -371,6 +404,7 @@ function MemberWorkoutSection({ memberId }) {
       setSaving(true);
       setError("");
       setSuccess("");
+      setNotice("");
 
       const updated =
         await updateDailyWorkout(
@@ -379,7 +413,7 @@ function MemberWorkoutSection({ memberId }) {
             ...exercise,
             order: index,
           })),
-          selectedDate,
+          workoutDate,
         );
 
       setDailyWorkout(updated);
@@ -391,11 +425,9 @@ function MemberWorkoutSection({ memberId }) {
       );
 
       setSuccess(
-        isToday
-          ? "Today's workout has been updated."
-          : `Workout for ${formatDate(
-              selectedDate,
-            )} has been updated.`,
+        `Workout for ${formatDate(
+          workoutDate,
+        )} has been updated.`,
       );
 
       await loadHistory();
@@ -416,7 +448,7 @@ function MemberWorkoutSection({ memberId }) {
 
     const confirmed = window.confirm(
       `Delete the workout for ${formatDate(
-        selectedDate,
+        workoutDate,
       )}?`,
     );
 
@@ -428,21 +460,20 @@ function MemberWorkoutSection({ memberId }) {
       setSaving(true);
       setError("");
       setSuccess("");
+      setNotice("");
 
       await deleteDailyWorkout(
         memberId,
-        selectedDate,
+        workoutDate,
       );
 
       setDailyWorkout(null);
       setExercises([]);
 
       setSuccess(
-        isToday
-          ? "Today's workout has been removed."
-          : `Workout for ${formatDate(
-              selectedDate,
-            )} has been removed.`,
+        `Workout for ${formatDate(
+          workoutDate,
+        )} has been removed.`,
       );
 
       await loadHistory();
@@ -456,6 +487,58 @@ function MemberWorkoutSection({ memberId }) {
     }
   }
 
+  async function handleCompleteWorkout() {
+    if (!dailyWorkout?.id) {
+      setError(
+        "This workout cannot be completed.",
+      );
+      return;
+    }
+
+    try {
+      setCompleting(true);
+      setError("");
+      setSuccess("");
+      setNotice("");
+
+      const result = await completeDailyWorkout(
+        memberId,
+        dailyWorkout.id,
+      );
+
+      const updated = result?.workout || null;
+
+      if (updated) {
+        setDailyWorkout(updated);
+
+        setExercises(
+          normalizeExercises(
+            updated.exercises || [],
+          ),
+        );
+      }
+
+      if (result?.already_completed) {
+        setNotice(
+          "This workout was already completed. Rotation progress is unchanged.",
+        );
+      } else {
+        setSuccess(
+          "Workout marked complete. The next workout advances the split.",
+        );
+      }
+
+      await loadHistory();
+    } catch (err) {
+      setError(
+        err?.message ||
+          "We couldn't complete this workout.",
+      );
+    } finally {
+      setCompleting(false);
+    }
+  }
+
   function handleHistorySelect(date) {
     if (!date) {
       return;
@@ -463,12 +546,14 @@ function MemberWorkoutSection({ memberId }) {
 
     setError("");
     setSuccess("");
+    setNotice("");
     setSelectedDate(date);
   }
 
   function handleResetToToday() {
     setError("");
     setSuccess("");
+    setNotice("");
     setSelectedDate(today);
   }
 
@@ -518,6 +603,12 @@ function MemberWorkoutSection({ memberId }) {
         </div>
       )}
 
+      {notice && (
+        <div className="member-workout-message member-workout-message-info">
+          {notice}
+        </div>
+      )}
+
       <div className="member-workout-overview">
         <article className="member-workout-overview-card member-workout-overview-card-dark">
           <span>
@@ -541,9 +632,13 @@ function MemberWorkoutSection({ memberId }) {
 
         <article className="member-workout-overview-card">
           <span>
-            {isToday
-              ? "TODAY"
-              : "SELECTED DATE"}
+            {dailyWorkout
+              ? String(workoutDate) === today
+                ? "TODAY"
+                : "PENDING WORKOUT"
+              : isToday
+                ? "TODAY"
+                : "SELECTED DATE"}
           </span>
 
           <strong>
@@ -554,9 +649,19 @@ function MemberWorkoutSection({ memberId }) {
 
           <small>
             {dailyWorkout
-              ? `${exercises.length} exercises · ${formatDate(
-                  selectedDate,
-                )}`
+              ? [
+                  isSplitWorkout
+                    ? `DAY ${dailyWorkout.split_day}${
+                        dailyWorkout.split_day_label
+                          ? ` · ${dailyWorkout.split_day_label}`
+                          : ""
+                      }`
+                    : null,
+                  `${exercises.length} exercises`,
+                  formatDate(workoutDate),
+                ]
+                  .filter(Boolean)
+                  .join(" · ")
               : `No workout for ${formatDate(
                   selectedDate,
                 )}.`}
@@ -684,16 +789,32 @@ function MemberWorkoutSection({ memberId }) {
             </p>
 
             <h3>
-              {isToday
+              {String(workoutDate) === today
                 ? "TODAY'S WORKOUT."
                 : `${formatDate(
-                    selectedDate,
+                    workoutDate,
                   ).toUpperCase()}.`}
             </h3>
 
             <span>
               {dailyWorkout
-                ? `${exercises.length} exercises`
+                ? [
+                    isSplitWorkout
+                      ? `DAY ${dailyWorkout.split_day}${
+                          dailyWorkout.split_day_label
+                            ? ` · ${dailyWorkout.split_day_label}`
+                            : ""
+                        }`
+                      : null,
+                    `${exercises.length} exercises`,
+                    isCompleted
+                      ? "COMPLETED"
+                      : isSplitWorkout
+                        ? "PENDING"
+                        : null,
+                  ]
+                    .filter(Boolean)
+                    .join(" · ")
                 : "Generate a workout from the member's current assigned template."}
             </span>
           </div>
@@ -740,6 +861,24 @@ function MemberWorkoutSection({ memberId }) {
                 >
                   + ADD EXERCISE
                 </button>
+
+                {isSplitWorkout &&
+                  !isCompleted && (
+                    <button
+                      type="button"
+                      className="member-workout-button member-workout-button-dark"
+                      onClick={
+                        handleCompleteWorkout
+                      }
+                      disabled={
+                        saving || completing
+                      }
+                    >
+                      {completing
+                        ? "COMPLETING..."
+                        : "MARK COMPLETE →"}
+                    </button>
+                  )}
 
                 <button
                   type="button"
@@ -789,6 +928,17 @@ function MemberWorkoutSection({ memberId }) {
             </small>
           )}
         </div>
+
+        {dailyWorkout &&
+          workoutDate !== selectedDate && (
+            <div className="member-workout-message member-workout-message-info">
+              This member already has a
+              pending split workout dated{" "}
+              {formatDate(workoutDate)}. It is
+              shown here instead of creating a
+              second pending workout.
+            </div>
+          )}
 
         {!dailyWorkout ? (
           <div className="member-workout-empty">
@@ -943,7 +1093,8 @@ function MemberWorkoutSection({ memberId }) {
               )
             )}
 
-            {dailyWorkout && (
+            {dailyWorkout &&
+              !(isSplitWorkout && isCompleted) && (
               <div className="member-workout-delete-day">
                 <button
                   type="button"
@@ -953,7 +1104,7 @@ function MemberWorkoutSection({ memberId }) {
                   disabled={saving}
                 >
                   DELETE{" "}
-                  {isToday
+                  {String(workoutDate) === today
                     ? "TODAY'S"
                     : "SELECTED DAY'S"}{" "}
                   WORKOUT
@@ -1042,6 +1193,9 @@ function MemberWorkoutSection({ memberId }) {
                     <strong>
                       {record.template_key ||
                         "CUSTOM"}
+                      {record.split_day
+                        ? ` · DAY ${record.split_day}`
+                        : ""}
                     </strong>
                   </div>
 

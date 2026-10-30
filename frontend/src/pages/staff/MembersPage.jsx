@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 
 import {
   createMember,
-  deactivateMember,
   getMembers,
   updateMember,
 } from "../../api/client";
@@ -21,7 +20,6 @@ const SESSION_OPTIONS = [
 
 const EMPTY_FORM = {
   member_id: "",
-  password: "",
   name: "",
   phone: "",
   email: "",
@@ -70,7 +68,6 @@ function formatSession(value) {
 function normalizeMemberForForm(member) {
   return {
     member_id: member?.member_id || "",
-    password: "",
     name: member?.name || "",
     phone: member?.phone || "",
     email: member?.email || "",
@@ -203,7 +200,7 @@ function MembersPage() {
 
   
   function validateForm() {
-    if (!form.member_id.trim()) {
+    if (editingMember && !form.member_id.trim()) {
       return "Member ID is required.";
     }
 
@@ -217,40 +214,6 @@ function MembersPage() {
 
     if (!form.joining_date) {
       return "Joining date is required.";
-    }
-
-    if (!editingMember) {
-      const password = form.password;
-
-      if (!password) {
-        return "Please create a password for this member.";
-      }
-
-      if (password.length < 8) {
-        return "Your password must contain at least 8 characters.";
-      }
-
-      if (/^\d+$/.test(password)) {
-        return "Your password cannot contain only numbers. Mix letters and numbers.";
-      }
-
-      const commonPasswords = [
-        "password",
-        "password123",
-        "12345678",
-        "123456789",
-        "qwerty123",
-        "abc12345",
-        "admin123",
-      ];
-
-      if (commonPasswords.includes(password.toLowerCase())) {
-        return "This password is too common. Please choose a stronger password.";
-      }
-
-      if (!/[a-zA-Z]/.test(password) || !/\d/.test(password)) {
-        return "Use a combination of letters and numbers in your password.";
-      }
     }
 
     if (form.email.trim()) {
@@ -281,7 +244,6 @@ function MembersPage() {
       setSuccessMessage("");
 
       const payload = {
-        member_id: form.member_id.trim(),
         name: form.name.trim(),
         phone: form.phone.trim(),
         email: form.email.trim() || null,
@@ -301,7 +263,6 @@ function MembersPage() {
           payload,
         );
       } else {
-        payload.password = form.password;
         savedMember = await createMember(payload);
       }
 
@@ -335,7 +296,11 @@ function MembersPage() {
       setSuccessMessage(
         wasEditing
           ? "Member updated successfully."
-          : "Member added successfully.",
+          : `Member ${
+              returnedMember?.member_id || ""
+            } added. Initial password: ${
+              returnedMember?.member_id || "member ID"
+            }.`,
       );
     } catch (err) {
       setFormError(
@@ -366,12 +331,20 @@ function MembersPage() {
       setSuccessMessage("");
 
       if (isActive) {
-        await deactivateMember(member.member_id);
+        const updatedMember = await updateMember(
+          member.member_id,
+          {
+            status: "inactive",
+          },
+        );
+
+        const returnedMember =
+          updatedMember?.value || updatedMember;
 
         setMembers((current) =>
           current.map((currentMember) =>
             currentMember.member_id === member.member_id
-              ? { ...currentMember, status: "inactive" }
+              ? returnedMember
               : currentMember,
           ),
         );
@@ -383,17 +356,12 @@ function MembersPage() {
         const updatedMember = await updateMember(
           member.member_id,
           {
-            ...normalizeMemberForForm(member),
             status: "active",
-            email: member.email || null,
-            date_of_birth: member.date_of_birth || null,
-            gender: member.gender || null,
-            emergency_contact: member.emergency_contact || null,
-            preferred_session: member.preferred_session || null,
           },
         );
 
-        const returnedMember = updatedMember?.value || updatedMember;
+        const returnedMember =
+          updatedMember?.value || updatedMember;
 
         setMembers((current) =>
           current.map((currentMember) =>
@@ -404,7 +372,9 @@ function MembersPage() {
         );
 
         setSuccessMessage(
-          `${member.name || "Member"} has been activated.`,
+          `${member.name || "Member"} has been activated. ` +
+            `Initial password: ${member.member_id}. ` +
+            "They must set a new password and school answer.",
         );
       }
     } catch (err) {
@@ -767,14 +737,30 @@ function MembersPage() {
 
                 <div className="members-form-grid">
                   <label className="members-field">
-                    <span>MEMBER ID *</span>
+                    <span>MEMBER ID</span>
                     <input
                       name="member_id"
-                      value={form.member_id}
-                      onChange={handleFormChange}
-                      placeholder="MEM-0003"
-                      disabled={Boolean(editingMember)}
+                      value={
+                        editingMember
+                          ? form.member_id
+                          : ""
+                      }
+                      placeholder={
+                        editingMember
+                          ? ""
+                          : "Generated automatically"
+                      }
+                      disabled
                     />
+
+                    {!editingMember && (
+                      <small>
+                        Assigned automatically in sequence (A001,
+                        A002...). This becomes the initial password.
+                        The member must set a new password and school
+                        answer on first sign in.
+                      </small>
+                    )}
                   </label>
 
                   <label className="members-field">
@@ -797,30 +783,6 @@ function MembersPage() {
                       inputMode="tel"
                     />
                   </label>
-
-
-                  {!editingMember && (
-                    <label className="members-field">
-                      <span>PASSWORD *</span>
-                      <input
-                        name="password"
-                        type="password"
-                        value={form.password}
-                        onChange={(event) => {
-                          handleFormChange(event);
-                          setFormError("");
-                        }}
-                        placeholder="Minimum 8 characters"
-                        minLength={8}
-                        autoComplete="new-password"
-                        required
-                        aria-describedby="member-password-help"
-                      />
-                      <small id="member-password-help">
-                        Use at least 8 characters, including letters and numbers.
-                      </small>
-                    </label>
-                  )}
 
 
                   <label className="members-field">

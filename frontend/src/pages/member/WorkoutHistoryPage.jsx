@@ -137,7 +137,7 @@ function WorkoutHistoryPage() {
         </div>
 
         <div className="member-workout-history-count">
-          <span>COMPLETED RECORDS</span>
+          <span>WORKOUT RECORDS</span>
           <strong>
             {String(history.length).padStart(2, "0")}
           </strong>
@@ -213,6 +213,12 @@ function WorkoutHistoryPage() {
                   <span>
                     {exerciseCount} EXERCISES ·{" "}
                     {sets || "—"} SETS
+                    {workout?.split_day
+                      ? ` · DAY ${workout.split_day}`
+                      : ""}
+                    {workout?.status === "pending"
+                      ? " · PENDING"
+                      : ""}
                   </span>
                 </div>
 
@@ -270,6 +276,18 @@ function WorkoutHistoryPage() {
                 selectedWorkout?.workout_date ||
                   selectedWorkout?.date,
               )}
+              {selectedWorkout?.split_day
+                ? ` · DAY ${selectedWorkout.split_day}${
+                    selectedWorkout.split_day_label
+                      ? ` · ${selectedWorkout.split_day_label}`
+                      : ""
+                  }`
+                : ""}
+              {selectedWorkout?.status
+                ? ` · ${String(
+                    selectedWorkout.status,
+                  ).toUpperCase()}`
+                : ""}
             </span>
 
             <div className="member-history-modal-exercises">

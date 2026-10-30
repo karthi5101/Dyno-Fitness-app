@@ -167,6 +167,12 @@
   color: #236b3b;
 }
 
+.member-workout-section .member-workout-message-info {
+  border-color: #d8d8d2;
+  background: #f7f7f4;
+  color: #4a4a45;
+}
+
 /* =========================================================
    OVERVIEW CARDS
 ========================================================= */

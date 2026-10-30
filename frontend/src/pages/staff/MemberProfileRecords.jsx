@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 
 import {
+  createMembership,
   createNote,
   deleteNote,
   getMemberNotes,
   getMemberPayments,
   getMembership,
+  updateMembership,
   updateNote,
 } from "../../api/client";
 
@@ -71,11 +73,45 @@ function daysUntil(value) {
  * -------------------------------------------------------------------
  */
 
+const MEMBERSHIP_PLANS = [
+  "Monthly",
+  "Quarterly",
+  "6 Months",
+  "12 Months",
+];
+
+function toDateInput(value) {
+  if (!value) {
+    return "";
+  }
+
+  return String(value).slice(0, 10);
+}
+
+function getTodayInputValue() {
+  const date = new Date();
+
+  return [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, "0"),
+    String(date.getDate()).padStart(2, "0"),
+  ].join("-");
+}
+
 function MembershipSection({ memberId }) {
   const [membership, setMembership] =
     useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [form, setForm] = useState({
+    plan_name: "Monthly",
+    start_date: getTodayInputValue(),
+    end_date: "",
+  });
 
   useEffect(() => {
     let cancelled = false;
@@ -90,14 +126,29 @@ function MembershipSection({ memberId }) {
 
         if (!cancelled) {
           setMembership(response);
+          setForm({
+            plan_name:
+              response?.plan_name || "Monthly",
+            start_date: toDateInput(
+              response?.start_date,
+            ),
+            end_date: toDateInput(
+              response?.end_date,
+            ),
+          });
         }
       } catch (err) {
         if (!cancelled) {
           setMembership(null);
-          setError(
-            err?.message ||
-              "Unable to load this member's membership.",
-          );
+
+          if (err?.status === 404) {
+            setError("");
+          } else {
+            setError(
+              err?.message ||
+                "Unable to load this member's membership.",
+            );
+          }
         }
       } finally {
         if (!cancelled) {
@@ -118,6 +169,104 @@ function MembershipSection({ memberId }) {
   const remaining = useMemo(() => {
     return daysUntil(membership?.end_date);
   }, [membership?.end_date]);
+
+  const showForm = editing || !membership;
+
+  function handleChange(event) {
+    const { name, value } = event.target;
+
+    setForm((current) => ({
+      ...current,
+      [name]: value,
+    }));
+  }
+
+  function startEditing() {
+    setForm({
+      plan_name:
+        membership?.plan_name || "Monthly",
+      start_date: toDateInput(
+        membership?.start_date,
+      ),
+      end_date: toDateInput(
+        membership?.end_date,
+      ),
+    });
+    setFormError("");
+    setSuccess("");
+    setEditing(true);
+  }
+
+  function cancelEditing() {
+    setEditing(false);
+    setFormError("");
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+
+    if (!form.plan_name) {
+      setFormError("Select a membership plan.");
+      return;
+    }
+
+    if (!form.start_date || !form.end_date) {
+      setFormError(
+        "Start date and end date are required.",
+      );
+      return;
+    }
+
+    if (form.end_date < form.start_date) {
+      setFormError(
+        "End date must be on or after the start date.",
+      );
+      return;
+    }
+
+    try {
+      setSaving(true);
+      setFormError("");
+      setSuccess("");
+
+      const payload = {
+        plan_name: form.plan_name,
+        start_date: form.start_date,
+        end_date: form.end_date,
+      };
+
+      const saved = membership
+        ? await updateMembership(memberId, payload)
+        : await createMembership({
+            member_id: memberId,
+            status: "active",
+            ...payload,
+          });
+
+      const savedMembership = saved?.value || saved;
+
+      setMembership(savedMembership);
+      setForm({
+        plan_name:
+          savedMembership?.plan_name || "Monthly",
+        start_date: toDateInput(
+          savedMembership?.start_date,
+        ),
+        end_date: toDateInput(
+          savedMembership?.end_date,
+        ),
+      });
+      setEditing(false);
+      setSuccess("Membership saved.");
+    } catch (err) {
+      setFormError(
+        err?.message ||
+          "Unable to save this membership.",
+      );
+    } finally {
+      setSaving(false);
+    }
+  }
 
   if (loading) {
     return (
@@ -220,7 +369,99 @@ function MembershipSection({ memberId }) {
               </small>
             </article>
           </div>
+
+          {!showForm && (
+            <div className="member-records-membership-actions">
+              <button
+                type="button"
+                onClick={startEditing}
+              >
+                EDIT PLAN
+              </button>
+            </div>
+          )}
         </>
+      )}
+
+      {success && (
+        <p className="member-records-membership-success">
+          {success}
+        </p>
+      )}
+
+      {showForm && (
+        <form
+          className="member-records-membership-form"
+          onSubmit={handleSubmit}
+        >
+          <label>
+            <span>PLAN</span>
+
+            <select
+              name="plan_name"
+              value={form.plan_name}
+              onChange={handleChange}
+              disabled={saving}
+            >
+              {MEMBERSHIP_PLANS.map((plan) => (
+                <option key={plan} value={plan}>
+                  {plan}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label>
+            <span>START DATE</span>
+
+            <input
+              type="date"
+              name="start_date"
+              value={form.start_date}
+              onChange={handleChange}
+              disabled={saving}
+              required
+            />
+          </label>
+
+          <label>
+            <span>END DATE</span>
+
+            <input
+              type="date"
+              name="end_date"
+              value={form.end_date}
+              onChange={handleChange}
+              disabled={saving}
+              required
+            />
+          </label>
+
+          {formError && (
+            <p className="member-records-membership-error">
+              {formError}
+            </p>
+          )}
+
+          <div className="member-records-membership-form-actions">
+            <button
+              type="submit"
+              disabled={saving}
+            >
+              {saving ? "SAVING..." : "SAVE PLAN"}
+            </button>
+
+            {membership && (
+              <button
+                type="button"
+                onClick={cancelEditing}
+                disabled={saving}
+              >
+                CANCEL
+              </button>
+            )}
+          </div>
+        </form>
       )}
     </section>
   );

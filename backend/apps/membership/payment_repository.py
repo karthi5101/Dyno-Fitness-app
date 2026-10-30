@@ -8,6 +8,7 @@ from apps.members.database import get_members_collection
 from apps.membership.payment_database import (
     get_payments_collection,
 )
+from apps.uploads import delete_upload
 
 
 def _date_to_datetime(value):
@@ -211,6 +212,15 @@ def delete_payment(payment_id):
 
     if not ObjectId.is_valid(payment_id):
         return False
+
+    document = collection.find_one(
+        {"_id": ObjectId(payment_id)}
+    )
+
+    if document is None:
+        return False
+
+    delete_upload(document.get("payment_proof_file_id"))
 
     result = collection.delete_one(
         {

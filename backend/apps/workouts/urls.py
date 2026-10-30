@@ -2,6 +2,7 @@
 from django.urls import path
 
 from apps.workouts.views import (
+    DailyWorkoutCompleteView,
     DailyWorkoutGenerateView,
     DailyWorkoutView,
     WorkoutAssignmentView,
@@ -59,6 +60,12 @@ urlpatterns = [
         "daily/sync/",
         WorkoutSyncView.as_view(),
         name="daily-workout-sync",
+    ),
+
+    path(
+        "daily/<str:member_id>/complete/",
+        DailyWorkoutCompleteView.as_view(),
+        name="daily-workout-complete",
     ),
 
     path(

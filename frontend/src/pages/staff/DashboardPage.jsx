@@ -159,37 +159,6 @@ function DashboardPage() {
       <section className="dashboard-stat-grid">
         <Link
           className="dashboard-stat-card"
-          to="/staff/members"
-        >
-          <span>ACTIVE MEMBERS</span>
-
-          <strong>
-            {dashboard?.members?.active ?? 0}
-          </strong>
-
-          <p>
-            active members →
-          </p>
-        </Link>
-
-        <Link
-          className="dashboard-stat-card"
-          to="/staff/sessions"
-        >
-          <span>SESSIONS</span>
-
-          <strong>
-            {dashboard?.sessions
-              ?.total_present ?? 0}
-          </strong>
-
-          <p>
-            session activity →
-          </p>
-        </Link>
-
-        <Link
-          className="dashboard-stat-card"
           to="/staff/membership"
         >
           <span>ACTIVE MEMBERSHIPS</span>

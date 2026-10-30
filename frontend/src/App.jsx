@@ -353,12 +353,9 @@ function AppRoutes() {
       <Route
         path="/staff/gym-qr"
         element={
-          <StaffRoute
-            backTo="/staff/attendance"
-            backLabel="ATTENDANCE"
-          >
+          <Protected role="staff">
             <StaffGymQRPage />
-          </StaffRoute>
+          </Protected>
         }
       />
 

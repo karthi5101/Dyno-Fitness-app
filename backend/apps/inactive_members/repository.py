@@ -19,7 +19,7 @@ def _normalize_date(value):
     return value
 
 
-def _get_reference_date(member_id, joining_date):
+def _get_reference_dates(member_id, joining_date):
     attendance_collection = get_attendance_collection()
 
     latest_attendance = attendance_collection.find_one(
@@ -33,11 +33,13 @@ def _get_reference_date(member_id, joining_date):
     )
 
     if latest_attendance:
-        return _normalize_date(
+        last_attendance_date = _normalize_date(
             latest_attendance["attendance_date"]
         )
 
-    return _normalize_date(joining_date)
+        return last_attendance_date, last_attendance_date
+
+    return _normalize_date(joining_date), None
 
 
 def get_inactive_member_candidates():
@@ -56,9 +58,11 @@ def get_inactive_member_candidates():
     for member in active_members:
         member_id = member["member_id"]
 
-        reference_date = _get_reference_date(
-            member_id,
-            member.get("joining_date"),
+        reference_date, last_attendance_date = (
+            _get_reference_dates(
+                member_id,
+                member.get("joining_date"),
+            )
         )
 
         if reference_date is None:
@@ -81,6 +85,12 @@ def get_inactive_member_candidates():
                     reference_date.isoformat()
                 ),
                 "days_since_attendance": days_since_attendance,
+                "last_attendance": (
+                    last_attendance_date.isoformat()
+                    if last_attendance_date
+                    else None
+                ),
+                "days_since_reference": days_since_attendance,
                 "inactive_threshold_days": (
                     INACTIVE_AFTER_DAYS
                 ),

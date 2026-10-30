@@ -1,5 +1,6 @@
-from datetime import date, timedelta
+from datetime import timedelta
 
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -48,7 +49,7 @@ class SessionTodayView(APIView):
     permission_classes = [IsStaffUser]
 
     def get(self, request):
-        overview = get_session_overview(date.today())
+        overview = get_session_overview(timezone.localdate())
 
         return Response(overview)
 
@@ -61,7 +62,7 @@ class SessionTomorrowView(APIView):
     permission_classes = [IsStaffUser]
 
     def get(self, request):
-        tomorrow = date.today() + timedelta(days=1)
+        tomorrow = timezone.localdate() + timedelta(days=1)
 
         overview = get_session_overview(tomorrow)
 
@@ -78,7 +79,7 @@ class SessionClientTodayView(APIView):
     permission_classes = [IsStaffUser]
 
     def get(self, request):
-        overview = get_session_overview(date.today())
+        overview = get_session_overview(timezone.localdate())
 
         return Response(
             build_client_response(overview)
@@ -95,7 +96,7 @@ class SessionTrainerTodayView(APIView):
     permission_classes = [IsStaffUser]
 
     def get(self, request):
-        overview = get_session_overview(date.today())
+        overview = get_session_overview(timezone.localdate())
 
         return Response(overview)
 

@@ -1,5 +1,5 @@
 ﻿import { useEffect, useMemo, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import {
   createAttendance,
@@ -11,6 +11,7 @@ import {
 
 import MemberDietSection from "./MemberDietSection";
 import MemberWorkoutSection from "./MemberWorkoutSection";
+import MemberProgressSection from "./MemberProgressSection";
 
 import {
   MembershipSection,
@@ -187,7 +188,6 @@ function normalizeAttendanceResponse(
 
 function MemberProfilePage() {
   const { memberId } = useParams();
-  const navigate = useNavigate();
 
   const [member, setMember] =
     useState(null);
@@ -470,19 +470,6 @@ function MemberProfilePage() {
   function handleSectionChange(
     sectionKey,
   ) {
-    if (sectionKey === "progress") {
-      if (memberId) {
-        navigate(
-          `/staff/progress/${encodeURIComponent(
-            memberId,
-          )}`,
-        );
-      } else {
-        navigate("/staff/progress");
-      }
-      return;
-    }
-
     setActiveSection(sectionKey);
   }
 
@@ -895,6 +882,16 @@ function MemberProfilePage() {
           "diet" && (
           <MemberDietSection
             memberId={memberId}
+          />
+        )}
+
+        {activeSection ===
+          "progress" && (
+          <MemberProgressSection
+            memberId={memberId}
+            member={member}
+            embedded
+            showHeader={false}
           />
         )}
 

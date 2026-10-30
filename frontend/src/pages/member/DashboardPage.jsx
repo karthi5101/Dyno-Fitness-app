@@ -120,7 +120,10 @@ function calculateStreak(records) {
 }
 
 function DashboardPage() {
-  const { memberId } = useAuth();
+  const {
+    memberId,
+    passwordResetRequired,
+  } = useAuth();
 
   const [member, setMember] = useState(null);
   const [attendance, setAttendance] = useState([]);
@@ -346,6 +349,25 @@ function DashboardPage() {
           </Link>
         </div>
       </header>
+
+      {passwordResetRequired && (
+        <section className="member-dashboard-warning">
+          <div>
+            <strong>
+              UPDATE YOUR PASSWORD.
+            </strong>
+
+            <p>
+              Your account was recovered or reset. Set a
+              new password and school security answer.
+            </p>
+          </div>
+
+          <Link to="/member/profile">
+            OPEN PROFILE →
+          </Link>
+        </section>
+      )}
 
       <article className="member-hero-card">
         <div className="member-hero-content">

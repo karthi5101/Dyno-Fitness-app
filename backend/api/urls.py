@@ -1,6 +1,7 @@
 from django.urls import include, path
 
 from api.views import HealthCheckView
+from apps.uploads import UploadedFileView
 
 
 urlpatterns = [
@@ -52,5 +53,10 @@ urlpatterns = [
     path(
         "notes/",
         include("apps.notes.urls"),
+    ),
+    path(
+        "uploads/<str:file_id>/",
+        UploadedFileView.as_view(),
+        name="uploaded-file",
     ),
 ]

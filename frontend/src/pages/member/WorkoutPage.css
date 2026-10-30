@@ -481,4 +481,82 @@
   .member-workout-note h3 {
     font-size: 62px;
   }
+}.member-workout-completion {
+  max-width: 1400px;
+  margin: 0 auto 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 18px;
+  padding: 18px 22px;
+  background: #111;
+  color: #f5f5f3;
+}
+
+.member-workout-complete-button {
+  border: 0;
+  padding: 16px 22px;
+  background: #f5f5f3;
+  color: #111;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+}
+
+.member-workout-complete-button:hover {
+  background: #c2182b;
+  color: #ffffff;
+}
+
+.member-workout-complete-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.member-workout-completion-state {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.member-workout-completion-state span {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+}
+
+.member-workout-completion-state strong {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.member-workout-completion-state small {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  opacity: 0.7;
+}
+
+.member-workout-feedback {
+  width: 100%;
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.member-workout-feedback-success {
+  color: #7ee2a0;
+}
+
+.member-workout-feedback-notice {
+  color: #d8d8d2;
+}
+
+.member-workout-feedback-error {
+  color: #ff8d9c;
 }

@@ -119,7 +119,10 @@ WSGI_APPLICATION = "config.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "NAME": os.getenv(
+            "DJANGO_SQLITE_PATH",
+            BASE_DIR / "db.sqlite3",
+        ),
     }
 }
 
@@ -244,6 +247,14 @@ if DEBUG:
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 else:
     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
+EMAIL_PASSWORD_RESET_ENABLED = (
+    os.getenv(
+        "EMAIL_PASSWORD_RESET_ENABLED",
+        "False",
+    ).lower()
+    == "true"
+)
 
 EMAIL_HOST = os.getenv("EMAIL_HOST", "")
 EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587"))

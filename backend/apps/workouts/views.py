@@ -1,6 +1,7 @@
 
 from datetime import date
 
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -10,10 +11,12 @@ from apps.authentication.identity import get_member_id_for_user
 from apps.authentication.permissions import (
     IsStaffUser,
     MemberScopedAccess,
+    StaffOrLinkedMember,
 )
 
 from apps.workouts.repositories import (
     assign_template,
+    complete_daily_workout,
     create_daily_workout,
     create_daily_workout_from_assignment,
     create_template,
@@ -29,6 +32,7 @@ from apps.workouts.repositories import (
     update_template,
 )
 from apps.workouts.serializers import (
+    DailyWorkoutCompleteSerializer,
     DailyWorkoutGenerateSerializer,
     DailyWorkoutSerializer,
     DailyWorkoutUpdateSerializer,
@@ -62,6 +66,39 @@ def serialize_exercise(exercise):
     }
 
 
+def serialize_split_days(document):
+    split_days = document.get("split_days")
+
+    if not isinstance(split_days, list):
+        return []
+
+    serialized = []
+
+    for entry in split_days:
+        if not isinstance(entry, dict):
+            continue
+
+        exercises = entry.get("exercises", [])
+
+        serialized.append(
+            {
+                "day": entry.get("day"),
+                "label": entry.get("label", ""),
+                "exercises": [
+                    serialize_exercise(exercise)
+                    for exercise in (
+                        exercises
+                        if isinstance(exercises, list)
+                        else []
+                    )
+                    if isinstance(exercise, dict)
+                ],
+            }
+        )
+
+    return serialized
+
+
 def serialize_template(document):
     if not document:
         return None
@@ -75,6 +112,7 @@ def serialize_template(document):
             serialize_exercise(exercise)
             for exercise in document.get("exercises", [])
         ],
+        "split_days": serialize_split_days(document),
         "created_at": serialize_datetime(
             document.get("created_at")
         ),
@@ -126,6 +164,15 @@ def serialize_daily_workout(document):
             else None
         ),
         "template_key": document.get("template_key"),
+        "split_day": document.get("split_day"),
+        "split_day_label": document.get("split_day_label"),
+        "status": document.get("status"),
+        "completed_at": serialize_datetime(
+            document.get("completed_at")
+        ),
+        "completed_by_role": document.get(
+            "completed_by_role"
+        ),
         "exercises": [
             serialize_exercise(exercise)
             for exercise in document.get("exercises", [])
@@ -396,7 +443,12 @@ class DailyWorkoutGenerateView(APIView):
 
         workout_date = serializer.validated_data.get(
             "workout_date",
-            date.today(),
+            timezone.localdate(),
+        )
+
+        split_requested = serializer.validated_data.get(
+            "split",
+            False,
         )
 
         try:
@@ -422,12 +474,24 @@ class DailyWorkoutGenerateView(APIView):
             workout = create_daily_workout_from_assignment(
                 member_id,
                 workout_date,
+                split_requested=split_requested,
             )
 
         except ValueError as exc:
             return Response(
                 {"detail": str(exc)},
                 status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        stored_date = workout.get("workout_date")
+
+        if (
+            hasattr(stored_date, "date")
+            and stored_date.date() != workout_date
+        ):
+            return Response(
+                serialize_daily_workout(workout),
+                status=status.HTTP_200_OK,
             )
 
         return Response(
@@ -464,7 +528,7 @@ class DailyWorkoutView(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
         else:
-            workout_date = date.today()
+            workout_date = timezone.localdate()
 
         workout = get_daily_workout(
             member_id,
@@ -570,7 +634,7 @@ class DailyWorkoutView(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
         else:
-            workout_date = date.today()
+            workout_date = timezone.localdate()
 
         try:
             workout = update_daily_workout(
@@ -626,12 +690,20 @@ class DailyWorkoutView(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
         else:
-            workout_date = date.today()
+            workout_date = timezone.localdate()
 
-        if not delete_daily_workout(
-            member_id,
-            workout_date,
-        ):
+        try:
+            deleted = delete_daily_workout(
+                member_id,
+                workout_date,
+            )
+        except ValueError as exc:
+            return Response(
+                {"detail": str(exc)},
+                status=status.HTTP_409_CONFLICT,
+            )
+
+        if not deleted:
             return Response(
                 {"detail": "Daily workout not found."},
                 status=status.HTTP_404_NOT_FOUND,
@@ -689,13 +761,19 @@ class WorkoutSyncView(APIView):
 
         workout_date = serializer.validated_data.get(
             "workout_date",
-            date.today(),
+            timezone.localdate(),
+        )
+
+        split_requested = serializer.validated_data.get(
+            "split",
+            False,
         )
 
         try:
             workout = sync_member_daily_workout_with_assignment(
                 member_id,
                 workout_date,
+                split_requested=split_requested,
             )
         except ValueError as exc:
             return Response(
@@ -705,6 +783,79 @@ class WorkoutSyncView(APIView):
 
         return Response(
             serialize_daily_workout(workout),
+            status=status.HTTP_200_OK,
+        )
+
+
+# ---------------------------------------------------------------------------
+# Daily Workout Completion
+# ---------------------------------------------------------------------------
+
+class DailyWorkoutCompleteView(APIView):
+
+    permission_classes = [StaffOrLinkedMember]
+
+    def post(self, request, member_id):
+        if not request.user.is_staff:
+            actor_member_id = get_member_id_for_user(
+                request.user
+            )
+
+            if (
+                actor_member_id is None
+                or str(actor_member_id) != str(member_id)
+            ):
+                return Response(
+                    {"detail": "Daily workout not found."},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+
+        serializer = DailyWorkoutCompleteSerializer(
+            data=request.data
+        )
+
+        if not serializer.is_valid():
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        completed_by_role = (
+            "staff" if request.user.is_staff else "member"
+        )
+
+        outcome, workout = complete_daily_workout(
+            member_id,
+            serializer.validated_data["workout_id"],
+            completed_by_role,
+        )
+
+        if outcome == "missing":
+            return Response(
+                {"detail": "Daily workout not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        if outcome == "legacy":
+            return Response(
+                {
+                    "detail": (
+                        "This workout is not a split workout "
+                        "and cannot be completed."
+                    )
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        return Response(
+            {
+                "already_completed": (
+                    outcome == "already_completed"
+                ),
+                "workout": serialize_daily_workout(
+                    workout
+                ),
+            },
             status=status.HTTP_200_OK,
         )
 

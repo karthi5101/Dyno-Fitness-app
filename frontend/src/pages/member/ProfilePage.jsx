@@ -53,7 +53,11 @@ function getInitials(name = "") {
 
 function ProfilePage() {
   const navigate = useNavigate();
-  const { logout, memberId } = useAuth();
+  const {
+    logout,
+    memberId,
+    clearPasswordResetRequired,
+  } = useAuth();
 
   const [member, setMember] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -78,6 +82,7 @@ function ProfilePage() {
     oldPassword: "",
     newPassword: "",
     confirmPassword: "",
+    schoolAnswer: "",
   });
 
   useEffect(() => {
@@ -183,18 +188,31 @@ function ProfilePage() {
       oldPassword: "",
       newPassword: "",
       confirmPassword: "",
+      schoolAnswer: "",
     });
   }
 
   async function handlePasswordSubmit(event) {
     event.preventDefault();
 
-    const { oldPassword, newPassword, confirmPassword } =
-      passwords;
+    const {
+      oldPassword,
+      newPassword,
+      confirmPassword,
+      schoolAnswer,
+    } = passwords;
 
     if (!oldPassword || !newPassword) {
       setPasswordError(
         "Enter your current password and a new password.",
+      );
+
+      return;
+    }
+
+    if (!schoolAnswer.trim()) {
+      setPasswordError(
+        "Answer the school security question.",
       );
 
       return;
@@ -224,16 +242,20 @@ function ProfilePage() {
       await changePassword(
         oldPassword,
         newPassword,
+        schoolAnswer,
       );
 
+      clearPasswordResetRequired();
+
       setPasswordSuccess(
-        "Password updated. Use it the next time you sign in.",
+        "Password and school answer updated. Use the new password the next time you sign in.",
       );
 
       setPasswords({
         oldPassword: "",
         newPassword: "",
         confirmPassword: "",
+        schoolAnswer: "",
       });
     } catch (err) {
       setPasswordError(
@@ -525,6 +547,20 @@ function ProfilePage() {
                 onChange={handlePasswordChange}
                 autoComplete="new-password"
                 minLength={8}
+                disabled={passwordSaving}
+                required
+              />
+            </label>
+
+            <label>
+              SCHOOL SECURITY ANSWER
+              <input
+                type="text"
+                name="schoolAnswer"
+                value={passwords.schoolAnswer}
+                onChange={handlePasswordChange}
+                autoComplete="off"
+                placeholder="Which school did you study?"
                 disabled={passwordSaving}
                 required
               />

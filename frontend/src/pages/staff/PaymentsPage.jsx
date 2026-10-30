@@ -6,6 +6,7 @@ import {
   deletePayment,
   getMembers,
   getPayments,
+  uploadPaymentProof,
 } from "../../api/client";
 
 import "./PaymentsPage.css";
@@ -73,6 +74,12 @@ function PaymentsPage() {
 
   const [form, setForm] = useState(EMPTY_FORM);
   const [formError, setFormError] = useState("");
+
+  const [proofFile, setProofFile] = useState(null);
+  const [proofDragActive, setProofDragActive] =
+    useState(false);
+  const [proofUploadingId, setProofUploadingId] =
+    useState("");
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -192,6 +199,61 @@ function PaymentsPage() {
     setFormError("");
   }
 
+  function handleProofFile(file) {
+    if (!file) {
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      setFormError("Payment proofs must be 10 MB or smaller.");
+      return;
+    }
+
+    setProofFile(file);
+    setFormError("");
+  }
+
+  function handleProofDrop(event) {
+    event.preventDefault();
+    setProofDragActive(false);
+    handleProofFile(event.dataTransfer.files?.[0]);
+  }
+
+  async function handleProofUpload(paymentId, file) {
+    if (!paymentId || !file) {
+      return;
+    }
+
+    try {
+      setProofUploadingId(String(paymentId));
+      setError("");
+      setSuccess("");
+
+      const updated = await uploadPaymentProof(
+        paymentId,
+        file,
+      );
+
+      setPayments((current) =>
+        current.map((payment) =>
+          String(payment?.id || payment?._id) ===
+          String(paymentId)
+            ? updated
+            : payment,
+        ),
+      );
+
+      setSuccess("Payment proof uploaded.");
+    } catch (err) {
+      setError(
+        err?.message ||
+          "Unable to upload this payment proof.",
+      );
+    } finally {
+      setProofUploadingId("");
+    }
+  }
+
   async function handleSubmit(event) {
     event.preventDefault();
 
@@ -226,7 +288,7 @@ function PaymentsPage() {
       setError("");
       setSuccess("");
 
-      const created = await createPayment({
+      let created = await createPayment({
         member_id: form.member_id,
         amount: form.amount,
         payment_date: form.payment_date,
@@ -235,6 +297,21 @@ function PaymentsPage() {
         period_end: form.period_end,
         notes: form.notes,
       });
+
+      let uploadError = "";
+
+      if (proofFile) {
+        try {
+          created = await uploadPaymentProof(
+            created?.id || created?._id,
+            proofFile,
+          );
+        } catch (err) {
+          uploadError =
+            err?.message ||
+            "The proof could not be uploaded.";
+        }
+      }
 
       setPayments((current) => [
         created,
@@ -246,14 +323,21 @@ function PaymentsPage() {
         member_id: form.member_id,
         payment_date: form.payment_date,
       });
+      setProofFile(null);
 
       const member = memberMap.get(form.member_id);
 
-      setSuccess(
-        `Payment recorded for ${
-          member?.name || form.member_id
-        }.`,
-      );
+      if (uploadError) {
+        setFormError(
+          `Payment recorded, but the proof upload failed: ${uploadError}`,
+        );
+      } else {
+        setSuccess(
+          `Payment recorded for ${
+            member?.name || form.member_id
+          }.`,
+        );
+      }
     } catch (err) {
       setFormError(
         err?.message ||
@@ -461,6 +545,40 @@ function PaymentsPage() {
             />
           </label>
 
+          <label
+            className={`payment-proof-drop${
+              proofDragActive ? " is-dragging" : ""
+            }`}
+            onDragOver={(event) => {
+              event.preventDefault();
+              setProofDragActive(true);
+            }}
+            onDragLeave={() => setProofDragActive(false)}
+            onDrop={handleProofDrop}
+          >
+            <input
+              type="file"
+              accept=".jpg,.jpeg,.png,.webp,.pdf"
+              onChange={(event) => {
+                handleProofFile(
+                  event.target.files?.[0],
+                );
+                event.target.value = "";
+              }}
+              disabled={saving}
+            />
+
+            <strong>
+              {proofFile
+                ? proofFile.name
+                : "DROP PAYMENT PROOF"}
+            </strong>
+
+            <span>
+              JPEG, PNG, WebP or PDF · max 10 MB
+            </span>
+          </label>
+
           <label>
             NOTES
             <textarea
@@ -578,6 +696,48 @@ function PaymentsPage() {
 
                   <div className="payment-amount">
                     {formatAmount(payment?.amount)}
+                  </div>
+
+                  <div className="payment-proof-cell">
+                    {payment?.payment_proof?.url ? (
+                      <a
+                        href={payment.payment_proof.url}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        VIEW PROOF
+                      </a>
+                    ) : (
+                      <span>NO PROOF</span>
+                    )}
+
+                    <label className="payment-proof-replace">
+                      {String(proofUploadingId) ===
+                      String(paymentId)
+                        ? "UPLOADING..."
+                        : payment?.payment_proof
+                          ? "REPLACE"
+                          : "ADD PROOF"}
+
+                      <input
+                        type="file"
+                        accept=".jpg,.jpeg,.png,.webp,.pdf"
+                        onChange={(event) => {
+                          const file =
+                            event.target.files?.[0];
+
+                          event.target.value = "";
+                          handleProofUpload(
+                            paymentId,
+                            file,
+                          );
+                        }}
+                        disabled={
+                          String(proofUploadingId) ===
+                          String(paymentId)
+                        }
+                      />
+                    </label>
                   </div>
 
                   <button

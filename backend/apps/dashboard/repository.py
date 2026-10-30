@@ -2,6 +2,7 @@ from datetime import date, datetime
 from decimal import Decimal
 
 from bson import ObjectId
+from django.utils import timezone
 
 from apps.attendance.repositories import (
     get_today_attendance,
@@ -63,7 +64,7 @@ def _serialize_documents(documents):
 
 def get_dashboard_data(target_date=None):
     if target_date is None:
-        target_date = date.today()
+        target_date = timezone.localdate()
 
     members = get_all_members()
 

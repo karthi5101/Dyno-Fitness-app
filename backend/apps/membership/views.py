@@ -1,3 +1,4 @@
+from pymongo.errors import DuplicateKeyError
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -51,9 +52,30 @@ class MembershipListCreateView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        if get_membership_by_member_id(
+            serializer.validated_data["member_id"]
+        ) is not None:
+            return Response(
+                {
+                    "detail": (
+                        "This member already has a membership record."
+                    )
+                },
+                status=status.HTTP_409_CONFLICT,
+            )
+
         try:
             membership = create_membership(
                 serializer.validated_data
+            )
+        except DuplicateKeyError:
+            return Response(
+                {
+                    "detail": (
+                        "This member already has a membership record."
+                    )
+                },
+                status=status.HTTP_409_CONFLICT,
             )
         except Exception as exc:
             return Response(
@@ -130,10 +152,44 @@ class MembershipDetailView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        start_date = serializer.validated_data.get(
+            "start_date",
+            existing_membership.get("start_date"),
+        )
+        end_date = serializer.validated_data.get(
+            "end_date",
+            existing_membership.get("end_date"),
+        )
+
+        if hasattr(start_date, "date"):
+            start_date = start_date.date()
+
+        if hasattr(end_date, "date"):
+            end_date = end_date.date()
+
+        if start_date and end_date and end_date < start_date:
+            return Response(
+                {
+                    "end_date": [
+                        "End date must be on or after the start date."
+                    ]
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         try:
             membership = update_membership(
                 member_id,
                 serializer.validated_data,
+            )
+        except DuplicateKeyError:
+            return Response(
+                {
+                    "detail": (
+                        "This member already has a membership record."
+                    )
+                },
+                status=status.HTTP_409_CONFLICT,
             )
         except Exception as exc:
             return Response(

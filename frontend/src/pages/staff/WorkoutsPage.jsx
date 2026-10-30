@@ -36,6 +36,65 @@ const EMPTY_EXERCISE = {
   weight: "",
 };
 
+const SPLIT_DAY_LABELS = [
+  "Chest",
+  "Shoulders",
+  "Back",
+  "Biceps",
+  "Triceps",
+  "Legs",
+];
+
+function createSplitDays() {
+  return SPLIT_DAY_LABELS.map((label, index) => ({
+    day: index + 1,
+    label,
+    exercises: [],
+  }));
+}
+
+function normalizeSplitDays(splitDays) {
+  const base = createSplitDays();
+
+  if (
+    !Array.isArray(splitDays) ||
+    splitDays.length !== base.length
+  ) {
+    return base;
+  }
+
+  return base.map((entry) => {
+    const match = splitDays.find(
+      (item) => Number(item?.day) === entry.day,
+    );
+
+    if (!match) {
+      return entry;
+    }
+
+    return {
+      day: entry.day,
+      label: match.label || entry.label,
+      exercises: normalizeExercises(
+        match.exercises || [],
+      ),
+    };
+  });
+}
+
+function toExercisePayload(exercise, index) {
+  return {
+    name: exercise.name.trim(),
+    sets: Number(exercise.sets) || 1,
+    reps: Number(exercise.reps) || 1,
+    weight:
+      exercise.weight === ""
+        ? null
+        : exercise.weight,
+    order: index,
+  };
+}
+
 function getId(item) {
   return (
     item?.id ||
@@ -105,6 +164,12 @@ function WorkoutsPage() {
     useState("");
 
   const [exercises, setExercises] = useState([]);
+
+  const [splitEnabled, setSplitEnabled] =
+    useState(false);
+
+  const [splitDays, setSplitDays] =
+    useState(createSplitDays);
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -210,6 +275,8 @@ function WorkoutsPage() {
     setTemplateName("");
     setTemplateDescription("");
     setExercises([]);
+    setSplitEnabled(false);
+    setSplitDays(createSplitDays());
   }
 
   function startEdit(template) {
@@ -234,6 +301,16 @@ function WorkoutsPage() {
       normalizeExercises(
         template?.exercises || [],
       ),
+    );
+
+    setSplitDays(
+      normalizeSplitDays(
+        template?.split_days || [],
+      ),
+    );
+
+    setSplitEnabled(
+      (template?.split_days?.length || 0) > 0,
     );
   }
 
@@ -303,6 +380,101 @@ function WorkoutsPage() {
     );
   }
 
+  function updateSplitDayLabel(dayIndex, value) {
+    setSplitDays((current) =>
+      current.map((day, index) =>
+        index === dayIndex
+          ? {
+              ...day,
+              label: value,
+            }
+          : day,
+      ),
+    );
+  }
+
+  function addSplitExercise(dayIndex) {
+    setSplitDays((current) =>
+      current.map((day, index) =>
+        index === dayIndex
+          ? {
+              ...day,
+              exercises: [
+                ...day.exercises,
+                {
+                  ...EMPTY_EXERCISE,
+                  order: day.exercises.length,
+                },
+              ],
+            }
+          : day,
+      ),
+    );
+  }
+
+  function updateSplitExercise(
+    dayIndex,
+    exerciseIndex,
+    field,
+    value,
+  ) {
+    setSplitDays((current) =>
+      current.map((day, index) => {
+        if (index !== dayIndex) {
+          return day;
+        }
+
+        return {
+          ...day,
+          exercises: day.exercises.map(
+            (exercise, currentExerciseIndex) =>
+              currentExerciseIndex ===
+              exerciseIndex
+                ? {
+                    ...exercise,
+                    [field]:
+                      field === "sets" ||
+                      field === "reps"
+                        ? Math.max(
+                            1,
+                            Number(value) || 1,
+                          )
+                        : value,
+                  }
+                : exercise,
+          ),
+        };
+      }),
+    );
+  }
+
+  function removeSplitExercise(
+    dayIndex,
+    exerciseIndex,
+  ) {
+    setSplitDays((current) =>
+      current.map((day, index) => {
+        if (index !== dayIndex) {
+          return day;
+        }
+
+        return {
+          ...day,
+          exercises: day.exercises
+            .filter(
+              (_, currentExerciseIndex) =>
+                currentExerciseIndex !==
+                exerciseIndex,
+            )
+            .map((exercise, order) => ({
+              ...exercise,
+              order,
+            })),
+        };
+      }),
+    );
+  }
+
   function validateTemplate() {
     if (!templateKey.trim()) {
       return "Template key is required.";
@@ -312,17 +484,45 @@ function WorkoutsPage() {
       return "Template name is required.";
     }
 
-    if (exercises.length === 0) {
+    const fallbackExercises =
+      exercises.length > 0
+        ? exercises
+        : splitEnabled
+          ? splitDays[0]?.exercises || []
+          : [];
+
+    if (fallbackExercises.length === 0) {
       return "Add at least one exercise.";
     }
 
     if (
-      exercises.some(
+      fallbackExercises.some(
         (exercise) =>
           !exercise.name.trim(),
       )
     ) {
       return "Every exercise needs a name.";
+    }
+
+    if (splitEnabled) {
+      for (const day of splitDays) {
+        if (!day.label.trim()) {
+          return `Day ${day.day} needs a label.`;
+        }
+
+        if (day.exercises.length === 0) {
+          return `Day ${day.day} needs at least one exercise.`;
+        }
+
+        if (
+          day.exercises.some(
+            (exercise) =>
+              !exercise.name.trim(),
+          )
+        ) {
+          return `Day ${day.day} has an exercise without a name.`;
+        }
+      }
     }
 
     return "";
@@ -347,20 +547,25 @@ function WorkoutsPage() {
         name: templateName.trim(),
         description:
           templateDescription.trim(),
-        exercises: exercises.map(
-          (exercise, index) => ({
-            name: exercise.name.trim(),
-            sets:
-              Number(exercise.sets) || 1,
-            reps:
-              Number(exercise.reps) || 1,
-            weight:
-              exercise.weight === ""
-                ? null
-                : exercise.weight,
-            order: index,
-          }),
-        ),
+        exercises: (
+          exercises.length > 0
+            ? exercises
+            : splitDays[0]?.exercises || []
+        ).map(toExercisePayload),
+        ...(splitEnabled
+          ? {
+              split_days: splitDays.map(
+                (day) => ({
+                  day: day.day,
+                  label: day.label.trim(),
+                  exercises:
+                    day.exercises.map(
+                      toExercisePayload,
+                    ),
+                }),
+              ),
+            }
+          : {}),
       };
 
       let saved;
@@ -657,10 +862,10 @@ function WorkoutsPage() {
                         </strong>
 
                         <small>
-                          {template
-                            ?.exercises
-                            ?.length || 0}{" "}
-                          EXERCISES
+                          {template?.split_days
+                            ?.length
+                            ? `SPLIT · ${template.split_days.length} DAYS`
+                            : `${template?.exercises?.length || 0} EXERCISES`}
                         </small>
                       </span>
 
@@ -878,6 +1083,220 @@ function WorkoutsPage() {
                 )}
               </div>
 
+              <div className="workout-section-label workout-split-header">
+                <p className="staff-eyebrow">
+                  SIX-DAY SPLIT
+                </p>
+
+                {!splitEnabled ? (
+                  <button
+                    type="button"
+                    className="staff-button staff-button-outline"
+                    onClick={() =>
+                      setSplitEnabled(true)
+                    }
+                    disabled={saving}
+                  >
+                    + ENABLE SPLIT
+                  </button>
+                ) : (
+                  <span>
+                    {(selectedTemplate
+                      ?.split_days?.length ||
+                      0) > 0
+                      ? "CONFIGURED"
+                      : "DAYS 1–6 AUTO-ROTATE"}
+                  </span>
+                )}
+              </div>
+
+              {!splitEnabled ? (
+                <div className="workout-exercises-empty">
+                  This template generates one
+                  shared workout. Enable the six-day
+                  split to rotate chest, shoulders,
+                  back, biceps, triceps and legs.
+                </div>
+              ) : (
+                <>
+                  <p className="workout-split-note">
+                    Day numbers are fixed 1–6. Every
+                    day needs at least one exercise.
+                    If the main list above is empty,
+                    Day 01 is stored as the template
+                    fallback.
+                  </p>
+
+                  <div className="workout-split-days">
+                    {splitDays.map(
+                    (day, dayIndex) => (
+                      <article
+                        className="workout-split-day"
+                        key={day.day}
+                      >
+                        <div className="workout-split-day-head">
+                          <span className="workout-split-day-number">
+                            DAY{" "}
+                            {String(
+                              day.day,
+                            ).padStart(2, "0")}
+                          </span>
+
+                          <input
+                            value={day.label}
+                            placeholder="Muscle group"
+                            onChange={(event) =>
+                              updateSplitDayLabel(
+                                dayIndex,
+                                event.target
+                                  .value,
+                              )
+                            }
+                            disabled={saving}
+                          />
+
+                          <button
+                            type="button"
+                            onClick={() =>
+                              addSplitExercise(
+                                dayIndex,
+                              )
+                            }
+                            disabled={saving}
+                          >
+                            + EXERCISE
+                          </button>
+                        </div>
+
+                        {day.exercises.length ===
+                        0 ? (
+                          <div className="workout-split-day-empty">
+                            At least one exercise is
+                            required for this day.
+                          </div>
+                        ) : (
+                          day.exercises.map(
+                            (
+                              exercise,
+                              exerciseIndex,
+                            ) => (
+                              <div
+                                className="workout-editor-exercise workout-split-exercise"
+                                key={
+                                  exerciseIndex
+                                }
+                              >
+                                <strong>
+                                  {String(
+                                    exerciseIndex +
+                                      1,
+                                  ).padStart(
+                                    2,
+                                    "0",
+                                  )}
+                                </strong>
+
+                                <input
+                                  value={
+                                    exercise.name
+                                  }
+                                  placeholder="Exercise name"
+                                  onChange={(
+                                    event,
+                                  ) =>
+                                    updateSplitExercise(
+                                      dayIndex,
+                                      exerciseIndex,
+                                      "name",
+                                      event.target
+                                        .value,
+                                    )
+                                  }
+                                  disabled={saving}
+                                />
+
+                                <input
+                                  type="number"
+                                  min="1"
+                                  value={
+                                    exercise.sets
+                                  }
+                                  onChange={(
+                                    event,
+                                  ) =>
+                                    updateSplitExercise(
+                                      dayIndex,
+                                      exerciseIndex,
+                                      "sets",
+                                      event.target
+                                        .value,
+                                    )
+                                  }
+                                  disabled={saving}
+                                />
+
+                                <input
+                                  type="number"
+                                  min="1"
+                                  value={
+                                    exercise.reps
+                                  }
+                                  onChange={(
+                                    event,
+                                  ) =>
+                                    updateSplitExercise(
+                                      dayIndex,
+                                      exerciseIndex,
+                                      "reps",
+                                      event.target
+                                        .value,
+                                    )
+                                  }
+                                  disabled={saving}
+                                />
+
+                                <input
+                                  value={
+                                    exercise.weight
+                                  }
+                                  placeholder="Load"
+                                  onChange={(
+                                    event,
+                                  ) =>
+                                    updateSplitExercise(
+                                      dayIndex,
+                                      exerciseIndex,
+                                      "weight",
+                                      event.target
+                                        .value,
+                                    )
+                                  }
+                                  disabled={saving}
+                                />
+
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    removeSplitExercise(
+                                      dayIndex,
+                                      exerciseIndex,
+                                    )
+                                  }
+                                  disabled={saving}
+                                >
+                                  REMOVE
+                                </button>
+                              </div>
+                            ),
+                          )
+                        )}
+                      </article>
+                    ),
+                  )}
+                  </div>
+                </>
+              )}
+
               <div className="workout-editor-footer">
                 <button
                   type="button"
@@ -945,6 +1364,49 @@ function WorkoutsPage() {
                 </div>
               </header>
 
+              {selectedTemplate?.split_days
+                ?.length ? (
+                <section className="workout-exercise-section">
+                  <div className="workout-section-label">
+                    <p className="staff-eyebrow">
+                      SIX-DAY SPLIT
+                    </p>
+
+                    <span>
+                      DAY 1 → 6 ROTATION
+                    </span>
+                  </div>
+
+                  <div className="workout-split-summary">
+                    {selectedTemplate.split_days.map(
+                      (day) => (
+                        <article
+                          className="workout-split-summary-day"
+                          key={day.day}
+                        >
+                          <span>
+                            DAY{" "}
+                            {String(
+                              day.day,
+                            ).padStart(2, "0")}
+                          </span>
+
+                          <strong>
+                            {day.label}
+                          </strong>
+
+                          <small>
+                            {day.exercises
+                              ?.length || 0}{" "}
+                            EXERCISES
+                          </small>
+                        </article>
+                      ),
+                    )}
+                  </div>
+                </section>
+              ) : null}
+
               <section className="workout-exercise-section">
                 <div className="workout-section-label">
                   <p className="staff-eyebrow">
@@ -958,7 +1420,6 @@ function WorkoutsPage() {
                     MOVEMENTS
                   </span>
                 </div>
-
                 <div className="workout-exercises">
                   {!selectedTemplate
                     ?.exercises

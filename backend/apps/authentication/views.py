@@ -2,6 +2,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from apps.members.repository import get_member_by_id
+
 from .identity import get_member_id_for_user
 from .serializers import LoginSerializer
 
@@ -45,6 +47,8 @@ class LoginView(APIView):
             else "member"
         )
 
+        member = get_member_by_id(member_id)
+
         return Response(
             {
                 "access": str(refresh.access_token),
@@ -53,43 +57,12 @@ class LoginView(APIView):
                     "username": user.username,
                     "member_id": member_id,
                     "role": role,
-                },
-            }
-        )
-
-
-class CurrentIdentityView(APIView):
-    """
-    Return the currently authenticated user's
-    Dyno identity and account role.
-    """
-
-    def get(self, request):
-        member_id = get_member_id_for_user(
-            request.user
-        )
-
-        if member_id is None:
-            return Response(
-                {
-                    "detail": (
-                        "This account is not linked "
-                        "to a Dyno member."
+                    "password_reset_required": bool(
+                        member
+                        and member.get(
+                            "password_reset_required"
+                        )
                     ),
                 },
-                status=400,
-            )
-
-        role = (
-            "staff"
-            if request.user.is_staff
-            else "member"
-        )
-
-        return Response(
-            {
-                "username": request.user.username,
-                "member_id": member_id,
-                "role": role,
             }
         )

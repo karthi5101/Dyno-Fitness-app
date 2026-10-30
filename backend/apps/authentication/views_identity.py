@@ -1,6 +1,8 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.members.repository import get_member_by_id
+
 from .identity import get_member_id_for_user
 from .permissions import HasLinkedMember
 
@@ -24,10 +26,18 @@ class CurrentIdentityView(APIView):
             else "member"
         )
 
+        member = get_member_by_id(member_id)
+
         return Response(
             {
                 "username": request.user.username,
                 "member_id": member_id,
                 "role": role,
+                "password_reset_required": bool(
+                    member
+                    and member.get(
+                        "password_reset_required"
+                    )
+                ),
             }
         )

@@ -74,10 +74,18 @@ function extractErrorMessage(data) {
 }
 
 export async function apiRequest(endpoint, options = {}) {
+  const isFormData =
+    typeof FormData !== "undefined" &&
+    options.body instanceof FormData;
+
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     ...options,
     headers: {
-      "Content-Type": "application/json",
+      ...(isFormData
+        ? {}
+        : {
+            "Content-Type": "application/json",
+          }),
       ...getAuthHeaders(),
       ...(options.headers || {}),
     },
@@ -283,7 +291,10 @@ export async function deactivateMember(memberId) {
   return apiRequest(
     `/members/${encodeURIComponent(memberId)}/`,
     {
-      method: "DELETE",
+      method: "PUT",
+      body: JSON.stringify({
+        status: "inactive",
+      }),
     },
   );
 }
@@ -418,7 +429,10 @@ export async function assignWorkoutTemplate(
 export async function generateDailyWorkout(
   memberId,
   workoutDate = null,
+  options = {},
 ) {
+  const { split = false } = options || {};
+
   return apiRequest("/workouts/daily/generate/", {
     method: "POST",
     body: JSON.stringify({
@@ -426,6 +440,11 @@ export async function generateDailyWorkout(
       ...(workoutDate
         ? {
             workout_date: workoutDate,
+          }
+        : {}),
+      ...(split
+        ? {
+            split: true,
           }
         : {}),
     }),
@@ -574,6 +593,30 @@ export async function getWorkoutHistory(memberId) {
   );
 }
 
+/**
+ * Complete a pending split workout.
+ *
+ * Backend route:
+ * POST /workouts/daily/<member_id>/complete/
+ *
+ * Only the workout identifier is sent. The server derives the
+ * rotation day, completion timestamp and actor role itself.
+ */
+export async function completeDailyWorkout(
+  memberId,
+  workoutId,
+) {
+  return apiRequest(
+    `/workouts/daily/${encodeURIComponent(memberId)}/complete/`,
+    {
+      method: "POST",
+      body: JSON.stringify({
+        workout_id: workoutId,
+      }),
+    },
+  );
+}
+
 // ---------------------------------------------------------------------------
 // DIETS
 // ---------------------------------------------------------------------------
@@ -717,6 +760,44 @@ export async function deletePayment(paymentId) {
   );
 }
 
+export async function uploadPaymentProof(
+  paymentId,
+  file,
+) {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  return apiRequest(
+    `/membership/payments/${encodeURIComponent(
+      paymentId,
+    )}/proof/`,
+    {
+      method: "POST",
+      body: formData,
+    },
+  );
+}
+
+export async function uploadTransformationImage(
+  transformationId,
+  file,
+  slot = "image",
+) {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("slot", slot);
+
+  return apiRequest(
+    `/transformations/record/${encodeURIComponent(
+      transformationId,
+    )}/image/`,
+    {
+      method: "POST",
+      body: formData,
+    },
+  );
+}
+
 // ---------------------------------------------------------------------------
 // MEMBER NOTES
 // ---------------------------------------------------------------------------
@@ -763,11 +844,28 @@ export async function deleteNote(noteId) {
 export async function changePassword(
   oldPassword,
   newPassword,
+  schoolAnswer,
 ) {
   return apiRequest("/auth/password/change/", {
     method: "POST",
     body: JSON.stringify({
       old_password: oldPassword,
+      new_password: newPassword,
+      school_answer: schoolAnswer,
+    }),
+  });
+}
+
+export async function recoverPassword(
+  memberId,
+  schoolAnswer,
+  newPassword,
+) {
+  return apiRequest("/auth/password/recover/", {
+    method: "POST",
+    body: JSON.stringify({
+      member_id: memberId,
+      school_answer: schoolAnswer,
       new_password: newPassword,
     }),
   });

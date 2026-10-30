@@ -5,6 +5,11 @@
   color: #111111;
 }
 
+.staff-progress-page.is-embedded {
+  max-width: none;
+  padding: 0;
+}
+
 .staff-progress-header {
   margin-bottom: 64px;
 }
@@ -919,6 +924,48 @@
 .staff-progress-form input:focus,
 .staff-progress-form textarea:focus {
   border-color: #c2182b;
+}
+
+.staff-progress-form > label.staff-progress-form-drop {
+  display: flex;
+  min-height: 108px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 6px;
+  padding: 18px;
+  border: 1px dashed #cfcfcf;
+  border-radius: 18px;
+  background: #fafaf8;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease;
+}
+
+.staff-progress-form > label.staff-progress-form-drop.is-dragging {
+  border-color: #c2182b;
+  background: #fff5f5;
+}
+
+.staff-progress-form-drop input[type="file"] {
+  display: none;
+}
+
+.staff-progress-form-drop strong {
+  color: #111111;
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  word-break: break-word;
+}
+
+.staff-progress-form-drop small {
+  color: #888888;
+  font-family: "Inter", sans-serif;
+  font-size: 9px;
 }
 
 .staff-progress-form-grid {
