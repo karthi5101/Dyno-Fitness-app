@@ -31,6 +31,10 @@ urlpatterns = [
         include("apps.workouts.urls"),
     ),
     path(
+        "training/",
+        include("apps.training.urls"),
+    ),
+    path(
         "diets/",
         include("apps.diets.urls"),
     ),

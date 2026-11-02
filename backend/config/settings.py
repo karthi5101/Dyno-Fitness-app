@@ -34,6 +34,10 @@ DEBUG = os.getenv(
 
 ALLOWED_HOSTS = []
 
+WORKOUTS_V2_ENABLED = (
+    os.getenv("WORKOUTS_V2_ENABLED", "False").lower() == "true"
+)
+
 
 # ---------------------------------------------------------------------------
 # Application definition
@@ -54,6 +58,7 @@ INSTALLED_APPS = [
     "apps.attendance",
     "apps.gym_sessions",
     "apps.workouts",
+    "apps.training",
     "apps.diets",
     "apps.transformations",
     "apps.inactive_members",

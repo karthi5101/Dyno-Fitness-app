@@ -1,0 +1,83 @@
+.trn-assignment-section {
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin: 1rem 0;
+}
+
+.assign-form-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.assign-form-overlay form {
+  background: white;
+  padding: 2rem;
+  border-radius: 4px;
+  width: 90%;
+  max-width: 500px;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.form-group select,
+.form-group input {
+  width: 100%;
+  padding: 0.5rem;
+  box-sizing: border-box;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.confirm-overlay {
+  background: rgba(0, 0, 0, 0.5);
+  padding: 2rem;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.trn-assignment-error {
+  padding: 1rem;
+  color: #dc3545;
+}
+
+.assignment-details {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.assignment-empty {
+  padding: 1rem;
+  text-align: center;
+  color: #6c757d;
+}
+
+ul {
+  padding-left: 1rem;
+}
+
+li {
+  margin-bottom: 0.5rem;
+}

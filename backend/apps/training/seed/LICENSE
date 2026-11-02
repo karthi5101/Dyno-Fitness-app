@@ -1,0 +1,12 @@
+free-exercise-db
+===============
+
+Source: https://github.com/yuhonas/free-exercise-db
+Data file: https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/dist/exercises.json
+License: The Unlicense (public domain dedication)
+License text: https://github.com/yuhonas/free-exercise-db/blob/main/LICENSE.md
+
+The `exercises.json` file and the first image for each exercise are
+included here for the Dyno Fitness training library seed. Exercise
+images remain attributable to the free-exercise-db project; no
+openGym assets or code are used.

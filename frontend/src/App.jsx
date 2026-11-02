@@ -18,7 +18,6 @@ import LoginPage from "./pages/auth/LoginPage";
 ========================================================= */
 
 import MemberDashboardPage from "./pages/member/DashboardPage";
-import MemberWorkoutPage from "./pages/member/WorkoutPage";
 import MemberWorkoutHistoryPage from "./pages/member/WorkoutHistoryPage";
 import MemberDietPage from "./pages/member/DietPage";
 import MemberAttendancePage from "./pages/member/AttendancePage";
@@ -36,13 +35,17 @@ import MembersPage from "./pages/staff/MembersPage";
 import MemberProfileStaffPage from "./pages/staff/MemberProfilePage";
 import StaffAttendancePage from "./pages/staff/AttendancePage";
 import StaffSessionsPage from "./pages/staff/SessionsPage";
-import StaffWorkoutsPage from "./pages/staff/WorkoutsPage";
 import StaffDietsPage from "./pages/staff/DietsPage";
 import StaffProgressPage from "./pages/staff/ProgressPage";
 import StaffMembershipPage from "./pages/staff/MembershipPage";
 import StaffPaymentsPage from "./pages/staff/PaymentsPage";
 import InactiveMembersPage from "./pages/staff/InactiveMembersPage";
 import StaffGymQRPage from "./pages/staff/GymQRPage";
+
+import { TrainingMemberEntry, TrainingStaffEntry, trainingEnabled } from "./features/training/library/TrainingEntry";
+
+const MemberWorkoutPage = TrainingMemberEntry;
+const StaffWorkoutsPage = TrainingStaffEntry;
 
 /* =========================================================
    PROTECTED ROUTE
@@ -208,7 +211,7 @@ function AppRoutes() {
       />
 
       <Route
-        path="/member/workout"
+        path={trainingEnabled ? "/member/workout/*" : "/member/workout"}
         element={
           <Protected role="member">
             <MemberWorkoutPage />
@@ -380,7 +383,7 @@ function AppRoutes() {
       ===================================================== */}
 
       <Route
-        path="/staff/workouts"
+        path={trainingEnabled ? "/staff/workouts/*" : "/staff/workouts"}
         element={
           <StaffRoute
             backTo="/staff/dashboard"

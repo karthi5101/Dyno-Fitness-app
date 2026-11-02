@@ -12,6 +12,8 @@ import {
 import MemberDietSection from "./MemberDietSection";
 import MemberWorkoutSection from "./MemberWorkoutSection";
 import MemberProgressSection from "./MemberProgressSection";
+import MemberAssignmentSection from "../../features/training/assignments/MemberAssignmentSection";
+import { trainingEnabled } from "../../features/training/library/TrainingEntry";
 
 import {
   MembershipSection,
@@ -872,7 +874,11 @@ function MemberProfilePage() {
         )}
 
         {activeSection ===
-          "workout" && (
+          "workout" && trainingEnabled ? (
+          <MemberAssignmentSection
+            memberId={memberId}
+          />
+        ) : (
           <MemberWorkoutSection
             memberId={memberId}
           />
