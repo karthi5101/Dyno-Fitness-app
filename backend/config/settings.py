@@ -15,7 +15,9 @@ from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-load_dotenv(BASE_DIR.parent / ".env")
+# Load .env from backend directory first, then parent if it exists
+load_dotenv(BASE_DIR / ".env")
+load_dotenv(BASE_DIR.parent / ".env", override=False)
 
 
 # ---------------------------------------------------------------------------

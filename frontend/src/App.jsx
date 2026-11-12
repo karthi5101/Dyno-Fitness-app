@@ -42,10 +42,14 @@ import StaffPaymentsPage from "./pages/staff/PaymentsPage";
 import InactiveMembersPage from "./pages/staff/InactiveMembersPage";
 import StaffGymQRPage from "./pages/staff/GymQRPage";
 
-import { TrainingMemberEntry, TrainingStaffEntry, trainingEnabled } from "./features/training/library/TrainingEntry";
+import MemberWorkoutPage from "./pages/member/WorkoutPage";
+import StaffWorkoutsPage from "./pages/staff/WorkoutsPage";
 
-const MemberWorkoutPage = TrainingMemberEntry;
-const StaffWorkoutsPage = TrainingStaffEntry;
+// Training v2 imports
+import StaffTrainingPage from "./features/training/library/StaffTrainingPage";
+import MemberTrainingPage from "./features/training/library/MemberTrainingPage";
+
+const WORKOUTS_V2_ENABLED = import.meta.env.VITE_WORKOUTS_V2_ENABLED === 'true';
 
 /* =========================================================
    PROTECTED ROUTE
@@ -211,10 +215,10 @@ function AppRoutes() {
       />
 
       <Route
-        path={trainingEnabled ? "/member/workout/*" : "/member/workout"}
+        path="/member/workout/*"
         element={
           <Protected role="member">
-            <MemberWorkoutPage />
+            {WORKOUTS_V2_ENABLED ? <MemberTrainingPage /> : <MemberWorkoutPage />}
           </Protected>
         }
       />
@@ -383,13 +387,13 @@ function AppRoutes() {
       ===================================================== */}
 
       <Route
-        path={trainingEnabled ? "/staff/workouts/*" : "/staff/workouts"}
+        path="/staff/workouts/*"
         element={
           <StaffRoute
             backTo="/staff/dashboard"
             backLabel="DASHBOARD"
           >
-            <StaffWorkoutsPage />
+            {WORKOUTS_V2_ENABLED ? <StaffTrainingPage /> : <StaffWorkoutsPage />}
           </StaffRoute>
         }
       />

@@ -1,0 +1,3 @@
+Watching for file changes with StatReloader
+D:\Dyno-Fitness-app-main\Dyno-Fitness-app-main\backend\venv\Lib\site-packages\rest_framework\fields.py:992: UserWarning: min_value should be a Decimal instance.
+  warnings.warn("min_value should be a Decimal instance.")
