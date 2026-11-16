@@ -13,11 +13,11 @@ urlpatterns = [
         include("apps.training.programs.urls"),
     ),
     path(
-        "members/",
+        "",
         include("apps.training.assignments.urls"),
     ),
     path(
-        "me/",
+        "",
         include("apps.training.sessions.urls"),
     ),
 ]

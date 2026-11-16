@@ -7,8 +7,7 @@ import { enqueueSet } from "./offlineQueue";
 import { buildSetPayload, sessionEndpoint } from "./syncSets";
 
 /**
- * Generate a stable id for one set attempt. The same id is reused for every
- * retry of that set, which is what makes server-side idempotency work.
+ * Generate a stable id for one set attempt.
  */
 export function newClientSetId() {
   if (
@@ -24,9 +23,6 @@ export function newClientSetId() {
 }
 
 function isNetworkFailure(error) {
-  // fetch() rejects with a TypeError when the network is unavailable. Any
-  // request that reached the server has a numeric status and is a real
-  // rejection, not an offline condition.
   return !error || typeof error.status !== "number";
 }
 
@@ -43,10 +39,11 @@ export async function logSetWithOfflineFallback({
   clientSetId,
   request = apiRequest,
 }) {
+  const effectiveSessionId = sessionId || assignmentId;
   const record = {
     client_set_id: clientSetId || newClientSetId(),
     assignment_id: assignmentId,
-    session_id: sessionId,
+    session_id: effectiveSessionId,
     payload,
   };
 
@@ -57,14 +54,14 @@ export async function logSetWithOfflineFallback({
 
   try {
     const data = await request(
-      sessionEndpoint(assignmentId, sessionId),
+      sessionEndpoint(effectiveSessionId),
       {
-        method: "PATCH",
+        method: "PUT",
         body: JSON.stringify(buildSetPayload(record)),
       },
     );
 
-    return { queued: false, data, clientSetId: record.client_set_id };
+    return { queued: false, data: data?.session || data, clientSetId: record.client_set_id };
   } catch (error) {
     if (!isNetworkFailure(error)) {
       throw error;

@@ -1,87 +1,23 @@
+from django.urls import include, path
 
-from django.urls import path
-
-from apps.workouts.views import (
-    DailyWorkoutCompleteView,
-    DailyWorkoutGenerateView,
-    DailyWorkoutView,
-    WorkoutAssignmentView,
-    WorkoutHistoryView,
-    WorkoutSyncView,
-    WorkoutTemplateDetailView,
-    WorkoutTemplateListCreateView,
-)
-
+from .views import TrainingHealthView
 
 urlpatterns = [
-    # -----------------------------------------------------------------------
-    # Workout Templates
-    # -----------------------------------------------------------------------
-
+    path("health/", TrainingHealthView.as_view(), name="training-health"),
     path(
-        "templates/",
-        WorkoutTemplateListCreateView.as_view(),
-        name="workout-template-list-create",
+        "",
+        include("apps.workouts.library.urls"),
     ),
-
     path(
-        "templates/<str:template_id>/",
-        WorkoutTemplateDetailView.as_view(),
-        name="workout-template-detail",
+        "programs/",
+        include("apps.workouts.programs.urls"),
     ),
-
-    # -----------------------------------------------------------------------
-    # Member Workout Assignment
-    # -----------------------------------------------------------------------
-
     path(
-        "assignments/",
-        WorkoutAssignmentView.as_view(),
-        name="workout-assignment-create",
+        "",
+        include("apps.workouts.assignments.urls"),
     ),
-
     path(
-        "assignments/<str:member_id>/",
-        WorkoutAssignmentView.as_view(),
-        name="workout-assignment-detail",
-    ),
-
-    # -----------------------------------------------------------------------
-    # Daily Workout
-    # -----------------------------------------------------------------------
-
-    path(
-        "daily/generate/",
-        DailyWorkoutGenerateView.as_view(),
-        name="daily-workout-generate",
-    ),
-
-    path(
-        "daily/sync/",
-        WorkoutSyncView.as_view(),
-        name="daily-workout-sync",
-    ),
-
-    path(
-        "daily/<str:member_id>/complete/",
-        DailyWorkoutCompleteView.as_view(),
-        name="daily-workout-complete",
-    ),
-
-    path(
-        "daily/<str:member_id>/",
-        DailyWorkoutView.as_view(),
-        name="daily-workout",
-    ),
-
-    # -----------------------------------------------------------------------
-    # Workout History
-    # -----------------------------------------------------------------------
-
-    path(
-        "history/<str:member_id>/",
-        WorkoutHistoryView.as_view(),
-        name="workout-history",
+        "",
+        include("apps.workouts.sessions.urls"),
     ),
 ]
-

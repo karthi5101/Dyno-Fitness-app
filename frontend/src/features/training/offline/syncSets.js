@@ -44,21 +44,33 @@ function isAuthFailure(error) {
   );
 }
 
-export function sessionEndpoint(assignmentId, sessionId) {
-  return `/training/sessions/session/${encodeURIComponent(
-    assignmentId,
-  )}/${encodeURIComponent(sessionId)}/`;
+export function sessionEndpoint(assignmentIdOrSessionId, sessionId) {
+  const sid = sessionId || assignmentIdOrSessionId;
+  return `/training/sessions/${encodeURIComponent(sid)}/sets/`;
 }
 
 export function buildSetPayload(item) {
+  const p = item.payload || {};
   return {
-    sets: {
-      exercise_name: item.payload?.exercise_name || "current",
-      sets: item.payload?.sets ?? 0,
-      reps: item.payload?.reps ?? 0,
-      weight: item.payload?.weight ?? 0,
-    },
-    client_set_id: item.client_set_id,
+    sets: [
+      {
+        client_set_id: item.client_set_id,
+        block_id: p.block_id || undefined,
+        exercise_id: p.exercise_id || undefined,
+        set_no: p.set_no != null ? Number(p.set_no) : undefined,
+        set_type: p.set_type || "normal",
+        reps: p.reps != null ? Number(p.reps) : undefined,
+        weight_kg:
+          p.weight_kg != null
+            ? Number(p.weight_kg)
+            : p.weight != null
+            ? Number(p.weight)
+            : undefined,
+        duration_s: p.duration_s != null ? Number(p.duration_s) : undefined,
+        rpe: p.rpe != null ? Number(p.rpe) : undefined,
+        done: p.done !== undefined ? Boolean(p.done) : true,
+      },
+    ],
   };
 }
 
@@ -96,8 +108,8 @@ export async function replayQueue(options = {}) {
 
   for (const item of items) {
     try {
-      await request(sessionEndpoint(item.assignment_id, item.session_id), {
-        method: "PATCH",
+      await request(sessionEndpoint(item.session_id), {
+        method: "PUT",
         body: JSON.stringify(buildSetPayload(item)),
       });
     } catch (error) {
@@ -117,9 +129,7 @@ export async function replayQueue(options = {}) {
       );
     }
 
-    // Only remove after an acknowledged write. If this line is interrupted,
-    // the next replay re-sends the same client_set_id, which the server
-    // treats as a no-op.
+    // Only remove after an acknowledged write.
     await queue.removeItem(item.client_set_id);
     synced += 1;
     onProgress?.({ synced, remaining: total - synced, total });

@@ -32,7 +32,7 @@ urlpatterns = [
     ),
     path(
         "training/",
-        include("apps.training.urls"),
+        include("apps.workouts.urls"),
     ),
     path(
         "diets/",

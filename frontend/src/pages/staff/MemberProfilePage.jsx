@@ -12,9 +12,6 @@ import {
 import MemberDietSection from "./MemberDietSection";
 import MemberWorkoutSection from "./MemberWorkoutSection";
 import MemberProgressSection from "./MemberProgressSection";
-import MemberAssignmentSection from "../../features/training/assignments/MemberAssignmentSection";
-
-const WORKOUTS_V2_ENABLED = import.meta.env.VITE_WORKOUTS_V2_ENABLED === 'true';
 
 import {
   MembershipSection,
@@ -875,11 +872,7 @@ function MemberProfilePage() {
         )}
 
         {activeSection === "workout" && (
-          WORKOUTS_V2_ENABLED ? (
-            <MemberAssignmentSection memberId={memberId} />
-          ) : (
-            <MemberWorkoutSection memberId={memberId} />
-          )
+          <MemberWorkoutSection memberId={memberId} />
         )}
 
         {activeSection ===

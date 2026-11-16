@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import ExerciseLibrary from "./ExerciseLibrary";
+import ProgramsPage from "../programs/ProgramsPage";
 
 
 function StaffTrainingPage() {
@@ -50,14 +51,7 @@ function StaffTrainingPage() {
       {tab === "library" ? (
         <ExerciseLibrary />
       ) : (
-        <section className="trn-empty-panel">
-          <strong>PROGRAMS ARE NEXT</strong>
-          <p>
-            The program builder arrives in Phase 2.
-            The library is ready for staff and member
-            browsing now.
-          </p>
-        </section>
+        <ProgramsPage onClose={() => setTab("library")} />
       )}
     </main>
   );

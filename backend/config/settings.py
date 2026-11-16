@@ -37,7 +37,7 @@ DEBUG = os.getenv(
 ALLOWED_HOSTS = []
 
 WORKOUTS_V2_ENABLED = (
-    os.getenv("WORKOUTS_V2_ENABLED", "False").lower() == "true"
+    os.getenv("WORKOUTS_V2_ENABLED", "True").lower() == "true"
 )
 
 

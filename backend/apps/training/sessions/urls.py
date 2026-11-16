@@ -26,7 +26,7 @@ urlpatterns = [
     path("sessions/<str:session_id>/complete/", SessionCompleteView.as_view(), name="session-complete"),
     path("sessions/<str:session_id>/sets/", SessionSetsView.as_view(), name="session-sets"),
     path("sessions/<str:session_id>/corrections/", CorrectionsView.as_view(), name="session-corrections"),
-    path("me/history/staff/<str:member_id>/", StaffHistoryView.as_view(), name="staff-member-history"),
-    path("me/adherence/staff/<str:member_id>/", StaffAdherenceView.as_view(), name="staff-member-adherence"),
-    path("me/plan/staff/<str:member_id>/", StaffPlanView.as_view(), name="staff-member-plan"),
+    path("staff/members/<str:member_id>/history/", StaffHistoryView.as_view(), name="staff-member-history"),
+    path("staff/members/<str:member_id>/adherence/", StaffAdherenceView.as_view(), name="staff-member-adherence"),
+    path("staff/members/<str:member_id>/plan/", StaffPlanView.as_view(), name="staff-member-plan"),
 ]

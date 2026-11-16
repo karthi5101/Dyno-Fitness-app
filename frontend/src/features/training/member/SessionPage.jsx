@@ -6,25 +6,22 @@ import {
   PendingSyncIndicator,
   logSetWithOfflineFallback,
   newClientSetId,
-  sessionEndpoint,
   useOfflineSync,
 } from "../offline";
 import "./SessionPage.css";
 
-const EMPTY_SET = {
-  exercise_name: "",
-  sets: 3,
-  reps: 10,
-  weight: 0,
-};
-
 export function SessionPage() {
   const { assignmentId, sessionId } = useParams();
+  const effectiveSessionId = sessionId || assignmentId;
 
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(null);
-  const [form, setForm] = useState(EMPTY_SET);
+
+  const [selectedBlockId, setSelectedBlockId] = useState("");
+  const [reps, setReps] = useState(10);
+  const [weight, setWeight] = useState(0);
+
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState(null);
   const [formError, setFormError] = useState(null);
@@ -37,36 +34,52 @@ export function SessionPage() {
     sync,
   } = useOfflineSync();
 
-  const hasParams = Boolean(assignmentId && sessionId);
-
   const loadSession = useCallback(async () => {
+    if (!effectiveSessionId) return;
     try {
-      const data = await apiRequest(
-        sessionEndpoint(assignmentId, sessionId),
-      );
+      setLoadError(null);
+      const data = await apiRequest(`/training/sessions/${effectiveSessionId}/`);
       setSession(data);
+      if (data?.exercises?.length > 0 && !selectedBlockId) {
+        setSelectedBlockId(data.exercises[0].block_id || data.exercises[0].exercise_id);
+        const firstSet = data.exercises[0].sets?.[0];
+        if (firstSet) {
+          if (firstSet.reps != null) setReps(firstSet.reps);
+          if (firstSet.weight_kg != null) setWeight(firstSet.weight_kg);
+        }
+      }
     } catch (caught) {
       setLoadError(caught?.message || "Could not load this session.");
     } finally {
       setLoading(false);
     }
-  }, [assignmentId, sessionId]);
+  }, [effectiveSessionId, selectedBlockId]);
 
   useEffect(() => {
-    if (hasParams) {
-      // Async fetch: every setState in loadSession runs after an await.
-      // eslint-disable-next-line react/set-state-in-effect
-      loadSession();
-    }
-  }, [hasParams, loadSession]);
+    loadSession();
+  }, [loadSession]);
 
-  const updateField = (field) => (event) => {
-    const value = event.target.value;
-    setForm((current) => ({
-      ...current,
-      [field]:
-        field === "exercise_name" ? value : Number(value),
-    }));
+  const currentExercise = (session?.exercises || []).find(
+    (ex) => (ex.block_id || ex.exercise_id) === selectedBlockId
+  ) || session?.exercises?.[0];
+
+  const handleExerciseChange = (blockId) => {
+    setSelectedBlockId(blockId);
+    const ex = (session?.exercises || []).find(
+      (item) => (item.block_id || item.exercise_id) === blockId
+    );
+    if (ex) {
+      // Find first incomplete set or last set
+      const incomplete = (ex.sets || []).find((s) => !s.done);
+      if (incomplete) {
+        if (incomplete.reps != null) setReps(incomplete.reps);
+        if (incomplete.weight_kg != null) setWeight(incomplete.weight_kg);
+      } else if (ex.sets?.length) {
+        const last = ex.sets[ex.sets.length - 1];
+        if (last.reps != null) setReps(last.reps);
+        if (last.weight_kg != null) setWeight(last.weight_kg);
+      }
+    }
   };
 
   const handleLogSet = async (event) => {
@@ -74,41 +87,50 @@ export function SessionPage() {
     setFormError(null);
     setNotice(null);
 
-    if (!form.exercise_name.trim()) {
-      setFormError("Enter an exercise name before logging the set.");
+    if (!currentExercise) {
+      setFormError("Please select an exercise first.");
       return;
     }
 
     setSaving(true);
 
     try {
+      // Determine set_no
+      const completedSets = (currentExercise.sets || []).filter((s) => s.done);
+      const nextSetNo = completedSets.length + 1;
+
+      const payload = {
+        block_id: currentExercise.block_id || "",
+        exercise_id: currentExercise.exercise_id || "",
+        set_no: nextSetNo,
+        reps: Number(reps) || 0,
+        weight_kg: Number(weight) || 0,
+        done: true,
+      };
+
       const result = await logSetWithOfflineFallback({
-        assignmentId,
-        sessionId,
-        payload: { ...form, exercise_name: form.exercise_name.trim() },
-        // One stable id per attempt. Re-clicking after a failure reuses it
-        // only if the caller retries the same attempt; a new set gets a new
-        // id so it is recorded separately.
+        sessionId: effectiveSessionId,
+        payload,
         clientSetId: newClientSetId(),
       });
 
       if (result.queued) {
         setNotice(
           online
-            ? "Set saved on this device and will sync automatically."
-            : "You are offline. Set saved on this device.",
+            ? "Set saved locally and will sync automatically."
+            : "You are offline. Set saved locally on this device."
         );
-        setForm(EMPTY_SET);
-
-        // Try a replay now. If the token expired, this flips the indicator to
-        // the login-required prompt without dropping the queued set.
         if (online) {
           await sync();
         }
       } else {
-        setSession(result.data);
-        setNotice("Set logged.");
-        setForm(EMPTY_SET);
+        const updatedSession = result.data?.session || result.data;
+        if (updatedSession) {
+          setSession(updatedSession);
+        } else {
+          await loadSession();
+        }
+        setNotice(`Logged set ${nextSetNo} for ${currentExercise.exercise_name}!`);
       }
     } catch (caught) {
       setFormError(caught?.message || "Could not log this set.");
@@ -124,17 +146,16 @@ export function SessionPage() {
 
     try {
       const data = await apiRequest(
-        sessionEndpoint(assignmentId, sessionId),
+        `/training/sessions/${effectiveSessionId}/complete/`,
         {
-          method: "PATCH",
-          body: JSON.stringify({ action: "finish" }),
-        },
+          method: "POST",
+        }
       );
-      setSession(data);
+      setSession(data.session || data);
       setNotice(
-        data?.note
+        data?.already_completed
           ? "This session was already completed."
-          : "Session completed.",
+          : "Session completed! Great work."
       );
     } catch (caught) {
       setFormError(caught?.message || "Could not finish this session.");
@@ -143,7 +164,7 @@ export function SessionPage() {
     }
   };
 
-  if (!hasParams) {
+  if (!effectiveSessionId) {
     return (
       <div className="trn-session-error" role="alert">
         <p>This session link is incomplete.</p>
@@ -173,21 +194,20 @@ export function SessionPage() {
     );
   }
 
-  const exercises = session?.exercises || {};
-  const exerciseNames = Object.keys(exercises);
-  const isActive = (session?.status || "active") === "active";
+  const exercises = session?.exercises || [];
+  const isCompleted = session?.status === "completed";
 
   return (
     <section className="trn-session">
       <header className="trn-session-head">
         <div>
-          <p className="trn-eyebrow">SESSION</p>
-          <h2>{session?.day_key || "Today"}</h2>
+          <p className="trn-eyebrow">SESSION · {session?.session_date}</p>
+          <h2>{session?.day_snapshot?.label || session?.day_key || "Today"}</h2>
         </div>
         <span
-          className={`trn-session-status trn-session-status-${session?.status || "active"}`}
+          className={`trn-session-status trn-session-status-${session?.status || "in_progress"}`}
         >
-          {(session?.status || "active").toUpperCase()}
+          {(session?.status || "in_progress").toUpperCase()}
         </span>
       </header>
 
@@ -199,59 +219,91 @@ export function SessionPage() {
         onRetry={sync}
       />
 
-      {exerciseNames.length === 0 ? (
-        <p className="trn-session-muted">
-          No sets logged yet. Add your first set below.
-        </p>
-      ) : (
-        <ul className="trn-session-list">
-          {exerciseNames.map((name) => {
-            const entry = exercises[name] || {};
-            return (
-              <li key={name}>
-                <strong>{name}</strong>
-                <span>
-                  {entry.sets} × {entry.reps}
-                </span>
-                <span>{entry.weight ?? 0} kg</span>
-              </li>
-            );
-          })}
-        </ul>
-      )}
+      <div className="trn-session-overview">
+        {exercises.length === 0 ? (
+          <p className="trn-session-muted">No exercises in this session.</p>
+        ) : (
+          <ul className="trn-session-list">
+            {exercises.map((ex) => {
+              const completedCount = (ex.sets || []).filter((s) => s.done).length;
+              const totalCount = ex.sets?.length || 0;
+              const isSelected =
+                (ex.block_id || ex.exercise_id) ===
+                (currentExercise?.block_id || currentExercise?.exercise_id);
 
-      {isActive ? (
+              return (
+                <li
+                  key={ex.block_id || ex.exercise_id}
+                  style={{
+                    cursor: isCompleted ? "default" : "pointer",
+                    borderColor: isSelected ? "#6a3bd8" : undefined,
+                  }}
+                  onClick={() => !isCompleted && handleExerciseChange(ex.block_id || ex.exercise_id)}
+                >
+                  <div>
+                    <strong>{ex.exercise_name}</strong>
+                    {ex.notes && (
+                      <p style={{ margin: "2px 0 0", fontSize: "0.78rem", color: "#6b657e" }}>
+                        {ex.notes}
+                      </p>
+                    )}
+                    <div style={{ marginTop: "4px", fontSize: "0.8rem", color: "#4a4460" }}>
+                      {(ex.sets || []).map((s, idx) => (
+                        <span
+                          key={idx}
+                          style={{
+                            marginRight: "8px",
+                            color: s.done ? "#1d6b32" : "#999",
+                            fontWeight: s.done ? 600 : 400,
+                          }}
+                        >
+                          S{s.set_no}: {s.reps}r @ {s.weight_kg ?? 0}kg {s.done ? "✓" : "○"}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <span>
+                    {completedCount} / {totalCount} sets
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </div>
+
+      {!isCompleted ? (
         <form className="trn-session-form" onSubmit={handleLogSet}>
-          <h3>Log a set</h3>
+          <h3>Log Set: {currentExercise?.exercise_name || "Select Exercise"}</h3>
 
-          <label>
-            Exercise
-            <input
-              type="text"
-              value={form.exercise_name}
-              onChange={updateField("exercise_name")}
-              placeholder="e.g. Bench Press"
-              autoComplete="off"
-            />
-          </label>
+          {exercises.length > 1 && (
+            <label>
+              Select Movement
+              <select
+                value={selectedBlockId}
+                onChange={(e) => handleExerciseChange(e.target.value)}
+              >
+                {exercises.map((ex) => (
+                  <option
+                    key={ex.block_id || ex.exercise_id}
+                    value={ex.block_id || ex.exercise_id}
+                  >
+                    {ex.exercise_name} ({(ex.sets || []).filter((s) => s.done).length}/{ex.sets?.length || 0} sets)
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
 
           <div className="trn-session-row">
             <label>
-              Sets
+              Reps Completed
               <input
                 type="number"
-                min="1"
-                value={form.sets}
-                onChange={updateField("sets")}
-              />
-            </label>
-            <label>
-              Reps
-              <input
-                type="number"
-                min="1"
-                value={form.reps}
-                onChange={updateField("reps")}
+                min="0"
+                value={reps}
+                onChange={(e) => setReps(e.target.value)}
+                required
               />
             </label>
             <label>
@@ -260,8 +312,8 @@ export function SessionPage() {
                 type="number"
                 min="0"
                 step="0.5"
-                value={form.weight}
-                onChange={updateField("weight")}
+                value={weight}
+                onChange={(e) => setWeight(e.target.value)}
               />
             </label>
           </div>
@@ -280,7 +332,7 @@ export function SessionPage() {
 
           <div className="trn-session-actions">
             <button type="submit" disabled={saving}>
-              {saving ? "Saving…" : "Log set"}
+              {saving ? "Saving…" : "Log Set"}
             </button>
             <button
               type="button"
@@ -288,14 +340,14 @@ export function SessionPage() {
               onClick={handleFinish}
               disabled={saving}
             >
-              Finish session
+              Finish Session
             </button>
           </div>
         </form>
       ) : (
-        <p className="trn-session-muted">
-          This session is completed. Its history is preserved.
-        </p>
+        <div className="trn-session-notice" role="status">
+          <p>This session is completed. Your performance has been recorded.</p>
+        </div>
       )}
     </section>
   );

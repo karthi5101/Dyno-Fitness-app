@@ -2,6 +2,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from apps.authentication.identity import get_member_id_for_user
 from apps.authentication.permissions import IsStaffUser
 
 from ..flag import TrainingEnabledAPIView
@@ -15,6 +16,7 @@ from .repositories import (
     last_exercise,
     log_sets,
     plan,
+    start_session,
     add_correction,
     repair_completed_advancements,
     serialize_session,
@@ -35,13 +37,14 @@ class TodayView(TrainingEnabledAPIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        if not request.user.is_authenticated:
+        member_id = get_member_id_for_user(request.user)
+        if not member_id:
             return Response(
-                {"detail": "Authentication required."},
-                status=status.HTTP_401_UNAUTHORIZED,
+                {"detail": "No member profile linked to this user."},
+                status=status.HTTP_404_NOT_FOUND,
             )
         try:
-            result = get_today(request.user.member_profile.id)
+            result = get_today(member_id)
         except SessionError as exc:
             return _error(exc)
         except Exception as exc:
@@ -58,8 +61,14 @@ class SessionDetailView(TrainingEnabledAPIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, session_id):
+        member_id = get_member_id_for_user(request.user)
+        if not member_id:
+            return Response(
+                {"detail": "No member profile linked to this user."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
         try:
-            session = get_session(request.user.member_profile.id, session_id)
+            session = get_session(member_id, session_id)
         except SessionError as exc:
             return _error(exc)
         except Exception as exc:
@@ -76,8 +85,14 @@ class SessionStartView(TrainingEnabledAPIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
+        member_id = get_member_id_for_user(request.user)
+        if not member_id:
+            return Response(
+                {"detail": "No member profile linked to this user."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
         try:
-            session = start_session(request.user.member_profile.id)
+            session = start_session(member_id)
         except SessionError as exc:
             return _error(exc)
         except Exception as exc:
@@ -94,10 +109,14 @@ class SessionCompleteView(TrainingEnabledAPIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, session_id):
-        try:
-            session, already = complete_session(
-                request.user.member_profile.id, session_id
+        member_id = get_member_id_for_user(request.user)
+        if not member_id:
+            return Response(
+                {"detail": "No member profile linked to this user."},
+                status=status.HTTP_404_NOT_FOUND,
             )
+        try:
+            session, already = complete_session(member_id, session_id)
         except SessionError as exc:
             return _error(exc)
         except Exception as exc:
@@ -119,10 +138,14 @@ class SessionSetsView(TrainingEnabledAPIView):
     permission_classes = [IsAuthenticated]
 
     def put(self, request, session_id):
-        try:
-            session, applied = log_sets(
-                request.user.member_profile.id, session_id, request.data
+        member_id = get_member_id_for_user(request.user)
+        if not member_id:
+            return Response(
+                {"detail": "No member profile linked to this user."},
+                status=status.HTTP_404_NOT_FOUND,
             )
+        try:
+            session, applied = log_sets(member_id, session_id, request.data)
         except SessionError as exc:
             return _error(exc)
         except Exception as exc:
@@ -144,8 +167,14 @@ class LastExerciseView(TrainingEnabledAPIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, exercise_id):
+        member_id = get_member_id_for_user(request.user)
+        if not member_id:
+            return Response(
+                {"detail": "No member profile linked to this user."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
         try:
-            result = last_exercise(request.user.member_profile.id, exercise_id)
+            result = last_exercise(member_id, exercise_id)
         except SessionError as exc:
             return _error(exc)
         except Exception as exc:
@@ -167,8 +196,14 @@ class HistoryView(TrainingEnabledAPIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        member_id = get_member_id_for_user(request.user)
+        if not member_id:
+            return Response(
+                {"detail": "No member profile linked to this user."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
         try:
-            result = history(request.user.member_profile.id)
+            result = history(member_id)
         except SessionError as exc:
             return _error(exc)
         except Exception as exc:
@@ -185,8 +220,14 @@ class PlanView(TrainingEnabledAPIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        member_id = get_member_id_for_user(request.user)
+        if not member_id:
+            return Response(
+                {"detail": "No member profile linked to this user."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
         try:
-            result = plan(request.user.member_profile.id)
+            result = plan(member_id)
         except SessionError as exc:
             return _error(exc)
         except Exception as exc:
@@ -225,7 +266,7 @@ class StaffHistoryView(TrainingEnabledAPIView):
 
     def get(self, request, member_id):
         try:
-            result = get_today(request.user.member_profile.id)
+            result = history(member_id)
         except SessionError as exc:
             return _error(exc)
         except Exception as exc:

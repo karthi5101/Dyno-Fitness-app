@@ -353,268 +353,71 @@ export async function deleteAttendance(attendanceId) {
 }
 
 // ---------------------------------------------------------------------------
-// WORKOUT TEMPLATES
+// WORKOUTS / TRAINING ENGINE
 // ---------------------------------------------------------------------------
 
-export async function getWorkoutTemplates() {
-  return apiRequest("/workouts/templates/");
+export async function getWorkoutExercises(params = {}) {
+  const query = new URLSearchParams(params).toString();
+  return apiRequest(`/workouts/exercises/${query ? `?${query}` : ''}`);
 }
 
-export async function getWorkoutTemplate(templateId) {
-  return apiRequest(
-    `/workouts/templates/${encodeURIComponent(templateId)}/`,
-  );
+export async function getWorkoutPrograms() {
+  return apiRequest('/workouts/programs/');
 }
 
-export async function createWorkoutTemplate(
-  templateData,
-) {
-  return apiRequest("/workouts/templates/", {
-    method: "POST",
-    body: JSON.stringify(templateData),
+export async function createWorkoutProgram(programData) {
+  return apiRequest('/workouts/programs/', {
+    method: 'POST',
+    body: JSON.stringify(programData),
   });
 }
 
-export async function updateWorkoutTemplate(
-  templateId,
-  templateData,
-) {
-  return apiRequest(
-    `/workouts/templates/${encodeURIComponent(templateId)}/`,
-    {
-      method: "PUT",
-      body: JSON.stringify(templateData),
-    },
-  );
+export async function getMemberWorkoutAssignment(memberId) {
+  return apiRequest(`/workouts/members/${encodeURIComponent(memberId)}/assignment/`);
 }
 
-export async function deleteWorkoutTemplate(
-  templateId,
-) {
-  return apiRequest(
-    `/workouts/templates/${encodeURIComponent(templateId)}/`,
-    {
-      method: "DELETE",
-    },
-  );
-}
-
-// ---------------------------------------------------------------------------
-// WORKOUT ASSIGNMENT
-// ---------------------------------------------------------------------------
-
-export async function getWorkoutAssignment(memberId) {
-  return apiRequest(
-    `/workouts/assignments/${encodeURIComponent(memberId)}/`,
-  );
-}
-
-export async function assignWorkoutTemplate(
-  memberId,
-  templateId,
-) {
-  return apiRequest("/workouts/assignments/", {
-    method: "POST",
-    body: JSON.stringify({
-      member_id: memberId,
-      template_id: templateId,
-    }),
+export async function assignMemberWorkoutProgram(memberId, assignmentData) {
+  return apiRequest(`/workouts/members/${encodeURIComponent(memberId)}/assignment/`, {
+    method: 'POST',
+    body: JSON.stringify(assignmentData),
   });
 }
 
-// ---------------------------------------------------------------------------
-// DAILY WORKOUT
-// ---------------------------------------------------------------------------
-
-export async function generateDailyWorkout(
-  memberId,
-  workoutDate = null,
-  options = {},
-) {
-  const { split = false } = options || {};
-
-  return apiRequest("/workouts/daily/generate/", {
-    method: "POST",
-    body: JSON.stringify({
-      member_id: memberId,
-      ...(workoutDate
-        ? {
-            workout_date: workoutDate,
-          }
-        : {}),
-      ...(split
-        ? {
-            split: true,
-          }
-        : {}),
-    }),
+export async function endMemberWorkoutAssignment(memberId) {
+  return apiRequest(`/workouts/members/${encodeURIComponent(memberId)}/assignment/end/`, {
+    method: 'POST',
   });
 }
 
-export async function getMemberWorkout(
-  memberId,
-  workoutDate = null,
-) {
-  const query = workoutDate
-    ? `?date=${encodeURIComponent(workoutDate)}`
-    : "";
-
-  const [
-    workoutResult,
-    assignmentResult,
-  ] = await Promise.allSettled([
-    apiRequest(
-      `/workouts/daily/${encodeURIComponent(memberId)}/${query}`,
-    ),
-    getWorkoutAssignment(memberId),
-  ]);
-
-  const workoutMissing =
-    workoutResult.status === "rejected" &&
-    workoutResult.reason?.status === 404;
-
-  const assignmentMissing =
-    assignmentResult.status === "rejected" &&
-    assignmentResult.reason?.status === 404;
-
-  if (workoutMissing && assignmentMissing) {
-    return {
-      workout: null,
-      assignment: null,
-    };
-  }
-
-  if (
-    workoutResult.status === "rejected" &&
-    assignmentResult.status === "rejected"
-  ) {
-    const realFailure = [
-      workoutResult.reason,
-      assignmentResult.reason,
-    ].find(
-      (reason) => reason?.status !== 404,
-    );
-
-    if (realFailure) {
-      throw realFailure;
-    }
-  }
-
-  return {
-    workout:
-      workoutResult.status === "fulfilled"
-        ? workoutResult.value
-        : null,
-
-    assignment:
-      assignmentResult.status === "fulfilled"
-        ? assignmentResult.value
-        : null,
-  };
+export async function getMemberTodayWorkout() {
+  return apiRequest('/workouts/me/today/');
 }
 
-/**
- * Create a daily workout manually.
- *
- * Backend route:
- * POST /workouts/daily/<member_id>/
- *
- * workoutData:
- * {
- *   member_id,
- *   workout_date,
- *   exercises
- * }
- */
-export async function createDailyWorkout(
-  workoutData,
-) {
-  if (!workoutData?.member_id) {
-    throw new Error(
-      "member_id is required to create a daily workout.",
-    );
-  }
-
-  return apiRequest(
-    `/workouts/daily/${encodeURIComponent(
-      workoutData.member_id,
-    )}/`,
-    {
-      method: "POST",
-      body: JSON.stringify({
-        workout_date:
-          workoutData.workout_date,
-        exercises:
-          workoutData.exercises || [],
-      }),
-    },
-  );
+export async function startWorkoutSession() {
+  return apiRequest('/workouts/sessions/start/', {
+    method: 'POST',
+  });
 }
 
-export async function updateDailyWorkout(
-  memberId,
-  exercises,
-  workoutDate = null,
-) {
-  const query = workoutDate
-    ? `?date=${encodeURIComponent(workoutDate)}`
-    : "";
-
-  return apiRequest(
-    `/workouts/daily/${encodeURIComponent(memberId)}/${query}`,
-    {
-      method: "PUT",
-      body: JSON.stringify({
-        exercises,
-      }),
-    },
-  );
+export async function getWorkoutSession(sessionId) {
+  return apiRequest(`/workouts/sessions/${encodeURIComponent(sessionId)}/`);
 }
 
-export async function deleteDailyWorkout(
-  memberId,
-  workoutDate = null,
-) {
-  const query = workoutDate
-    ? `?date=${encodeURIComponent(workoutDate)}`
-    : "";
-
-  return apiRequest(
-    `/workouts/daily/${encodeURIComponent(memberId)}/${query}`,
-    {
-      method: "DELETE",
-    },
-  );
+export async function logWorkoutSets(sessionId, setsData) {
+  return apiRequest(`/workouts/sessions/${encodeURIComponent(sessionId)}/sets/`, {
+    method: 'PUT',
+    body: JSON.stringify(setsData),
+  });
 }
 
-export async function getWorkoutHistory(memberId) {
-  return apiRequest(
-    `/workouts/history/${encodeURIComponent(memberId)}/`,
-  );
+export async function completeWorkoutSession(sessionId) {
+  return apiRequest(`/workouts/sessions/${encodeURIComponent(sessionId)}/complete/`, {
+    method: 'POST',
+  });
 }
 
-/**
- * Complete a pending split workout.
- *
- * Backend route:
- * POST /workouts/daily/<member_id>/complete/
- *
- * Only the workout identifier is sent. The server derives the
- * rotation day, completion timestamp and actor role itself.
- */
-export async function completeDailyWorkout(
-  memberId,
-  workoutId,
-) {
-  return apiRequest(
-    `/workouts/daily/${encodeURIComponent(memberId)}/complete/`,
-    {
-      method: "POST",
-      body: JSON.stringify({
-        workout_id: workoutId,
-      }),
-    },
-  );
+export async function getWorkoutHistory() {
+  return apiRequest('/workouts/me/history/');
 }
 
 // ---------------------------------------------------------------------------

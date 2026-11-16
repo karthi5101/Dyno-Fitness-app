@@ -62,6 +62,10 @@ function MemberTrainingPage() {
           element={<TodayPage />}
         />
         <Route
+          path="session/:sessionId"
+          element={<SessionPage />}
+        />
+        <Route
           path="session/:assignmentId/:sessionId"
           element={<SessionPage />}
         />

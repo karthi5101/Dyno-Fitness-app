@@ -45,12 +45,6 @@ import StaffGymQRPage from "./pages/staff/GymQRPage";
 import MemberWorkoutPage from "./pages/member/WorkoutPage";
 import StaffWorkoutsPage from "./pages/staff/WorkoutsPage";
 
-// Training v2 imports
-import StaffTrainingPage from "./features/training/library/StaffTrainingPage";
-import MemberTrainingPage from "./features/training/library/MemberTrainingPage";
-
-const WORKOUTS_V2_ENABLED = import.meta.env.VITE_WORKOUTS_V2_ENABLED === 'true';
-
 /* =========================================================
    PROTECTED ROUTE
 ========================================================= */
@@ -218,24 +212,7 @@ function AppRoutes() {
         path="/member/workout/*"
         element={
           <Protected role="member">
-            {WORKOUTS_V2_ENABLED ? <MemberTrainingPage /> : <MemberWorkoutPage />}
-          </Protected>
-        }
-      />
-
-      {/* =====================================================
-         MEMBER → WORKOUT HISTORY
-         
-         Uses the existing workout history page.
-         No backend changes.
-         No effect on the current workout route.
-      ===================================================== */}
-
-      <Route
-        path="/member/workout/history"
-        element={
-          <Protected role="member">
-            <MemberWorkoutHistoryPage />
+            <MemberWorkoutPage />
           </Protected>
         }
       />
@@ -393,7 +370,7 @@ function AppRoutes() {
             backTo="/staff/dashboard"
             backLabel="DASHBOARD"
           >
-            {WORKOUTS_V2_ENABLED ? <StaffTrainingPage /> : <StaffWorkoutsPage />}
+            <StaffWorkoutsPage />
           </StaffRoute>
         }
       />

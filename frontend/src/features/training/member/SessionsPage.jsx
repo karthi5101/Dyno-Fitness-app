@@ -1,52 +1,27 @@
 import { useCallback, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import { apiRequest } from "../../../api/client";
 import "./SessionPage.css";
 
-async function resolveAssignmentId(assignmentId) {
-  if (assignmentId) {
-    return assignmentId;
-  }
-
-  const data = await apiRequest("/training/assignments/");
-  const active = (data?.assignments || []).find(
-    (item) => item.status === "active",
-  );
-  return active?.id || null;
-}
-
 export function SessionsPage() {
-  const params = useParams();
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const loadHistory = useCallback(async () => {
     try {
-      const assignmentId = await resolveAssignmentId(
-        params.assignmentId,
-      );
-
-      if (!assignmentId) {
-        setSessions([]);
-        return;
-      }
-
-      const data = await apiRequest(
-        `/training/sessions/history/${encodeURIComponent(assignmentId)}/`,
-      );
-      setSessions(data?.sessions || []);
+      setError(null);
+      const data = await apiRequest("/training/me/history/");
+      setSessions(Array.isArray(data) ? data : data?.sessions || []);
     } catch (caught) {
       setError(caught?.message || "Could not load session history.");
     } finally {
       setLoading(false);
     }
-  }, [params.assignmentId]);
+  }, []);
 
   useEffect(() => {
-    // Async fetch: every setState in loadHistory runs after an await.
-    // eslint-disable-next-line react/set-state-in-effect
     loadHistory();
   }, [loadHistory]);
 
@@ -77,34 +52,39 @@ export function SessionsPage() {
       <header className="trn-session-head">
         <div>
           <p className="trn-eyebrow">HISTORY</p>
-          <h2>Completed sessions</h2>
+          <h2>Workout History</h2>
         </div>
       </header>
 
       {sessions.length === 0 ? (
         <p className="trn-session-muted">
-          No completed sessions yet. Finish a session to see it here.
+          No training sessions recorded yet. Complete a workout to see it here!
         </p>
       ) : (
         <ul className="trn-session-list">
           {sessions.map((session) => {
-            const exerciseCount = Object.keys(
-              session.exercises || {},
-            ).length;
+            const dateStr = session.session_date || (session.completed_at ? new Date(session.completed_at).toLocaleDateString() : "—");
+            const label = session.day_label || session.day_key || "Session";
+            const exercisesText = `${session.exercise_count ?? 0} exercise${session.exercise_count === 1 ? "" : "s"}`;
+            const setsText = `${session.completed_sets ?? 0}/${session.set_count ?? 0} sets`;
+
             return (
               <li key={session.id}>
-                <strong>{session.day_key || "Session"}</strong>
-                <span>
-                  {session.completed_at
-                    ? new Date(
-                        session.completed_at,
-                      ).toLocaleDateString()
-                    : "—"}
-                </span>
-                <span>
-                  {exerciseCount} exercise
-                  {exerciseCount === 1 ? "" : "s"}
-                </span>
+                <Link
+                  to={`/member/workout/session/${session.id}`}
+                  style={{ textDecoration: "none", color: "inherit", display: "contents" }}
+                >
+                  <div>
+                    <strong>{label}</strong>
+                    <div style={{ fontSize: "0.8rem", color: "#6b657e" }}>{dateStr}</div>
+                  </div>
+                  <span>{exercisesText} · {setsText}</span>
+                  <span
+                    className={`trn-session-status trn-session-status-${session.status || "completed"}`}
+                  >
+                    {(session.status || "completed").toUpperCase()}
+                  </span>
+                </Link>
               </li>
             );
           })}

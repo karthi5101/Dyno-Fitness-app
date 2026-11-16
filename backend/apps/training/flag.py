@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.http import Http404
+from rest_framework import exceptions
 from rest_framework.views import APIView
 
 
@@ -12,8 +12,7 @@ def training_enabled():
 class TrainingEnabledAPIView(APIView):
     """Base view that hides the training module when its flag is off."""
 
-    def dispatch(self, request, *args, **kwargs):
+    def initial(self, request, *args, **kwargs):
         if not training_enabled():
-            raise Http404("Training module is disabled.")
-
-        return super().dispatch(request, *args, **kwargs)
+            raise exceptions.NotFound("Training module is disabled.")
+        super().initial(request, *args, **kwargs)

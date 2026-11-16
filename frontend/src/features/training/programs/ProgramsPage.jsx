@@ -31,7 +31,7 @@ function ProgramsPage({ onSave, onClose }) {
     setError("");
     setLoading(true);
     try {
-      await apiRequest("/api/training/programs/", {
+      await apiRequest("/training/programs/", {
         method: "POST",
         body: JSON.stringify(program),
       });
